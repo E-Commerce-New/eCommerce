@@ -1,0 +1,42 @@
+# Node.js dependencies
+/node_modules/
+
+# Build output
+/dist/
+/build/
+
+# Logs
+*.log
+logs/
+
+# Environment files
+.env
+
+# IDE specific files
+.idea/
+.vscode/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# MongoDB related
+data/
+
+# Temporary files created by the runtime
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Coverage reports
+/coverage/
+
+# Package lock files (Optional based on preference)
+package-lock.json
+yarn.lock
+
+# Custom folders
+public/uploads/
+
+# Optional: If you have a database folder or something that should not be pushed
+database/
