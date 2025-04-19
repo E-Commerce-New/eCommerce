@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 const AdminNavbar = () => {
     return (
         <>
-            <div className="flex flex-col">
+            <div className="flex flex-col p-4 border-r-2 h-[100vh] fixed w-[14vw]">
             <div>
                 <img src="" alt="Logo"/>
             </div>

@@ -16,7 +16,7 @@ const UpdateProduct = () => {
                     title: 'Deleted!',
                     text: res.data.message || 'Product has been deleted!',
                 });
-                navigate("/admin/products"); // redirect to products page
+                navigate("/admin/products");
             } catch (err) {
                 console.error("Error deleting product:", err);
                 Swal.fire({

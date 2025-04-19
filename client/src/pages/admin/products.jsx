@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import swal from "sweetalert2";
 import {useNavigate} from "react-router-dom";
+import { Trash2 } from 'lucide-react';
 
 const Products = () => {
     const [showAddProduct, setShowAddProduct] = useState(false);
@@ -333,7 +334,7 @@ const Products = () => {
                                     </div>
                                 ))}
                             </td>
-                            <td className="border px-4 py-2">
+                            <td className="border px-4 py-2 text-center">
                                 <button
                                     onClick={() => handleEdit(product._id)}
                                     className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
@@ -341,12 +342,12 @@ const Products = () => {
                                     Edit
                                 </button>
                             </td>
-                            <td className="border px-4 py-2">
+                            <td className="border px-4 py-2 text-center">
                                 <button
                                     onClick={() => handeldelete(product._id)}
-                                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                                    className="bg-red-500 text-white p-1 py-1 rounded hover:bg-red-600 text-center"
                                 >
-                                    Delete
+                                    <Trash2/>
                                 </button>
                             </td>
                         </tr>
