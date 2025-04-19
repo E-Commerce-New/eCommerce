@@ -11,6 +11,18 @@ const upload = multer({ storage });
 
 router.post('/createProduct', upload.single('image'), createProducts);
 
+router.get('/getProducts', getProducts)
+
+router.patch("/update/:id", upload.single("image"), updateProduct);
+
+router.delete('/delete/:id', deleteProduct)
+
+router.get('/getproductbyid/:id', getProductById)
+
+module.exports = router;
+
+
+
 // router.post('/insertMany', async(req, res)=>{
 //     try{
 //         console.log("working")
@@ -21,13 +33,3 @@ router.post('/createProduct', upload.single('image'), createProducts);
 //         res.status(500).send('Something went wrong...')
 //     }
 // })
-
-router.get('/getProducts', getProducts)
-
-router.patch('/update/:id', updateProduct)
-
-router.delete('/delete/:id', deleteProduct)
-
-router.get('/getproductbyid/:id', getProductById)
-
-module.exports = router;

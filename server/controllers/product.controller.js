@@ -1,4 +1,6 @@
 const Product = require("../models/product");
+const multer = require("multer");
+
 
 const createProducts = async (req, res) => {
     try {
@@ -58,22 +60,29 @@ const updateProduct = async (req, res) => {
             active,
             attributes
         } = req.body;
-        await Product.findByIdAndUpdate(req.params.id, {
+
+        const parsedAttributes = typeof attributes === "string" ? JSON.parse(attributes) : attributes;
+
+        const updateData = {
             name,
             description,
             category,
             price,
             quantity,
             active,
-            attributes
-        })
-        const product = await Product.findById(req.params.id)
-        res.status(200).json({product, message: 'Product updated successfully'})
+            attributes: parsedAttributes
+        };
+
+        await Product.findByIdAndUpdate(req.params.id, updateData);
+
+        const product = await Product.findById(req.params.id);
+        res.status(200).json({ product, message: 'Product updated successfully' });
     } catch (error) {
-        console.log(error)
-        res.status(500).send('Something went wrong...')
+        console.log("Update Error:", error);
+        res.status(500).send('Something went wrong...');
     }
-}
+};
+
 
 const deleteProduct = async (req, res) => {
     try {
