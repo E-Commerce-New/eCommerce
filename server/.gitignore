@@ -40,3 +40,7 @@ public/uploads/
 
 # Optional: If you have a database folder or something that should not be pushed
 database/
+
+# .gitignore
+*.deb
+*.rpm
