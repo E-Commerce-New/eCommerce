@@ -70,4 +70,35 @@ router.get('/getProducts', async(req, res)=>{
     }
 })
 
+router.patch('/update/:id', async(req, res)=>{
+    console.log('update controller')
+    try {
+        const {
+            name,
+            description,
+            category,
+            price,
+            quantity,
+            active,
+            attributes,
+        } = req.body;
+        await Product.findByIdAndUpdate(req.params.id, {name, description, category, price, quantity, active, attributes})
+        const product = await Product.findById(req.params.id)
+        res.status(200).json({product, message: 'Product updated successfully'})
+    }catch(error){
+        console.log(error)
+        res.status(500).send('Something went wrong...')
+    }
+})
+
+router.delete('/delete/:id', async (req, res) =>{
+    try{
+        await Product.findByIdAndDelete(req.params.id);
+        res.status(200).json({message: 'Product deleted successfully'})
+    }catch(error){
+        console.log(error)
+        res.status(500).send('Something went wrong...')
+    }
+})
+
 module.exports = router;
