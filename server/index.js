@@ -5,6 +5,7 @@ const port = process.env.PORT || 3002;
 const mongoose = require('mongoose');
 const cors = require('cors');
 const userRouter = require('./routes/user.routes')
+const productRouter = require('./routes/product.routes')
 
 // Import the User model
 const User = require('./models/user');
@@ -20,6 +21,7 @@ mongoose
 
 // Api routes
 app.use('/api/user', userRouter)
+app.use('/api/product', productRouter)
 
 // Start server
 app.listen(port, () => {
