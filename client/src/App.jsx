@@ -4,6 +4,8 @@ import NoPage from "./pages/NoPage";
 import AdminPanel from "./pages/admin/AdminDashboard";
 import AdminLayout from "./layouts/AdminLayout";
 import Products from "./pages/admin/products";
+import UpdateProduct from "./pages/admin/updateProduct";
+import DeleteProduct from "./pages/admin/DeleteProduct";
 
 export default function App() {
     return (
@@ -14,6 +16,8 @@ export default function App() {
                 <Route path="/admin" element={<AdminLayout />}>
                     <Route path="panel" element={<AdminPanel />} />
                     <Route path="products" element={<Products />} />
+                    <Route path="update-product/:id" element={<UpdateProduct />} />
+                    <Route path="delete-product/:id" element={<DeleteProduct />} />
                 </Route>
 
                 
