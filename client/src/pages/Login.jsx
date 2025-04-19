@@ -24,14 +24,16 @@ const Login = () => {
                 swal.fire({
                     icon: "success",
                     title: "Login Success",
-                    // timer: 1500,
+                    timer: 1500,
                 })
-                navigate("/home")
+                if (form.username === "admin") {
+                    navigate("/admin/panel")
+                } else navigate("/home")
             } else swal.fire({
                 icon: "error",
                 title: "Login Failed",
                 text: data.message,
-                // timer: 1500,
+                timer: 1500,
             })
             } catch (error) {
             console.error(error)
