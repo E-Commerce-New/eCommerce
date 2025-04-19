@@ -51,7 +51,7 @@ const Products = () => {
             formData.append("image", form.image);
             formData.append("attributes", JSON.stringify(form.attributes));
 
-            const res = await axios.post("http://localhost:3000/api/products", formData, {
+            const res = await axios.post("http://localhost:3000/api/product/createProduct", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -143,6 +143,7 @@ const Products = () => {
                             className="p-2 border-b-2 border-black bg-transparent"
                         >
                             <option value="">Select Category</option>
+                            <option value="Computer">Computer</option>
 
                         </select>
                     </div>

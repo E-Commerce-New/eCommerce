@@ -19,7 +19,7 @@ const AdminNavbar = () => {
                 </div>
                 <hr className="bg-gray-400 h-[2px] mt-7" />
                 <div className="flex flex-col mt-5 gap-6">
-                    <div className="flex gap-3"> <LayoutGrid /> Overview </div>
+                    <Link to="/admin/panel" className="flex gap-3"> <LayoutGrid /> Overview </Link>
                     <div className="flex gap-3"> <ChartSpline /> Analytics </div>
                     <Link to="/admin/pages" className="flex gap-3 justify-between"> <div className="flex gap-3"> <StickyNote /> Pages </div> <Plus /> </Link>
                     <Link to="/admin/products" className="flex gap-3"> <Package /> Products </Link>
