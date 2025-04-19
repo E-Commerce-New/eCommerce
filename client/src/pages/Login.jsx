@@ -9,29 +9,29 @@ const Login = () => {
         password: "",
     })
     const navigate = useNavigate();
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault()
         console.log(form)
         try {
-            const res = fetch("http://localhost:5000/api/user/login", {
+            const res = await fetch("http://localhost:3000/api/user/login", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(form),
             })
-            const data = res.json()
+            const data = await res.json()
             console.log(data)
-            if(data.status === 200) {
+            if(res.status === 200) {
                 swal.fire({
                     icon: "success",
                     title: "Login Success",
-                    timer: 1500,
+                    // timer: 1500,
                 })
                 navigate("/home")
             } else swal.fire({
                 icon: "error",
                 title: "Login Failed",
                 text: data.message,
-                timer: 1500,
+                // timer: 1500,
             })
             } catch (error) {
             console.error(error)

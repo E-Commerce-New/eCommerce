@@ -9,13 +9,13 @@ const cors = require('cors');
 const User = require('./models/user');
 
 // CORS setup
-const corsOptions = {
-    origin: "*",
-    credentials: true,
-    optionSuccessStatus: 200,
-};
+// const corsOptions = {
+//     origin: "http://localhost:5173/",
+//     // credentials: true,
+//     // optionSuccessStatus: 200,
+// };
 app.use(express.json());
-app.use(cors(corsOptions));
+app.use(cors());
 
 // Connect to MongoDB Atlas
 mongoose
@@ -30,12 +30,12 @@ app.get('/', (req, res) => {
 
 // Login or Registration route
 app.post('/api/user/login', async (req, res) => {
-    // console.log("Request body:", req.body);
-    const { email, password } = req.body;
+    console.log("Request body:", req.body);
+    const { username, password } = req.body;
 
     try {
         // Create a new user
-        let user = await User.findOne({ email });
+        let user = await User.findOne({ email : username });
         if (!user) {
             return res.status(400).json({ message: "User not found" });
           }
