@@ -60,4 +60,14 @@ router.post('/insertMany', async(req, res)=>{
     }
 })
 
+router.get('/getProducts', async(req, res)=>{
+    try{
+        const data = await Product.find({})
+        res.status(200).json({data, message: 'Products fetched successfully'})
+    }catch(error){
+        console.log(error)
+        res.status(500).send('Something went wrong...')
+    }
+})
+
 module.exports = router;
