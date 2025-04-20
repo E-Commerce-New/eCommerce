@@ -9,12 +9,10 @@ const productSchema = new Schema({
     salePrice: Number,
     quantity: Number,
     sku: String,
-    images: [String], // URLs to images
+    images: [String],
     category: String,
     active: Boolean,
     isFeatured: Boolean,
-    createdAt: Date,
-    updatedAt: Date,
     meta: {
         title: String,
         description: String,
@@ -26,6 +24,6 @@ const productSchema = new Schema({
             value: String
         }
     ]
-})
+}, { timestamps: true });
 
 module.exports = mongoose.model('Product', productSchema)

@@ -28,7 +28,7 @@ const Login = () => {
                 })
                 if (form.username === "admin") {
                     navigate("/admin/panel")
-                } else navigate("/home")
+                } else navigate("/")
             } else swal.fire({
                 icon: "error",
                 title: "Login Failed",

@@ -3,15 +3,22 @@ import LogIn from "./pages/Login";
 import NoPage from "./pages/NoPage";
 import AdminPanel from "./pages/admin/AdminDashboard";
 import AdminLayout from "./layouts/AdminLayout";
-import Products from "./pages/admin/products";
+import Products from "./pages/admin/Products.jsx";
 import UpdateProduct from "./pages/admin/updateProduct";
 import DeleteProduct from "./pages/admin/DeleteProduct";
+import SignUp from "./pages/Signup.jsx"
+import Home from "./pages/Home.jsx"
+import UserLayout from "./layouts/UserLayout"
 
 export default function App() {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<LogIn />} />
+                <Route path="/" element={<UserLayout />}>
+                    <Route index element={<Home />} />
+                    <Route path="/signup" element={<SignUp />} />
+                    <Route path="/login" element={<LogIn />} />
+                </Route>
 
                 <Route path="/admin" element={<AdminLayout />}>
                     <Route path="panel" element={<AdminPanel />} />

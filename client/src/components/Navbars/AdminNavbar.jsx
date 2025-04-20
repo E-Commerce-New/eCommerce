@@ -1,12 +1,13 @@
 import { SquareArrowOutUpRight , LayoutTemplate ,LayoutGrid , ChartSpline , StickyNote , Package , Tag , Users , Mail , Plus} from "lucide-react"
 import {Link} from "react-router-dom";
+import logo from "../../assets/logo.png"
 
 const AdminNavbar = () => {
     return (
         <>
             <div className="flex flex-col p-4">
             <div>
-                <img src="" alt="Logo"/>
+                <img src={logo} alt="Logo"/>
             </div>
                 <hr className="bg-gray-400 h-[3px] mt-2" />
                 <div className="flex flex-col mt-10 gap-3">

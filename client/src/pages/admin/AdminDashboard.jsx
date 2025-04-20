@@ -1,4 +1,5 @@
 import { RefreshCcw , Bell , EllipsisVertical , SquarePen , ChevronLeft,  ChevronRight} from 'lucide-react';
+import RightTopNav from "../../components/reUsable/RightTopNav";
 
 const AdminDashboard = () => {
     return (
@@ -9,14 +10,7 @@ const AdminDashboard = () => {
             <h1 className="text-4xl font-bold">Overview</h1>
             <p className="flex gap-2 items-center"><RefreshCcw />Last Updated a while ago</p>
             </div>
-            <div className="flex gap-10 items-center">
-            <Bell />
-                <div className="flex gap-3 items-center">
-                <img className="w-[50px] rounded-[50%]" src="https://s3-alpha.figma.com/hub/file/2944732189/b47472b8-4e17-477e-a0a8-d5fcbed6a374-cover.png" alt="Pfp"/>
-                <p>Admin Panel</p>
-                </div>
-            <EllipsisVertical />
-            </div>
+            <RightTopNav/>
         </div>
             <hr/>
 
