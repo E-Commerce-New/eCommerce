@@ -43,7 +43,7 @@ const Products = () => {
                             <div className="overflow-hidden">
                                 <img
                                     // src="https://www.shipbob.com/wp-content/uploads/2022/06/PRODUCT-RANGE.jpg"
-                                    src={product.images?.[0]}
+                                    src={"https://ik.imagekit.io/0Shivams"+product.images?.[0]}
                                     alt={product.name}
                                     className="transition-transform duration-300 transform group-hover:scale-105"
                                 />
