@@ -1,14 +1,18 @@
 const Product = require("../models/product");
 const Category = require("../models/category");
-const multer = require("multer");
+// const multer = require("multer");
+const ImageKit = require("imagekit");
 
-
-
+const imagekit = new ImageKit({
+    urlEndpoint: 'https://ik.imagekit.io/0Shivams',
+    publicKey: 'public_nwv07BA1aDK003/hEjq8qhETyD0=',
+    privateKey: 'private_MWxjVnMznc/cAad06gnaPFHKCdc='
+});
 
 const createProducts = async (req, res) => {
     try {
         console.log("BODY:", req.body);
-        console.log("FILE:", req.file);
+        console.log("FILE:", req.files);
 
         const {
             name,
@@ -37,7 +41,6 @@ const createProducts = async (req, res) => {
                     console.log("Result", result)
                     images.push(result.filePath)
                 }
-
         }
         console.log("Images: ", images)
         const product = new Product({
@@ -50,6 +53,7 @@ const createProducts = async (req, res) => {
             attributes: parsedAttributes,
             createdAt: new Date(),
             updatedAt: new Date(),
+            images
         });
 
         await product.save();
