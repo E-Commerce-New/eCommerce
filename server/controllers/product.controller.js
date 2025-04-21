@@ -22,6 +22,24 @@ const createProducts = async (req, res) => {
 
         const parsedAttributes = JSON.parse(attributes);
 
+        const images = []
+
+        let i = 0;
+
+        for(const file of req.files){
+            console.log("file : ",i++, "buffer :", file.buffer, "name :",file.originalname);
+            const fileBuff = file?.buffer
+            if (fileBuff) {
+                    const result = await imagekit.upload({
+                        file: fileBuff,//<url|base_64|binary>, //required
+                        fileName: file.originalname,   //required
+                    });
+                    console.log("Result", result)
+                    images.push(result.filePath)
+                }
+
+        }
+        console.log("Images: ", images)
         const product = new Product({
             name,
             description,
@@ -79,7 +97,7 @@ const updateProduct = async (req, res) => {
         await Product.findByIdAndUpdate(req.params.id, updateData);
 
         const product = await Product.findById(req.params.id);
-        res.status(200).json({ product, message: 'Product updated successfully' });
+        res.status(200).json({product, message: 'Product updated successfully'});
     } catch (error) {
         console.log("Update Error:", error);
         res.status(500).send('Something went wrong...');
@@ -96,6 +114,7 @@ const deleteProduct = async (req, res) => {
         res.status(500).send('Something went wrong...')
     }
 }
+
 const getProductById = async (req, res) => {
     try {
         const data = await Product.findById(req.params.id)

@@ -9,7 +9,7 @@ router.get('/', (req, res)=>{
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-router.post('/createProduct', upload.single('image'), createProducts);
+router.post('/createProduct', upload.array('image'), createProducts);
 
 router.get('/getProducts', getProducts)
 

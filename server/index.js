@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const userRouter = require('./routes/user.routes')
 const productRouter = require('./routes/product.routes')
+const ImageKit = require('imagekit')
 
 // Import the User model
 const User = require('./models/user');
@@ -22,6 +23,19 @@ mongoose
 // Api routes
 app.use('/api/user', userRouter)
 app.use('/api/product', productRouter)
+
+//ImageKit
+
+const imagekit = new ImageKit({
+    urlEndpoint: 'https://ik.imagekit.io/0Shivams',
+    publicKey: 'public_nwv07BA1aDK003/hEjq8qhETyD0=',
+    privateKey: 'private_MWxjVnMznc/cAad06gnaPFHKCdc='
+});
+
+app.get('/auth', async(req,res)=>{
+    const result = imagekit.getAuthenticationParameters();
+    res.send(result);
+})
 
 // Start server
 app.listen(port, () => {

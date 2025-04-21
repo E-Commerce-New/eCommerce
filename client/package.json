@@ -13,6 +13,7 @@
     "@reduxjs/toolkit": "^2.7.0",
     "axios": "^1.8.4",
     "dayjs": "^1.11.13",
+    "imagekitio-react": "^4.3.0",
     "lucide": "^0.501.0",
     "lucide-react": "^0.501.0",
     "react": "^19.0.0",
