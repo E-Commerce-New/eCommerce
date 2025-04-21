@@ -10,7 +10,9 @@ const UpdateProduct = () => {
     useEffect(() => {
         const deleteProduct = async () => {
             try {
-                const res = await axios.delete(`http://localhost:3000/api/product/delete/${id}`);
+                const res = await axios.delete(`http://localhost:3000/api/product/delete/${id}`, {
+                    withCredentials: true
+                });
                 Swal.fire({
                     icon: 'success',
                     title: 'Deleted!',

@@ -6,13 +6,15 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const userRouter = require('./routes/user.routes')
 const productRouter = require('./routes/product.routes')
-const ImageKit = require('imagekit')
-
-// Import the User model
-const User = require('./models/user');
+const cookieParser = require('cookie-parser')
+// const ImageKit = require('imagekit')
 
 app.use(express.json());
-app.use(cors());
+app.use(cookieParser());
+app.use(cors({
+    origin: 'http://localhost:5173', // your frontend origin
+    credentials: true
+}));
 
 // Connect to MongoDB Atlas
 mongoose
@@ -24,18 +26,18 @@ mongoose
 app.use('/api/user', userRouter)
 app.use('/api/product', productRouter)
 
-//ImageKit
-
-const imagekit = new ImageKit({
-    urlEndpoint: 'https://ik.imagekit.io/0Shivams',
-    publicKey: 'public_nwv07BA1aDK003/hEjq8qhETyD0=',
-    privateKey: 'private_MWxjVnMznc/cAad06gnaPFHKCdc='
-});
-
-app.get('/auth', async(req,res)=>{
-    const result = imagekit.getAuthenticationParameters();
-    res.send(result);
-})
+// //ImageKit
+//
+// const imagekit = new ImageKit({
+//     urlEndpoint: '',
+//     publicKey: '',
+//     privateKey: ''
+// });
+//
+// app.get('/auth', async(req,res)=>{
+//     const result = imagekit.getAuthenticationParameters();
+//     res.send(result);
+// })
 
 // Start server
 app.listen(port, () => {

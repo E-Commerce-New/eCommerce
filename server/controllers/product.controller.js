@@ -4,15 +4,16 @@ const Category = require("../models/category");
 const ImageKit = require("imagekit");
 
 const imagekit = new ImageKit({
-    urlEndpoint: 'https://ik.imagekit.io/0Shivams',
-    publicKey: 'public_nwv07BA1aDK003/hEjq8qhETyD0=',
-    privateKey: 'private_MWxjVnMznc/cAad06gnaPFHKCdc='
+    urlEndpoint: process.env.IK_URLENDPOINT,
+    publicKey: process.env.IK_PUBLICKEY,
+    privateKey: process.env.IK_PRIVATEKEY
 });
 
+//Validations: Empty fields, 1 image required(Commented right now),
 const createProducts = async (req, res) => {
     try {
-        console.log("BODY:", req.body);
-        console.log("FILE:", req.files);
+        // console.log("BODY:", req.body);
+        // console.log("FILE:", req.files);
 
         const {
             name,
@@ -24,25 +25,44 @@ const createProducts = async (req, res) => {
             attributes,
         } = req.body;
 
+        // List of required fields
+        const requiredFields = {name, description, category, price, quantity, active, attributes};
+
+        // Check for missing or empty values
+        for (const [key, value] of Object.entries(requiredFields)) {
+            if (
+                value === undefined || (typeof value === 'string' && value.trim() === '')
+            ) {
+                return res.status(400).json({message: `Empty field: ${key.charAt(0).toUpperCase() + key.slice(1)}`});
+            }
+        }
+
         const parsedAttributes = JSON.parse(attributes);
 
         const images = []
 
         let i = 0;
 
-        for(const file of req.files){
-            console.log("file : ",i++, "buffer :", file.buffer, "name :",file.originalname);
+        for (const file of req.files) {
+            // console.log("file : ", i++, "buffer :", file.buffer, "name :", file.originalname);
             const fileBuff = file?.buffer
             if (fileBuff) {
-                    const result = await imagekit.upload({
-                        file: fileBuff,//<url|base_64|binary>, //required
-                        fileName: file.originalname,   //required
-                    });
-                    console.log("Result", result)
-                    images.push(result.filePath)
-                }
+                const result = await imagekit.upload({
+                    file: fileBuff,//<url|base_64|binary>, //required
+                    fileName: file.originalname,   //required
+                });
+                // console.log("Result", result)
+                images.push(result.filePath)
+            }
         }
-        console.log("Images: ", images)
+
+        // console.log("Images: ", images)
+
+        //Atleast one image is required.
+        // if(images.length === 0){
+        //     return res.status(400).json({message: "Please upload atleast one Image."})
+        // }
+
         const product = new Product({
             name,
             description,
@@ -108,7 +128,6 @@ const updateProduct = async (req, res) => {
     }
 };
 
-
 const deleteProduct = async (req, res) => {
     try {
         await Product.findByIdAndDelete(req.params.id);
@@ -131,24 +150,24 @@ const getProductById = async (req, res) => {
 
 const addCategory = async (req, res) => {
     try {
-        const { category } = req.body;
-        const newCat = new Category({ category });
+        const {category} = req.body;
+        const newCat = new Category({category});
         await newCat.save();
-        res.status(200).json({ message: "Category added successfully", category: newCat });
+        res.status(200).json({message: "Category added successfully", category: newCat});
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Error saving category" });
+        res.status(500).json({message: "Error saving category"});
     }
 };
 
 const getCategories = async (req, res) => {
     try {
         const categories = await Category.find({});
-        res.status(200).json({ success: true, categories });
+        res.status(200).json({success: true, categories});
     } catch (error) {
         console.error('Error fetching categories:', error);
-        res.status(500).json({ success: false, message: 'Failed to fetch categories' });
+        res.status(500).json({success: false, message: 'Failed to fetch categories'});
     }
 };
 
-module.exports = {deleteProduct, updateProduct, getProducts, createProducts, getProductById , addCategory , getCategories}
+module.exports = {deleteProduct, updateProduct, getProducts, createProducts, getProductById, addCategory, getCategories}

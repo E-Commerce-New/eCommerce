@@ -54,35 +54,35 @@ const Products = () => {
     };
 
     //ImageKit
-    const urlEndpoint = 'https://ik.imagekit.io/0Shivams';
-    const publicKey = 'public_nwv07BA1aDK003/hEjq8qhETyD0=';
-
-    const authenticator =  async () => {
-        try {
-            const response = await fetch('http://localhost:3000/auth');
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-            }
-
-            const data = await response.json();
-            const { signature, expire, token } = data;
-            console.log(data)
-            return { signature, expire, token };
-        } catch (error) {
-            throw new Error(`Authentication request failed: ${error.message}`);
-        }
-    };
-
+    // const urlEndpoint = 'https://ik.imagekit.io/0Shivams';
+    // const publicKey = 'public_nwv07BA1aDK003/hEjq8qhETyD0=';
+    //
+    // const authenticator =  async () => {
+    //     try {
+    //         const response = await fetch('http://localhost:3000/auth');
+    //
+    //         if (!response.ok) {
+    //             const errorText = await response.text();
+    //             throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+    //         }
+    //
+    //         const data = await response.json();
+    //         const { signature, expire, token } = data;
+    //         console.log(data)
+    //         return { signature, expire, token };
+    //     } catch (error) {
+    //         throw new Error(`Authentication request failed: ${error.message}`);
+    //     }
+    // };
 
     const onSubmit = async (e) => {
         e.preventDefault();
         console.log("Submitted Form:", form);
-        // setAuth(authenticator)
         try {
             const formData = new FormData();
+            console.log("Form Data: ", formData)
             formData.append("name", form.name);
+            console.log('name setted ...')
             formData.append("description", form.description);
             formData.append("category", form.category);
             formData.append("price", form.price);
@@ -90,14 +90,19 @@ const Products = () => {
             formData.append("active", form.active);
             // formData.append("image", form.image);
             formData.append("attributes", JSON.stringify(form.attributes));
+            //form.image setup
+            if(form?.image?.length > 0){
             for(let i = 0;i < form.image.length;i++){
                 formData.append('image', form.image[i])
+            }
             }
             console.log('console ', formData)
             const res = await axios.post("http://localhost:3000/api/product/createProduct", formData, {
                 headers: {
+
                     "Content-Type": "multipart/form-data",
                 },
+                withCredentials: true
             });
 
             Swal.fire({
@@ -117,7 +122,9 @@ const Products = () => {
                 attributes: [{ key: "", value: "" }],
             });
 
+        document.querySelector('#image').value = "";
         } catch (error) {
+            console.log("error: ", error)
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
@@ -126,15 +133,12 @@ const Products = () => {
         }
     };
 
-    const check = {
-        "token": "c27c844e-42e4-4ee6-8618-d568c1dddf66",
-        "expire": 17451543939,
-        "signature": "b050cb33269f530157bb63f27d800b54ac9baf3d"
-    }
     useEffect(() => {
         const getAllProducts = async () => {
             try {
-                const res = await axios.get("http://localhost:3000/api/product/getProducts");
+                const res = await axios.get("http://localhost:3000/api/product/getProducts", {
+                    withCredentials: true
+                });
                 console.log(res.data);
                 setProducts(res.data.data);
                 setLastUpdated(new Date());
@@ -149,7 +153,9 @@ const Products = () => {
 
         const getAllCategories = async () => {
             try {
-                const res = await axios.get("http://localhost:3000/api/product/getCategories");
+                const res = await axios.get("http://localhost:3000/api/product/getCategories", {
+                    withCredentials: true
+                });
                 setCategories(res.data.categories);
                 console.log("Fetched categories:", res.data.categories);
             } catch (e) {
@@ -160,12 +166,6 @@ const Products = () => {
         getAllCategories();
         getAllProducts();
     }, []);
-
-    useEffect(()=> {
-        console.log(categories);
-    },[categories]);
-
-
 
     const handleEdit = (productId) => {
         navigate(`/admin/update-product/${productId}`);
@@ -180,8 +180,6 @@ const Products = () => {
         product.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.price?.toString().includes(searchTerm)
     );
-
-
 
     return (
         <>
@@ -275,6 +273,7 @@ const Products = () => {
                     <input
                         type="file"
                         name="image"
+                        id='image'
                         accept="image/*"
                         onChange={handleChange}
                         multiple

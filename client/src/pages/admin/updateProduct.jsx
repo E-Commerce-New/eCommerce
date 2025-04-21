@@ -21,7 +21,9 @@ const UpdateProduct = () => {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const res = await axios.get(`http://localhost:3000/api/product/getproductbyid/${id}`);
+                const res = await axios.get(`http://localhost:3000/api/product/getproductbyid/${id}`, {
+                    withCredentials: true
+                });
                 const fetchedProduct = res.data.data;
                 setProduct(fetchedProduct);
                 setForm({
@@ -81,6 +83,7 @@ const UpdateProduct = () => {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
+                withCredentials: true
             });
 
             Swal.fire({
