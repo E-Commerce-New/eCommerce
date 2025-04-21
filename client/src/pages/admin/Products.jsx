@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 import RightTopNav from "../../components/reUsable/RightTopNav";
+import { IKContext, IKImage, IKUpload } from 'imagekitio-react';
 
 const Products = () => {
     const [showAddProduct, setShowAddProduct] = useState(false);
@@ -26,14 +27,16 @@ const Products = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const navigate = useNavigate();
     const [lastUpdated, setLastUpdated] = useState(null);
+    // const [auth, setAuth] = useState()
 
 
     const handleChange = (e) => {
         const { name, value, type, checked, files } = e.target;
         setForm((prev) => ({
             ...prev,
-            [name]: type === "checkbox" ? checked : type === "file" ? files[0] : value,
+            [name]: type === "checkbox" ? checked : type === "file" ? files : value,
         }));
+
     };
 
     const handleAttributeChange = (index, field, value) => {
@@ -50,9 +53,33 @@ const Products = () => {
         }));
     };
 
+    //ImageKit
+    const urlEndpoint = 'https://ik.imagekit.io/0Shivams';
+    const publicKey = 'public_nwv07BA1aDK003/hEjq8qhETyD0=';
+
+    const authenticator =  async () => {
+        try {
+            const response = await fetch('http://localhost:3000/auth');
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+            }
+
+            const data = await response.json();
+            const { signature, expire, token } = data;
+            console.log(data)
+            return { signature, expire, token };
+        } catch (error) {
+            throw new Error(`Authentication request failed: ${error.message}`);
+        }
+    };
+
+
     const onSubmit = async (e) => {
         e.preventDefault();
         console.log("Submitted Form:", form);
+        // setAuth(authenticator)
         try {
             const formData = new FormData();
             formData.append("name", form.name);
@@ -61,9 +88,11 @@ const Products = () => {
             formData.append("price", form.price);
             formData.append("quantity", form.quantity);
             formData.append("active", form.active);
-            formData.append("image", form.image);
+            // formData.append("image", form.image);
             formData.append("attributes", JSON.stringify(form.attributes));
-
+            for(let i = 0;i < form.image.length;i++){
+                formData.append('image', form.image[i])
+            }
             const res = await axios.post("http://localhost:3000/api/product/createProduct", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
@@ -96,6 +125,11 @@ const Products = () => {
         }
     };
 
+    const check = {
+        "token": "c27c844e-42e4-4ee6-8618-d568c1dddf66",
+        "expire": 17451543939,
+        "signature": "b050cb33269f530157bb63f27d800b54ac9baf3d"
+    }
     useEffect(() => {
         const getAllProducts = async () => {
             try {
@@ -220,9 +254,22 @@ const Products = () => {
                     <input
                         type="file"
                         name="image"
-                        accept="image/png"
+                        accept="image/*"
                         onChange={handleChange}
+                        multiple
                     />
+                    {/*<IKContext*/}
+                    {/*    publicKey={publicKey}*/}
+                    {/*    urlEndpoint={urlEndpoint}*/}
+                    {/*    authenticator={authenticator}*/}
+                    {/*>*/}
+                    {/*    <p>Upload an image</p>*/}
+                    {/*    <IKUpload*/}
+                    {/*        fileName="test-upload.png"*/}
+                    {/*        onError={(error)=>{console.log(error)}}*/}
+                    {/*        onSuccess={(success)=>{console.log('file uploaded successfully');console.log(success)}}*/}
+                    {/*    />*/}
+                    {/*</IKContext>*/}
 
                     <div className="flex flex-col gap-2">
                         <label>Attributes</label>
