@@ -10,6 +10,7 @@ import SignUp from "./pages/Signup.jsx"
 import Home from "./pages/Home.jsx"
 import UserLayout from "./layouts/UserLayout"
 import AdminSettings from "./pages/admin/AdminSetting"
+import ProductInfo from "./pages/customer/Product-info.jsx";
 
 export default function App() {
     return (
@@ -19,6 +20,7 @@ export default function App() {
                     <Route index element={<Home />} />
                     <Route path="/signup" element={<SignUp />} />
                     <Route path="/login" element={<LogIn />} />
+                    <Route path="product-info/:id" element={<ProductInfo />} />
                 </Route>
 
                 <Route path="/admin" element={<AdminLayout />}>

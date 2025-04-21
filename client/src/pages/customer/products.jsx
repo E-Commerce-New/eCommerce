@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 const Products = () => {
     const [products, setProducts] = useState([]);
@@ -19,8 +20,11 @@ const Products = () => {
         fetchProducts()
     },[])
 
+    const navigate = useNavigate();
+
     const handleProduct = (id) => {
-    alert(id)
+    // alert(id)
+        navigate(`/product-info/${id}`);
     }
 
     return (
@@ -38,7 +42,8 @@ const Products = () => {
                         >
                             <div className="overflow-hidden">
                                 <img
-                                    src="https://www.shipbob.com/wp-content/uploads/2022/06/PRODUCT-RANGE.jpg"
+                                    // src="https://www.shipbob.com/wp-content/uploads/2022/06/PRODUCT-RANGE.jpg"
+                                    src={product.images?.[0]}
                                     alt={product.name}
                                     className="transition-transform duration-300 transform group-hover:scale-105"
                                 />

@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 import RightTopNav from "../../components/reUsable/RightTopNav";
-import { IKContext, IKImage, IKUpload } from 'imagekitio-react';
+// import { IKContext, IKImage, IKUpload } from 'imagekitio-react';
 
 const Products = () => {
     const [showAddProduct, setShowAddProduct] = useState(false);
