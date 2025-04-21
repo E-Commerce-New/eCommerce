@@ -35,7 +35,7 @@ const Products = () => {
         const { name, value, type, checked, files } = e.target;
         setForm((prev) => ({
             ...prev,
-            [name]: type === "checkbox" ? checked : type === "file" ? files[0] : value,
+            [name]: type === "checkbox" ? checked : type === "file" ? files : value,
         }));
     };
 
@@ -93,6 +93,7 @@ const Products = () => {
             for(let i = 0;i < form.image.length;i++){
                 formData.append('image', form.image[i])
             }
+            console.log('console ', formData)
             const res = await axios.post("http://localhost:3000/api/product/createProduct", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
