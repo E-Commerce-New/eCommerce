@@ -26,6 +26,7 @@ const Products = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const navigate = useNavigate();
     const [lastUpdated, setLastUpdated] = useState(null);
+    const [categories , setCategories] = useState([]);
 
 
     const handleChange = (e) => {
@@ -100,20 +101,35 @@ const Products = () => {
         const getAllProducts = async () => {
             try {
                 const res = await axios.get("http://localhost:3000/api/product/getProducts");
-                console.log(res.data);
                 setProducts(res.data.data);
                 setLastUpdated(new Date());
             } catch (error) {
                 swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: error.response?.data?.message || 'Something went wrong Unable to fetch products!',
-                })
+                    text: error.response?.data?.message || 'Something went wrong! Unable to fetch products.',
+                });
             }
-        }
+        };
 
+        const getAllCategories = async () => {
+            try {
+                const res = await axios.get("http://localhost:3000/api/product/getCategories");
+                setCategories(res.data.categories);
+                console.log("Fetched categories:", res.data.categories);
+            } catch (e) {
+                console.log("Error fetching categories:", e);
+            }
+        };
+
+        getAllCategories();
         getAllProducts();
-    },[])
+    }, []);
+
+    useEffect(()=> {
+        console.log(categories);
+    },[categories]);
+
 
 
     const handleEdit = (productId) => {
@@ -188,7 +204,11 @@ const Products = () => {
                             className="p-2 border-b-2 border-black bg-transparent"
                         >
                             <option value="">Select Category</option>
-                            <option value="Computer">Computer</option>
+                            {categories.map((cate) => (
+                                <option key={cate._id} value={cate.category}>
+                                    {cate.category}
+                                </option>
+                            ))}
 
                         </select>
                     </div>
@@ -327,12 +347,23 @@ const Products = () => {
                                     <input type="checkbox" checked={product.active} readOnly />
                                 </td>
                                 <td className="border px-4 py-2">
-                                    {product.attributes.map((attr, idx) => (
-                                        <div key={idx}>
-                                            <span className="font-medium">{attr.key}:</span> {attr.value}
-                                        </div>
-                                    ))}
+                                    {product.attributes && product.attributes.length > 0 ? (
+                                        product.attributes.map((attr, idx) => (
+                                            <div key={idx}>
+                                                {attr.key || attr.value ? (
+                                                    <>
+                                                        <span className="font-medium">{attr.key || "N/A"}:</span> {attr.value || "N/A"}
+                                                    </>
+                                                ) : (
+                                                    "N/A"
+                                                )}
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <span className="text-gray-400 italic">N/A</span>
+                                    )}
                                 </td>
+
                                 <td className="border px-4 py-2 text-center">
                                     <button
                                         onClick={() => handleEdit(product._id)}

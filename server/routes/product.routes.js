@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const multer = require('multer');
-const {getProductById, deleteProduct, updateProduct, getProducts, createProducts} = require('../controllers/product.controller')
+const {getProductById, deleteProduct, updateProduct, getProducts, createProducts , addCategory, getCategories} = require('../controllers/product.controller')
 
 router.get('/', (req, res)=>{
     res.status(200).send("Product Route")
@@ -18,6 +18,10 @@ router.patch("/update/:id", upload.single("image"), updateProduct);
 router.delete('/delete/:id', deleteProduct)
 
 router.get('/getproductbyid/:id', getProductById)
+
+router.post('/addCategory', addCategory)
+
+router.get('/getCategories', getCategories)
 
 module.exports = router;
 

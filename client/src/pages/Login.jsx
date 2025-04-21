@@ -1,25 +1,31 @@
 import {Link, useNavigate} from "react-router-dom";
 import {useState} from "react";
 import swal from "sweetalert2"
-
+import { useDispatch} from "react-redux";
+import { setUser } from "../store/User";
+import axios from "axios";
 
 const Login = () => {
     const [form , setForm] = useState({
         username: "",
         password: "",
     })
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const onSubmit = async (e) => {
         e.preventDefault()
-        console.log(form)
+        // console.log(form)
         try {
-            const res = await fetch("http://localhost:3000/api/user/login", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(form),
+            const res = await axios.post("http://localhost:3000/api/user/login", form , {
+                headers: {"Content-Type": "application/json"}
             })
-            const data = await res.json()
-            console.log(data)
+            // const res = await fetch("http://localhost:3000/api/user/login", {
+            //     method: "POST",
+            //     headers: {"Content-Type": "application/json"},
+            //     body: JSON.stringify(form),
+            // })
+            console.log(res.data)
+            dispatch(setUser(res.data.user))
             if(res.status === 200) {
                 swal.fire({
                     icon: "success",

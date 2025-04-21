@@ -9,6 +9,7 @@ import DeleteProduct from "./pages/admin/DeleteProduct";
 import SignUp from "./pages/Signup.jsx"
 import Home from "./pages/Home.jsx"
 import UserLayout from "./layouts/UserLayout"
+import AdminSettings from "./pages/admin/AdminSetting"
 
 export default function App() {
     return (
@@ -25,6 +26,8 @@ export default function App() {
                     <Route path="products" element={<Products />} />
                     <Route path="update-product/:id" element={<UpdateProduct />} />
                     <Route path="delete-product/:id" element={<DeleteProduct />} />
+                    <Route path="setting" element={<AdminSettings />} />
+
                 </Route>
 
                 

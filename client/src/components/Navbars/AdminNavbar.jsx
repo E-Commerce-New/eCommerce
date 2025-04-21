@@ -1,4 +1,4 @@
-import { SquareArrowOutUpRight , LayoutTemplate ,LayoutGrid , ChartSpline , StickyNote , Package , Tag , Users , Mail , Plus} from "lucide-react"
+import { SquareArrowOutUpRight , LayoutTemplate ,LayoutGrid , Settings , ChartSpline , StickyNote , Package , Tag , Users , Mail , Plus} from "lucide-react"
 import {Link} from "react-router-dom";
 import logo from "../../assets/logo.png"
 
@@ -27,7 +27,7 @@ const AdminNavbar = () => {
                     <div className="flex gap-3"> <Tag /> Tags </div>
                     <div className="flex gap-3 justify-between"> <div className="flex gap-3"> <Users /> Members </div> <Plus /> </div>
                     <div className="flex gap-3"> <Mail /> Inquiries </div>
-
+                    <Link to="/admin/setting" className="flex gap-3"> <Settings/> Setting </Link>
                 </div>
 
             </div>

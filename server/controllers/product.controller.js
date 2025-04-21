@@ -1,5 +1,8 @@
 const Product = require("../models/product");
+const Category = require("../models/category");
 const multer = require("multer");
+
+
 
 
 const createProducts = async (req, res) => {
@@ -102,4 +105,27 @@ const getProductById = async (req, res) => {
         res.status(500).send('Something went wrong...')
     }
 }
-module.exports = {deleteProduct, updateProduct, getProducts, createProducts, getProductById}
+
+const addCategory = async (req, res) => {
+    try {
+        const { category } = req.body;
+        const newCat = new Category({ category });
+        await newCat.save();
+        res.status(200).json({ message: "Category added successfully", category: newCat });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error saving category" });
+    }
+};
+
+const getCategories = async (req, res) => {
+    try {
+        const categories = await Category.find({});
+        res.status(200).json({ success: true, categories });
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch categories' });
+    }
+};
+
+module.exports = {deleteProduct, updateProduct, getProducts, createProducts, getProductById , addCategory , getCategories}

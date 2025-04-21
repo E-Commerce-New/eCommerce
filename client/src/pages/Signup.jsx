@@ -1,6 +1,8 @@
 import {Link, useNavigate} from "react-router-dom";
 import {useState} from "react";
 import axios from "axios";
+import { useDispatch } from 'react-redux';
+import { setUser } from '../store/User.js';
 
 const Signup = () => {
     const navigate = useNavigate();
@@ -13,6 +15,7 @@ const Signup = () => {
         phone: "",
         terms: true,
     })
+    const dispatch = useDispatch();
 
     const onSubmit = async (e) => {
         e.preventDefault();
@@ -29,7 +32,8 @@ const Signup = () => {
                     phone: "",
                     terms: true,
                 });
-                console.log(res.data)
+                console.log(res.data.user)
+                dispatch(setUser(res.data.user));
                 if(res.status === 200){
                     navigate('/')
                 }
