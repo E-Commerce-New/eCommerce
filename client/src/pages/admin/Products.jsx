@@ -99,8 +99,10 @@ const Products = () => {
             console.log('console ', formData)
             const res = await axios.post("http://localhost:3000/api/product/createProduct", formData, {
                 headers: {
+
                     "Content-Type": "multipart/form-data",
                 },
+                withCredentials: true
             });
 
             Swal.fire({
@@ -134,7 +136,9 @@ const Products = () => {
     useEffect(() => {
         const getAllProducts = async () => {
             try {
-                const res = await axios.get("http://localhost:3000/api/product/getProducts");
+                const res = await axios.get("http://localhost:3000/api/product/getProducts", {
+                    withCredentials: true
+                });
                 console.log(res.data);
                 setProducts(res.data.data);
                 setLastUpdated(new Date());
@@ -149,7 +153,9 @@ const Products = () => {
 
         const getAllCategories = async () => {
             try {
-                const res = await axios.get("http://localhost:3000/api/product/getCategories");
+                const res = await axios.get("http://localhost:3000/api/product/getCategories", {
+                    withCredentials: true
+                });
                 setCategories(res.data.categories);
                 console.log("Fetched categories:", res.data.categories);
             } catch (e) {

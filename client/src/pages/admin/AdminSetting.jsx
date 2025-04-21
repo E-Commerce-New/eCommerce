@@ -16,7 +16,9 @@ const AdminSettings = () => {
             return
         }
         try {
-            const res = await axios.post("http://localhost:3000/api/product/addCategory", {category: category});
+            const res = await axios.post("http://localhost:3000/api/product/addCategory", {category: category}, {
+                withCredentials: true
+            });
             console.log(res.data)
             if(res.status === 200) {
                 swal.fire({

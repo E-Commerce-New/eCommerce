@@ -17,7 +17,7 @@ const Login = () => {
         // console.log(form)
         try {
             const res = await axios.post("http://localhost:3000/api/user/login", form , {
-                headers: {"Content-Type": "application/json"}
+                withCredentials: true
             })
             // const res = await fetch("http://localhost:3000/api/user/login", {
             //     method: "POST",
