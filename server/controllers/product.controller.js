@@ -170,4 +170,8 @@ const getCategories = async (req, res) => {
     }
 };
 
-module.exports = {deleteProduct, updateProduct, getProducts, createProducts, getProductById, addCategory, getCategories}
+const deleteCategory = async (req, res) => {
+
+}
+
+module.exports = {deleteProduct, updateProduct, getProducts, createProducts, getProductById, addCategory, getCategories , deleteCategory}

@@ -14,7 +14,7 @@ const AdminNavbar = () => {
                     <input type="search" name="" id="" placeholder="Search" className="border border-gray-300 p-2 focus:outline-0" />
                     <div className="flex justify-between p-2 text-sm items-center">
                         <LayoutTemplate />
-                    <p className="text-center">View Live Site </p>
+                    <Link to="/" className="text-center">View Live Site </Link>
                         <SquareArrowOutUpRight />
                     </div>
                 </div>

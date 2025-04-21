@@ -10,6 +10,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 import RightTopNav from "../../components/reUsable/RightTopNav";
 // import { IKContext, IKImage, IKUpload } from 'imagekitio-react';
+import Categories from "../../components/Categories";
 
 const Products = () => {
     const [showAddProduct, setShowAddProduct] = useState(false);
@@ -29,6 +30,7 @@ const Products = () => {
     const [lastUpdated, setLastUpdated] = useState(null);
     const [categories , setCategories] = useState([]);
     // const [auth, setAuth] = useState()
+    const [showCate , setShowCate] = useState(false);
 
 
     const handleChange = (e) => {
@@ -77,6 +79,14 @@ const Products = () => {
 
     const onSubmit = async (e) => {
         e.preventDefault();
+        Swal.fire({
+            title: 'Loading categories...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
         console.log("Submitted Form:", form);
         try {
             const formData = new FormData();
@@ -105,6 +115,8 @@ const Products = () => {
                 withCredentials: true
             });
 
+            swal.close()
+
             Swal.fire({
                 icon: 'success',
                 title: 'Product Added',
@@ -124,12 +136,15 @@ const Products = () => {
 
         document.querySelector('#image').value = "";
         } catch (error) {
+            swal.close();
             console.log("error: ", error)
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
                 text: error.response?.data?.message || 'Something went wrong!',
             });
+        } finally {
+            setShowAddProduct(!showAddProduct);
         }
     };
 
@@ -165,7 +180,7 @@ const Products = () => {
 
         getAllCategories();
         getAllProducts();
-    }, []);
+    }, [showAddProduct]);
 
     const handleEdit = (productId) => {
         navigate(`/admin/update-product/${productId}`);
@@ -201,6 +216,9 @@ const Products = () => {
             <div className="mb-4">
                 <div className="flex justify-end">
                 <button className="font-medium py-2 border-2 m-2 rounded-2xl border-black px-4 " onClick={()=>setShowAddProduct(!showAddProduct)}>Add Product</button>
+
+                    <button className="font-medium py-2 border-2 m-2 rounded-2xl border-black px-4 " onClick={()=>setShowCate(!showCate)}>Show Category Section</button>
+
                 </div>
                 {showAddProduct ?
                 <form onSubmit={onSubmit} encType="multipart/form-data" className="flex flex-col gap-2 p-4 border-2 border-black">
@@ -347,6 +365,11 @@ const Products = () => {
                 </form> : "" }
             </div>
 
+            {/*Catergory Section */}
+            {showCate ?
+            <Categories/>
+            : null
+            }
 
             {/*Show Products*/}
             <div className="p-4">
