@@ -14,6 +14,7 @@ import ProductInfo from "./pages/customer/Product-info.jsx";
 import AddToCart from "./components/reUsable/AddToCart.jsx";
 import Cart from "./pages/customer/Cart.jsx"
 import Profile from "./pages/customer/profile.jsx"
+import Swal from "sweetalert2";
 
 export default function App() {
     return (
@@ -45,3 +46,13 @@ export default function App() {
         </Router>
     );
 }
+
+// Loader
+// Swal.fire({
+//     title: 'Decreasing Quantity...',
+//     allowOutsideClick: false,
+//     allowEscapeKey: false,
+//     didOpen: () => {
+//         Swal.showLoading();
+//     }
+// });

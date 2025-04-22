@@ -1,14 +1,27 @@
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
+import {useSelector} from "react-redux";
+import swal from "sweetalert2";
 
 const ProductInfo = () => {
     const id = useParams();
     const [product, setProduct] = useState({});
     const [mainImage, setMainImage] = useState("");
+    const { user } = useSelector((state) => state.user);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProductById = async () => {
+            Swal.fire({
+                title: 'Loading...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
             const pid = id.id
             console.log(pid)
             try {
@@ -24,10 +37,30 @@ const ProductInfo = () => {
                 }
             } catch (e) {
                 console.log(e);
+            } finally {
+                swal.close();
             }
         };
         fetchProductById();
     }, [id]);
+
+    function handleAddToCart(productId, user) {
+        if (!user || !user._id) {
+            Swal.fire({
+                title: 'You must be logged in!',
+                text: 'Please login to add items to your cart.',
+                icon: 'warning',
+                confirmButtonText: 'Login now',
+                showCancelButton: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    navigate('/login');
+                }
+            });
+            return;
+        }
+        navigate(`/add-to-cart/${productId}/${user._id}`);
+    }
 
 
     const fallbackImg = "https://static-00.iconduck.com/assets.00/no-image-icon-512x512-lfoanl0w.png";
@@ -100,7 +133,9 @@ const ProductInfo = () => {
                     </div>
                     <p className="underline">Report a problem about this product</p>
                     <div className="flex gap-4 ">
-                        <button className="border-b-2 border-black p-2 w-1/2 hover:bg-gray-200">Add to Cart</button>
+                        <button className="border-b-2 border-black p-2 w-1/2 hover:bg-gray-200"
+                                onClick={()=>handleAddToCart(product._id , user)}
+                        >Add to Cart</button>
                         <button className="border-b-2 border-black p-2 w-1/2 hover:bg-gray-200">Buy Now</button>
                     </div>
                     <hr/>

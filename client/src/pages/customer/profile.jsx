@@ -3,10 +3,12 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Plus } from "lucide-react";
 import Swal from "sweetalert2";
-import swal from "sweetalert2"; // install lucide-react or replace with SVG/icon
+import swal from "sweetalert2";
+import {useNavigate} from "react-router-dom"; // install lucide-react or replace with SVG/icon
 
 const Profile = () => {
     const { user } = useSelector((state) => state.user);
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         username: "",
         email: "",
@@ -14,12 +16,24 @@ const Profile = () => {
         lastname: "",
         phone: "",
         currentPassword: "",
-        // newPassword: "",
+        newPassword: "",
         addresses: [],
     });
 
     useEffect(() => {
+        if (!user) {
+            navigate('/login');
+        }
+
         const fetchUser = async () => {
+        Swal.fire({
+            title: 'Finding your account',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
             try {
                 const res = await axios.post("http://localhost:3000/api/user/getUser", {
                     id: user._id,
@@ -38,10 +52,12 @@ const Profile = () => {
                 }
             } catch (error) {
                 console.log(error);
+            } finally {
+                Swal.close();
             }
         };
         fetchUser();
-    }, [user._id]);
+    }, [user?._id]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -83,32 +99,28 @@ const Profile = () => {
     };
 
     const onSubmit = async (e) => {
-        e.preventDefault();
         Swal.fire({
-            title: 'Updating Profile ...',
+            title: 'We are Updating your Profile',
             allowOutsideClick: false,
             allowEscapeKey: false,
             didOpen: () => {
                 Swal.showLoading();
             }
         });
-
+        e.preventDefault();
         try {
             const payload = {
                 id: user._id,
-                //Can think about sending username to backend
                 username: formData.username,
                 email: formData.email,
                 firstname: formData.firstname,
                 lastname: formData.lastname,
                 phone: formData.phone,
                 currentPassword: formData.currentPassword,
-                // newPassword: formData.newPassword,
+                newPassword: formData.newPassword,
                 addresses: formData.addresses,
             };
-            // if(user.username !== formData.username){
-            //     payload.username = formData.username;
-            // }
+
             const res = await axios.put("http://localhost:3000/api/user/profileupdate", payload);
 
             if (res.status === 200) {
@@ -140,7 +152,7 @@ const Profile = () => {
     return (
         <div className="p-6">
             <h1 className="capitalize text-2xl font-medium mb-4">
-                Hey, {user.firstname}{" "}
+                Hey, {user?.firstname}{" "}
                 <span className="font-normal text-gray-700 text-xl">- Update your Profile here</span>
             </h1>
 
@@ -209,16 +221,16 @@ const Profile = () => {
 
                 {/* Passwords */}
                 <div>
-                <label htmlFor="currentPassword" >Password :</label>
-                <input
-                    className="border-b-2 border-black p-2 w-full"
-                    name="currentPassword"
-                    id="currentPassword"
-                    value={formData.currentPassword}
-                    onChange={handleChange}
-                    placeholder="Password"
-                    type="password"
-                />
+                    <label htmlFor="currentPassword" >Password :</label>
+                    <input
+                        className="border-b-2 border-black p-2 w-full"
+                        name="currentPassword"
+                        id="currentPassword"
+                        value={formData.currentPassword}
+                        onChange={handleChange}
+                        placeholder="Password"
+                        type="password"
+                    />
                 </div>
                 {/*<input*/}
                 {/*    className="border-b-2 border-black p-2 w-full"*/}

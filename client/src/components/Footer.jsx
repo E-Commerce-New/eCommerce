@@ -1,9 +1,14 @@
 const Footer = () => {
     return (
         <>
-        <div className="text-center">
-            This is Footer
-        </div>
+        <footer className="mt-48">
+            <div className="text-center p-2 bg-gray-300 font-medium">
+                <p>Back to Top</p>
+            </div>
+            <div className="text-center p-2">
+                <h1>© 2025 [Company Name]. All Right Reserved </h1>
+            </div>
+        </footer>
         </>
     )
 }

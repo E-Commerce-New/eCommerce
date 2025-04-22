@@ -1,7 +1,18 @@
 import { RefreshCcw , Bell , EllipsisVertical , SquarePen , ChevronLeft,  ChevronRight} from 'lucide-react';
 import RightTopNav from "../../components/reUsable/RightTopNav";
+import {useEffect} from "react";
+import {useSelector} from "react-redux";
+import {useNavigate} from "react-router-dom";
 
 const AdminDashboard = () => {
+    const { user } = useSelector((state) => state.user)
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (!user) {
+            navigate('/login');
+        }
+    })
+
     return (
         <>
             {/*Section One*/}

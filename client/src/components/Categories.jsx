@@ -12,6 +12,14 @@ const Categories = () => {
 
     const saveCategories = async (e) => {
         e.preventDefault();
+        Swal.fire({
+            title: 'Saving Category...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
         console.log(category)
         if (!category) {
             alert("Category not found");
@@ -22,6 +30,7 @@ const Categories = () => {
                 withCredentials: true
             });
             console.log(res.data)
+            swal.close();
             if (res.status === 200) {
                 swal.fire({
                     icon: "success",
@@ -61,10 +70,10 @@ const Categories = () => {
                 });
                 console.log(res.data.categories)
                 setCateArray(res.data.categories);
-                Swal.close()
             } catch (err) {
-                swal.close()
                 console.log(err)
+            } finally {
+                Swal.close()
             }
         }
 
