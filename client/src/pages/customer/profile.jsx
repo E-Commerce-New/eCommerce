@@ -1,7 +1,9 @@
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Plus } from "lucide-react"; // install lucide-react or replace with SVG/icon
+import { Plus } from "lucide-react";
+import Swal from "sweetalert2";
+import swal from "sweetalert2"; // install lucide-react or replace with SVG/icon
 
 const Profile = () => {
     const { user } = useSelector((state) => state.user);
@@ -12,7 +14,7 @@ const Profile = () => {
         lastname: "",
         phone: "",
         currentPassword: "",
-        newPassword: "",
+        // newPassword: "",
         addresses: [],
     });
 
@@ -82,29 +84,56 @@ const Profile = () => {
 
     const onSubmit = async (e) => {
         e.preventDefault();
+        Swal.fire({
+            title: 'Updating Profile ...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
         try {
             const payload = {
                 id: user._id,
+                //Can think about sending username to backend
                 username: formData.username,
                 email: formData.email,
                 firstname: formData.firstname,
                 lastname: formData.lastname,
                 phone: formData.phone,
                 currentPassword: formData.currentPassword,
-                newPassword: formData.newPassword,
+                // newPassword: formData.newPassword,
                 addresses: formData.addresses,
             };
-
+            // if(user.username !== formData.username){
+            //     payload.username = formData.username;
+            // }
             const res = await axios.put("http://localhost:3000/api/user/profileupdate", payload);
 
             if (res.status === 200) {
-                alert("Profile updated successfully!");
-            } else {
-                alert("Something went wrong!");
+                swal.close()
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Profile Updated Successfully',
+                    text: res.data.message || 'Product has been successfully added!',
+                });
+            }else {
+                swal.close()
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: res.data.message || 'Something went wrong!',
+                });
             }
-        } catch (err) {
-            console.error(err);
-            alert("Error updating profile.");
+        } catch (error) {
+            swal.close();
+            console.log("error: ", error)
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error.response?.data?.message || 'Something went wrong!',
+            });
         }
     };
 
@@ -121,10 +150,11 @@ const Profile = () => {
                 {/* Basic Info Fields */}
                 {["username", "email", "firstname", "lastname", "phone"].map(field => (
                         <div>
-                    <label htmlFor="" className="capitalize">{field} :</label>
+                    <label htmlFor={field} className="capitalize">{field} :</label>
                     <input
                         key={field}
                         className="border-b-2 border-black p-2 w-full"
+                        id={field}
                         name={field}
                         value={formData[field]}
                         onChange={handleChange}
@@ -132,24 +162,6 @@ const Profile = () => {
                     />
                         </div>
                 ))}
-
-                {/* Passwords */}
-                <input
-                    className="border-b-2 border-black p-2 w-full"
-                    name="currentPassword"
-                    value={formData.currentPassword}
-                    onChange={handleChange}
-                    placeholder="Current Password"
-                    type="password"
-                />
-                <input
-                    className="border-b-2 border-black p-2 w-full"
-                    name="newPassword"
-                    value={formData.newPassword}
-                    onChange={handleChange}
-                    placeholder="New Password"
-                    type="password"
-                />
 
                 {/* Address Section */}
                 <div className="flex justify-between items-center">
@@ -194,6 +206,28 @@ const Profile = () => {
                         </label>
                     </div>
                 ))}
+
+                {/* Passwords */}
+                <div>
+                <label htmlFor="currentPassword" >Password :</label>
+                <input
+                    className="border-b-2 border-black p-2 w-full"
+                    name="currentPassword"
+                    id="currentPassword"
+                    value={formData.currentPassword}
+                    onChange={handleChange}
+                    placeholder="Password"
+                    type="password"
+                />
+                </div>
+                {/*<input*/}
+                {/*    className="border-b-2 border-black p-2 w-full"*/}
+                {/*    name="newPassword"*/}
+                {/*    value={formData.newPassword}*/}
+                {/*    onChange={handleChange}*/}
+                {/*    placeholder="New Password"*/}
+                {/*    type="password"*/}
+                {/*/>*/}
 
                 <button
                     type="submit"

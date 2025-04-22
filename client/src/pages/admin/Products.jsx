@@ -80,7 +80,7 @@ const Products = () => {
     const onSubmit = async (e) => {
         e.preventDefault();
         Swal.fire({
-            title: 'Loading categories...',
+            title: 'Uploading Product ...',
             allowOutsideClick: false,
             allowEscapeKey: false,
             didOpen: () => {
@@ -106,10 +106,10 @@ const Products = () => {
                 formData.append('image', form.image[i])
             }
             }
-            console.log('console ', formData)
+            // console.log('console ', formData)
+
             const res = await axios.post("http://localhost:3000/api/product/createProduct", formData, {
                 headers: {
-
                     "Content-Type": "multipart/form-data",
                 },
                 withCredentials: true

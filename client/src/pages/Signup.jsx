@@ -1,12 +1,14 @@
 import {Link, useNavigate} from "react-router-dom";
 import {useState} from "react";
 import axios from "axios";
-import { useDispatch } from 'react-redux';
-import { setUser } from '../store/User.js';
+import {useDispatch} from 'react-redux';
+import {setUser} from '../store/User.js';
+import Swal from "sweetalert2";
+import swal from "sweetalert2";
 
 const Signup = () => {
     const navigate = useNavigate();
-    const [form , setForm] = useState({
+    const [form, setForm] = useState({
         username: "",
         email: "",
         password: "",
@@ -19,55 +21,92 @@ const Signup = () => {
 
     const onSubmit = async (e) => {
         e.preventDefault();
-        console.log(form)
-            try {
-                const res = await axios.post("http://localhost:3000/api/user/register", form);
-                alert(res.data.message);
-                setForm({
-                    username: "",
-                    email: "",
-                    password: "",
-                    firstname: "",
-                    lastname: "",
-                    phone: "",
-                    terms: true,
-                });
-                console.log(res.data.user)
-                dispatch(setUser(res.data.user));
-                if(res.status === 200){
-                    navigate('/')
-                }
-            } catch (err) {
-                console.error(err);
-                alert("Something went wrong");
+        Swal.fire({
+            title: 'Creating Account ...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
             }
+        });
+        console.log(form)
+        try {
+            console.log('inside of try')
+            const res = await axios.post("http://localhost:3000/api/user/register", form);
+           console.log('after api')
+            setForm({
+                username: "",
+                email: "",
+                password: "",
+                firstname: "",
+                lastname: "",
+                phone: "",
+                terms: true,
+            });
+            console.log(res)
+            dispatch(setUser(res?.data?.user));
+            if (res.status === 200) {
+                swal.close()
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Profile Updated Successfully',
+                    text: res.data.message || 'Product has been successfully added!',
+                });
+                navigate('/')
+            } else {
+                swal.close()
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: res.message || 'Something went wrong!',
+                });
+                console.log('inside else ')
+            }
+        } catch (err) {
+            swal.close()
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: err || 'Something went wrong!',
+            });
+
+            console.error(err);
+            // alert("Something went wrong");
+        }
     }
     return (
         <>
-            <form onSubmit={onSubmit} className="flex flex-col gap-2 p-4 border mt-32 w-[60%] ml-[20%] font-mono border-black ">
+            <form onSubmit={onSubmit}
+                  className="flex flex-col gap-2 p-4 border mt-32 w-[60%] ml-[20%] font-mono border-black ">
                 <h1 className="text-center text-3xl font-medium font-mono">Hey dude! SignUp here</h1>
                 <label htmlFor="" className="">Username - </label>
-                <input type="text" placeholder="Enter your Username" className="border-b-2 border-black py-2 px-4 focus:outline-0"
+                <input type="text" placeholder="Enter your Username"
+                       className="border-b-2 border-black py-2 px-4 focus:outline-0"
                        onChange={(e) => setForm({...form, username: e.target.value})}
                 />
                 <label htmlFor="" className="">Email - </label>
-                <input type="email" placeholder="Enter your Email" className="border-b-2 border-black py-2 px-4 focus:outline-0"
+                <input type="email" placeholder="Enter your Email"
+                       className="border-b-2 border-black py-2 px-4 focus:outline-0"
                        onChange={(e) => setForm({...form, email: e.target.value})}
                 />
                 <label htmlFor="">Password - </label>
-                <input type="password" placeholder="Enter your password" className="border-b-2 border-black py-2 px-4 focus:outline-0"
+                <input type="password" placeholder="Enter your password"
+                       className="border-b-2 border-black py-2 px-4 focus:outline-0"
                        onChange={(e) => setForm({...form, password: e.target.value})}
                 />
                 <label htmlFor="">First Name - </label>
-                <input type="text" placeholder="Enter your First Name" className="border-b-2 border-black py-2 px-4 focus:outline-0"
+                <input type="text" placeholder="Enter your First Name"
+                       className="border-b-2 border-black py-2 px-4 focus:outline-0"
                        onChange={(e) => setForm({...form, firstname: e.target.value})}
                 />
                 <label htmlFor="">Last Name - </label>
-                <input type="text" placeholder="Enter your Last Name" className="border-b-2 border-black py-2 px-4 focus:outline-0"
+                <input type="text" placeholder="Enter your Last Name"
+                       className="border-b-2 border-black py-2 px-4 focus:outline-0"
                        onChange={(e) => setForm({...form, lastname: e.target.value})}
                 />
                 <label htmlFor="">Mobile Number - </label>
-                <input type="number" placeholder="Enter your Mobile Number" className="border-b-2 border-black py-2 px-4 focus:outline-0"
+                <input type="number" placeholder="Enter your Mobile Number"
+                       className="border-b-2 border-black py-2 px-4 focus:outline-0"
                        onChange={(e) => setForm({...form, phone: e.target.value})}
                 />
                 <div className="flex gap-2 items-center p-1">
@@ -76,7 +115,7 @@ const Signup = () => {
                         name="term"
                         id="term"
                         checked={form.terms}
-                        onChange={e => setForm({ ...form, terms: e.target.checked })}
+                        onChange={e => setForm({...form, terms: e.target.checked})}
                     />
                     <p>
                         I hereby accept the{" "}
@@ -87,7 +126,7 @@ const Signup = () => {
                 </div>
 
                 <input type="submit" value="LogIn" className="bg-sky-200 p-2"/>
-                <p>New here? <Link to="/signup" className="underline">SignUp Now</Link></p>
+                {/*<p>New here? <Link to="/signup" className="underline">SignUp Now</Link></p>*/}
             </form>
         </>
     )

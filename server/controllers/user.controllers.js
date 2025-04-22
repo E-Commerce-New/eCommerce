@@ -5,6 +5,13 @@ const jwt = require('jsonwebtoken');
 
 const secretKey = process.env.SECRET_KEY;
 
+
+const getAllUserName = async (req, res) => {
+    const getUsers = await User.find({}, 'username')
+    const usernames = getUsers.map(user => user.username)
+    return usernames
+}
+
 const getUserByUsernameAndPassword = async (req, res) => {
     // console.log(req.body)
     try {
@@ -37,33 +44,39 @@ const getUserByUsernameAndPassword = async (req, res) => {
 
 const getUser = async (req, res) => {
     try {
-        const { id } = req.body;
+        const {id} = req.body;
 
         if (!id) {
-            return res.status(400).json({ message: "User ID is required." });
+            return res.status(400).json({message: "User ID is required."});
         }
 
-        const user = await User.findOne({ _id: id });
+        const user = await User.findOne({_id: id});
 
         if (!user) {
-            return res.status(404).json({ message: "User not found." });
+            return res.status(404).json({message: "User not found."});
         }
 
-        res.status(200).json({ message: "User fetched successfully", data: user });
+        res.status(200).json({message: "User fetched successfully", data: user});
     } catch (error) {
         console.error("Error in getUser:", error);
-        res.status(500).json({ message: "Server error" });
+        res.status(500).json({message: "Server error"});
     }
 };
 
-
 const register = async (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     try {
         const {username, email, password, firstname, lastname, phone, terms} = req.body;
 
         if (!terms) {
             return res.status(400).json({message: "You must accept terms and conditions"});
+        }
+
+        const usernames = await getAllUserName()
+
+        if (usernames.includes(username)) {
+            console.log("true haha...")
+            return res.status(400).json({message: "Username already exists"})
         }
 
         const newUser = new User({
@@ -113,7 +126,48 @@ const addToCart = async (req, res) => {
     }
 }
 
+const updateUserProfile = async (req, res) => {
+    const {id, addresses, currentPassword, email, firstname, lastname, phone, username} = req.body;
+    try {
+        if (!id) {
+            return res.status(400).json({error: "Missing id"}, 'username');
+        } else {
+            const userById = await User.findOne({
+                $and: [
+                    { _id:id },
+                    { password: currentPassword }
+                ]
+            }, 'username password')
+
+            if(!userById){
+                return res.status(400).json({message: "Incorrect Password"})
+            }
+            //Verifying Password
+            console.log(userById)
+
+            //Verifying username
+            if (userById.username !== username) {
+                const usernames = await getAllUserName()
+                if (usernames.includes(username)) {
+                    return res.status(400).json({message: "Username already exists"})
+                }
+            }
+
+            const user = {addresses, email, firstname, lastname, phone, username}
+            await User.findByIdAndUpdate(id, user)
+
+            return res.status(200).json({
+                message: 'User updated successfully',
+                data: {id, addresses, currentPassword, email, firstname, lastname, phone, username}
+            });
+        }
+    } catch (error) {
+        console.log("ERROR : ", error)
+        res.status(500).json({message: 'Internal server error'})
+    }
+}
+
 
 module.exports = {
-    getUserByUsernameAndPassword , register , addToCart , getUser
+    getUserByUsernameAndPassword, register, addToCart, getUser, updateUserProfile
 }
