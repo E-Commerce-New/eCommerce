@@ -71,23 +71,24 @@ const Categories = () => {
         fetchCategories();
     }, []);
 
-    const handlecatdelete = async (id) => {
-        alert(id)
-        try {
-            const res = await axios.delete(`http://localhost:3000/api/product/deleteCategory/id:${id}`, {
-                withCredentials: true
-            })
-            if (res.status === 200) {
-                swal.fire({
-                    icon: "success",
-                    title: "Success",
-                    text: res.data.message,
-                })
-            }
-        } catch (e) {
-            console.log(e)
-        }
-    }
+    //Delete Category
+    // const handlecatdelete = async (id) => {
+    //     alert(id)
+    //     try {
+    //         const res = await axios.delete(`http://localhost:3000/api/product/deleteCategory/id:${id}`, {
+    //             withCredentials: true
+    //         })
+    //         if (res.status === 200) {
+    //             swal.fire({
+    //                 icon: "success",
+    //                 title: "Success",
+    //                 text: res.data.message,
+    //             })
+    //         }
+    //     } catch (e) {
+    //         console.log(e)
+    //     }
+    // }
 
     return (
         <>
@@ -116,7 +117,8 @@ const Categories = () => {
                                 <div className="flex gap-2">
                                     <p>{index + 1}</p> <p>{item.category}</p>
                                 </div>
-                                <p onClick={() => handlecatdelete(item._id)}><Trash2/></p>
+                                {/*{Delete Category}*/}
+                                {/*<p onClick={() => handlecatdelete(item._id)}><Trash2/></p>*/}
                             </div>
                         )
                     })}

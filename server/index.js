@@ -1,14 +1,15 @@
 require("dotenv").config();
 const express = require('express');
-const app = express();
-const port = process.env.PORT || 3002;
 const mongoose = require('mongoose');
 const cors = require('cors');
-const userRouter = require('./routes/user.routes')
-const productRouter = require('./routes/product.routes')
+const {userRouter, productRouter, orderRouter} = require('./routes/index')
 const cookieParser = require('cookie-parser')
 // const ImageKit = require('imagekit')
 
+const app = express()
+const port = process.env.PORT || 3002;
+
+//Middlewares
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
@@ -25,6 +26,7 @@ mongoose
 // Api routes
 app.use('/api/user', userRouter)
 app.use('/api/product', productRouter)
+app.use('/api/order', orderRouter)
 
 // //ImageKit
 //

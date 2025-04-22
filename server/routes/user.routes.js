@@ -5,9 +5,10 @@ const {getUserByUsernameAndPassword , register, addToCart , getUser} = require('
 
 // Login or Registration route
 router.post('/login', getUserByUsernameAndPassword);
-router.post('/register', register);
+
+router.post('/register', register)
+
 router.post('/addToCart', addToCart);
 router.post('/getUser', getUser);
-
 
 module.exports = router

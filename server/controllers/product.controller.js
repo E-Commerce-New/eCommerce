@@ -181,8 +181,8 @@ const getCategories = async (req, res) => {
 };
 
 
-const deleteCategory = async (req, res) => {
-    console.log(req.params.id);
-}
+// const deleteCategory = async (req, res) => {
+//     console.log(req.params.id);
+// }
 
-module.exports = {deleteProduct, updateProduct, getProducts, createProducts, getProductById, addCategory, getCategories , deleteCategory}
+module.exports = {deleteProduct, updateProduct, getProducts, createProducts, getProductById, addCategory, getCategories }
