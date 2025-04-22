@@ -117,7 +117,7 @@ const Products = () => {
                 withCredentials: true
             });
 
-            swal.close()
+            await swal.close()
 
             Swal.fire({
                 icon: 'success',
@@ -136,18 +136,19 @@ const Products = () => {
                 attributes: [{ key: "", value: "" }],
             });
 
-        document.querySelector('#image').value = "";
+            document.querySelector('#image').value = "";
+            swal.close()
         } catch (error) {
-            swal.close();
             console.log("error: ", error)
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
                 text: error.response?.data?.message || 'Something went wrong!',
             });
-        } finally {
-            setShowAddProduct(!showAddProduct);
             swal.close()
+        } finally {
+            swal.close()
+            setShowAddProduct(!showAddProduct);
         }
     };
 
