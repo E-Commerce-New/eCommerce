@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 
 const secretKey = process.env.SECRET_KEY;
 
-const getUserByUsernameAndPassword = async(req, res)=>{
+const getUserByUsernameAndPassword = async (req, res) => {
     // console.log(req.body)
     try {
         const {username, password} = req.body;
@@ -18,12 +18,12 @@ const getUserByUsernameAndPassword = async(req, res)=>{
             const token = jwt.sign({
                 password: user.password,
                 username: user.username
-            }, secretKey, { expiresIn: '30m' });
+            }, secretKey, {expiresIn: '30m'});
             //Sending Token to client as cookie
             res.cookie('access_token', token, {
                 httpOnly: true,
                 secure: true,
-                }).status(200).json({message: "Useer Logged In successfully...", user, token});
+            }).status(200).json({message: "Useer Logged In successfully...", user, token});
             // console.log(token)
         } else {
             res.status(404).json({message: "User Not Found..."})
@@ -63,35 +63,34 @@ const register = async (req, res) => {
 }
 
 const addToCart = async (req, res) => {
-    const { userId, productId } = req.body;
-
+    const {userId, productId} = req.body;
+    // console.log(req.body)
     if (!userId || !productId) {
-        return res.status(400).json({ error: "Missing userId or productId" });
+        return res.status(400).json({error: "Missing userId or productId"});
     }
 
     try {
         const user = await User.findById(userId);
 
-        if (!user) return res.status(404).json({ error: 'User not found' });
+        if (!user) return res.status(404).json({error: 'User not found'});
 
         const existingProduct = user.cart.find(item => item.productId.toString() === productId);
 
         if (existingProduct) {
             existingProduct.quantity += 1;
         } else {
-            user.cart.push({ productId });
+            user.cart.push({productId});
         }
 
         await user.save();
 
-        return res.status(200).json({ message: 'Product added to cart', cart: user.cart });
+        return res.status(200).json({message: 'Product added to cart', cart: user.cart});
     } catch (err) {
-        console.error(err);
-        return res.status(500).json({ error: 'Internal server error' });
+        console.error("ERROR ", err);
+        return res.status(500).json({message: 'Internal server error'});
     }
 }
 
-
 module.exports = {
-    getUserByUsernameAndPassword , register , addToCart
+    getUserByUsernameAndPassword, register, addToCart
 }
