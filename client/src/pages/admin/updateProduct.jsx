@@ -21,7 +21,7 @@ const UpdateProduct = () => {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const res = await axios.get(`http://localhost:3000/api/product/getproductbyid/${id}`, {
+                const res = await axios.post(`http://localhost:3000/api/product/getproductbyid`, {id : id}, {
                     withCredentials: true
                 });
                 const fetchedProduct = res.data.data;
@@ -91,6 +91,7 @@ const UpdateProduct = () => {
                 title: 'Product Updated',
                 text: res.data.message || 'Product has been successfully updated!',
             });
+            history.back()
         } catch (error) {
             Swal.fire({
                 icon: 'error',

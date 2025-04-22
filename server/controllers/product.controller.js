@@ -2,6 +2,7 @@ const Product = require("../models/product");
 const Category = require("../models/category");
 // const multer = require("multer");
 const ImageKit = require("imagekit");
+const {Types} = require("mongoose");
 
 const imagekit = new ImageKit({
     urlEndpoint: process.env.IK_URLENDPOINT,
@@ -140,18 +141,22 @@ const deleteProduct = async (req, res) => {
 
 const getProductById = async (req, res) => {
     const id = req.body?.id;
-    console.log(id)
-    if (!id) return res.status(400).json({ error: "Product ID required" });
-    try {
-        const data = await Product.findById(id);
-        if (!data) return res.status(404).json({ error: "Product not found" });
 
-        res.status(200).json({ data });
+    if (!id || !Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: "Invalid or missing Product ID" });
+    }
+
+    try {
+        const product = await Product.findById(id);
+        if (!product) return res.status(404).json({ error: "Product not found" });
+
+        return res.status(200).json({ data: product });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Server error" });
+        console.error("MongoDB Error:", error);
+        return res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
 
 const addCategory = async (req, res) => {
     try {

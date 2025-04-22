@@ -27,7 +27,7 @@ const AdminNavbar = () => {
                     <Link to="/contact" className="flex gap-2"><Contact /> Contact</Link>
                     {user ?
                         <>
-                        <div onClick={handleLogout} className="flex gap-2"><LogOut/>Logout</div>
+                        <div onClick={handleLogout} className="flex gap-2 cursor-pointer"><LogOut/>Logout</div>
                         <Link to="/profile" className="flex gap-2"><User/>Profile</Link>
                         <Link to="/cart" className="flex gap-2"><ShoppingCart />Cart</Link>
                         </>
