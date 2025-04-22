@@ -139,14 +139,19 @@ const deleteProduct = async (req, res) => {
 }
 
 const getProductById = async (req, res) => {
+    const id = req.body?.id;
+    console.log(id)
+    if (!id) return res.status(400).json({ error: "Product ID required" });
     try {
-        const data = await Product.findById(req.params.id)
-        res.status(200).json({data, message: 'Product fetched successfully'})
+        const data = await Product.findById(id);
+        if (!data) return res.status(404).json({ error: "Product not found" });
+
+        res.status(200).json({ data });
     } catch (error) {
-        console.log(error)
-        res.status(500).send('Something went wrong...')
+        console.error(error);
+        res.status(500).json({ error: "Server error" });
     }
-}
+};
 
 const addCategory = async (req, res) => {
     try {
@@ -170,8 +175,9 @@ const getCategories = async (req, res) => {
     }
 };
 
-const deleteCategory = async (req, res) => {
 
+const deleteCategory = async (req, res) => {
+    console.log(req.params.id);
 }
 
 module.exports = {deleteProduct, updateProduct, getProducts, createProducts, getProductById, addCategory, getCategories , deleteCategory}

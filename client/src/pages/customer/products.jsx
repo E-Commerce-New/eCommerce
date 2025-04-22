@@ -1,10 +1,12 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
+import {useSelector} from "react-redux";
+import Swal from "sweetalert2";
 
 const Products = () => {
     const [products, setProducts] = useState([]);
-
+    const { user } = useSelector((state) => state.user);
     const shuffleArray = (array) => {
         const shuffled = [...array];
         for (let i = shuffled.length - 1; i > 0; i--) {
@@ -39,6 +41,24 @@ const Products = () => {
         navigate(`/product-info/${id}`);
     }
 
+    function handleAddToCart(productId, user) {
+        if (!user || !user._id) {
+            Swal.fire({
+                title: 'You must be logged in!',
+                text: 'Please login to add items to your cart.',
+                icon: 'warning',
+                confirmButtonText: 'Login now',
+                showCancelButton: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    navigate('/login');
+                }
+            });
+            return;
+        }
+        navigate(`/add-to-cart/${productId}/${user._id}`);
+    }
+
     return (
         <>
             <div className="flex justify-start flex-wrap">
@@ -50,9 +70,10 @@ const Products = () => {
                         <div
                             key={index}
                             className="group border-b-2 border-black w-[18%] m-[1%] overflow-hidden cursor-pointer transition-all duration-300 "
-                            onClick={() => {handleProduct(product._id)}}
                         >
-                            <div className="h-48 w-full overflow-hidden flex items-center justify-center bg-white">
+                            <div className="h-48 w-full overflow-hidden flex items-center justify-center bg-white"
+                                 onClick={() => {handleProduct(product._id)}}
+                            >
                                 <img
                                     src={`https://ik.imagekit.io/0Shivams${product.images?.[0] || "https://static-00.iconduck.com/assets.00/no-image-icon-512x512-lfoanl0w.png"}`}
                                     alt={product.name}
@@ -66,10 +87,14 @@ const Products = () => {
 
 
                             <div className="flex flex-col gap-1 p-2">
-                                <h1 className="font-bold transition-colors duration-300 group-hover:underline">
+                                <h1 className="font-bold transition-colors duration-300 group-hover:underline"
+                                    onClick={() => {handleProduct(product._id)}}
+                                >
                                     {product.name}
                                 </h1>
-                                <p>
+                                <p
+                                    onClick={() => {handleProduct(product._id)}}
+                                >
                                         <span className="line-through text-gray-500 mr-2">
                                             ₹{inflatedPrice?.toLocaleString()}
                                         </span>
@@ -80,7 +105,9 @@ const Products = () => {
                                         <span className="text-sm text-red-500 font-medium">
                                             {discountPercent}% OFF
                                         </span>
-                                <button className="text-center p-2 border-2 border-black rounded-lg hover:bg-gray-200">Add to Cart</button>
+                                <button className="text-center p-2 border-2 border-black rounded-lg hover:bg-gray-200"
+                                onClick={()=>handleAddToCart(product._id , user)}
+                                >Add to Cart</button>
                             </div>
                         </div>
                     );

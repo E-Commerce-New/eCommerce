@@ -11,6 +11,9 @@ import Home from "./pages/Home.jsx"
 import UserLayout from "./layouts/UserLayout"
 import AdminSettings from "./pages/admin/AdminSetting"
 import ProductInfo from "./pages/customer/Product-info.jsx";
+import AddToCart from "./components/reUsable/AddToCart.jsx";
+import Cart from "./pages/customer/Cart.jsx"
+
 
 export default function App() {
     return (
@@ -18,9 +21,12 @@ export default function App() {
             <Routes>
                 <Route path="/" element={<UserLayout />}>
                     <Route index element={<Home />} />
-                    <Route path="/signup" element={<SignUp />} />
-                    <Route path="/login" element={<LogIn />} />
+                    <Route path="signup" element={<SignUp />} />
+                    <Route path="login" element={<LogIn />} />
                     <Route path="product-info/:id" element={<ProductInfo />} />
+                    <Route path="add-to-cart/:productId/:userId" element={<AddToCart />} />
+                    <Route path="Cart" element={<Cart />} />
+
                 </Route>
 
                 <Route path="/admin" element={<AdminLayout />}>

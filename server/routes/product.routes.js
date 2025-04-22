@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const multer = require('multer');
-const {getProductById, deleteProduct, updateProduct, getProducts, createProducts , addCategory, getCategories , deleteCategory} = require('../controllers/product.controller')
+const {getProductById, deleteProduct, updateProduct, getProducts, createProducts , addCategory, getCategories , deleteCategory , getProductByIds} = require('../controllers/product.controller')
 const jwt = require('jsonwebtoken');
 
 
@@ -35,7 +35,7 @@ router.patch("/update/:id",getUserAuthentication, upload.single("image"), update
 
 router.delete('/delete/:id',getUserAuthentication, deleteProduct)
 
-router.get('/getproductbyid/:id', getUserAuthentication,getProductById)
+router.post('/getproductbyid',getProductById)
 
 router.post('/addCategory',getUserAuthentication, addCategory)
 
