@@ -38,7 +38,7 @@ const Cart = () => {
         };
 
         fetchCartProducts();
-    }, [user._id]);
+    }, [user?._id]);
 
     const fallbackImg = "https://static-00.iconduck.com/assets.00/no-image-icon-512x512-lfoanl0w.png";
 

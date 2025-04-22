@@ -29,13 +29,25 @@ const userSchema = new Schema({
     default: null,
   },
 
-  address: {
-    street: String,
-    city: String,
-    state: String,
-    postalCode: String,
-    country: String,
-  },
+  addresses: [
+    {
+      addressLine1: String,
+      addressLine2: String,
+      city: String,
+      state: String,
+      postalCode: String,
+      country: String,
+      isDefault: {
+        type: Boolean,
+        default: false,
+      },
+      type: {
+        type: String,
+        enum: ['shipping', 'billing'],
+        default: 'shipping',
+      }
+    }
+  ],
 
   isAdmin: {
     type: Boolean,

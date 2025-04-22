@@ -13,7 +13,7 @@ import AdminSettings from "./pages/admin/AdminSetting"
 import ProductInfo from "./pages/customer/Product-info.jsx";
 import AddToCart from "./components/reUsable/AddToCart.jsx";
 import Cart from "./pages/customer/Cart.jsx"
-
+import Profile from "./pages/customer/profile.jsx"
 
 export default function App() {
     return (
@@ -26,6 +26,7 @@ export default function App() {
                     <Route path="product-info/:id" element={<ProductInfo />} />
                     <Route path="add-to-cart/:productId/:userId" element={<AddToCart />} />
                     <Route path="Cart" element={<Cart />} />
+                    <Route path="profile" element={<Profile />} />
 
                 </Route>
 
