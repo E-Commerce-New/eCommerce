@@ -1,10 +1,14 @@
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Plus } from "lucide-react"; // install lucide-react or replace with SVG/icon
+import { Plus } from "lucide-react";
+import Swal from "sweetalert2";
+import swal from "sweetalert2";
+import {useNavigate} from "react-router-dom"; // install lucide-react or replace with SVG/icon
 
 const Profile = () => {
     const { user } = useSelector((state) => state.user);
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         username: "",
         email: "",
@@ -17,7 +21,19 @@ const Profile = () => {
     });
 
     useEffect(() => {
+        if (!user) {
+            navigate('/login');
+        }
+
         const fetchUser = async () => {
+        Swal.fire({
+            title: 'Finding your account',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
             try {
                 const res = await axios.post("http://localhost:3000/api/user/getUser", {
                     id: user._id,
@@ -36,10 +52,12 @@ const Profile = () => {
                 }
             } catch (error) {
                 console.log(error);
+            } finally {
+                Swal.close();
             }
         };
         fetchUser();
-    }, [user._id]);
+    }, [user?._id]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -81,6 +99,14 @@ const Profile = () => {
     };
 
     const onSubmit = async (e) => {
+        Swal.fire({
+            title: 'We are Updating your Profile',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
         e.preventDefault();
         try {
             const payload = {
@@ -97,21 +123,32 @@ const Profile = () => {
 
             const res = await axios.put("http://localhost:3000/api/user/profileupdate", payload);
 
+            swal.close()
             if (res.status === 200) {
-                alert("Profile updated successfully!");
+                Swal.fire({
+                    icon: "success",
+                    title: "Profile Updated successfully",
+                })
             } else {
-                alert("Something went wrong!");
+                Swal.fire({
+                    icon: "error",
+                    title: "Something went wrong",
+                })
             }
         } catch (err) {
             console.error(err);
-            alert("Error updating profile.");
+            Swal.fire({
+                icon: "error",
+                title: "Something went wrong",
+                text: err,
+            })
         }
     };
 
     return (
         <div className="p-6">
             <h1 className="capitalize text-2xl font-medium mb-4">
-                Hey, {user.firstname}{" "}
+                Hey, {user?.firstname}{" "}
                 <span className="font-normal text-gray-700 text-xl">- Update your Profile here</span>
             </h1>
 

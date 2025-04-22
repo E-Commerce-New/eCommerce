@@ -4,6 +4,7 @@ import swal from "sweetalert2"
 import { useDispatch} from "react-redux";
 import { setUser } from "../store/User";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const Login = () => {
     const [form , setForm] = useState({
@@ -13,40 +14,45 @@ const Login = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const onSubmit = async (e) => {
+        Swal.fire({
+            title: 'Finding You!',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
         e.preventDefault()
-        // console.log(form)
         try {
             const res = await axios.post("http://localhost:3000/api/user/login", form , {
                 withCredentials: true
             })
-            // const res = await fetch("http://localhost:3000/api/user/login", {
-            //     method: "POST",
-            //     headers: {"Content-Type": "application/json"},
-            //     body: JSON.stringify(form),
-            // })
             console.log(res.data)
             dispatch(setUser(res.data.user))
+            swal.close()
             if(res.status === 200) {
                 swal.fire({
                     icon: "success",
-                    title: "Login Success",
+                    title: "Yay! Found You.",
                     timer: 1500,
                 })
                 if (form.username === "admin") {
                     navigate("/admin/panel")
                 } else navigate("/")
-            } else swal.fire({
+            } else if (res.status === 404) {
+            swal.fire({
                 icon: "error",
-                title: "Login Failed",
+                title: "You might need to Signup.",
                 text: res.data.message,
                 timer: 1500,
             })
+            }
             } catch (error) {
             console.error(error)
             swal.fire({
-                title: "Login failed.",
-                text: "Internal Server Error Occured",
-                icon: "error"
+                icon: "warning",
+                title: "You might need to Signup.",
+                timer: 1500,
             })
         }
     }

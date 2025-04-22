@@ -1,15 +1,32 @@
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {Trash2} from "lucide-react"
+import swal from "sweetalert2";
+import Swal from "sweetalert2";
+import {useNavigate} from "react-router-dom";
 
 const Cart = () => {
-    const { user } = useSelector((state) => state.user);
+    const { user } = useSelector((state) => state.user)
+    console.log(user)
+    const navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
 
     useEffect(() => {
+        if (!user) {
+            navigate('/login');
+        }
+
         const fetchCartProducts = async () => {
+            Swal.fire({
+                title: 'Loading cart...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
             try {
-                // Fetch the user's full data including cart
                 const userRes = await axios.post("http://localhost:3000/api/user/getUser", {
                     id: user._id,
                 });
@@ -17,7 +34,6 @@ const Cart = () => {
                 if (userRes.status === 200) {
                     const cart = userRes.data.data.cart;
 
-                    // Fetch product details for each item in the cart
                     const productPromises = cart.map((item) =>
                         axios.post("http://localhost:3000/api/product/getProductById", {
                             id: item.productId,
@@ -34,6 +50,8 @@ const Cart = () => {
                 }
             } catch (err) {
                 console.error("Error fetching cart products:", err);
+            } finally {
+                swal.close()
             }
         };
 
@@ -45,6 +63,82 @@ const Cart = () => {
     const totalPrice = cartItems.reduce((acc, item) => {
         return acc + item.price * item.quantity;
     }, 0);
+
+    const increaseQuantity = async (productId) => {
+        Swal.fire({
+            title: 'Increasing Product Quantity...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        try {
+            const res = await axios.put("http://localhost:3000/api/cart/increase", {
+                userId: user._id,
+                productId,
+            });
+            if (res.status === 200) {
+                location.reload();
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            swal.close();
+        }
+    };
+
+
+    const deleteCartItem = async (productId) => {
+        Swal.fire({
+            title: 'Deleting Item...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        try {
+            const res = await axios.delete("http://localhost:3000/api/cart/delete", {
+                data: {
+                    userId: user._id,
+                    productId,
+                }
+            });
+            if (res.status === 200) {
+                location.reload();
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            swal.close();
+        }
+    };
+
+    const decreaseQuanity = async (productId) => {
+        Swal.fire({
+            title: 'Decreasing Quantity...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        try {
+            const res = await axios.put("http://localhost:3000/api/cart/decrease", {
+                    userId: user._id,
+                    productId,
+            });
+            if (res.status === 200) {
+                location.reload();
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            swal.close();
+        }
+    };
+
 
 
     return (
@@ -58,9 +152,7 @@ const Cart = () => {
                         const originalPrice = item?.price;
                         const discountPercent = Math.floor(Math.random() * (80 - 50 + 1)) + 50;
                         const inflatedPrice = Math.round(originalPrice * (100 / (100 - discountPercent)));
-
-
-
+                        // console.log(item)
                         return (
                         <div key={item._id} className="border-b-2 p-4 border-black flex gap-2 justify-between">
                             <div className="flex gap-2">
@@ -77,11 +169,19 @@ const Cart = () => {
                                     }}
                                 />
                             <div>
-                            <div className="text-lg font-semibold flex gap-2">
+                            <div className="text-lg font-semibold flex gap-2 flex-col">
                                 <p >{item.name}</p>
-                                <div>
-
+                                <div className="flex border-2 border-yellow-400 rounded-2xl py-1 px-3 w-[5vw] text-sm">
+                                    {item.quantity > 1 ?
+                                    <p onClick={() => decreaseQuanity(item._id)} className="cursor-pointer basis-1/3 text-left">-</p>
+                                        :
+                                    <p onClick={() => deleteCartItem(item._id)} className="cursor-pointer basis-1/3"><Trash2 className="w-4 h-4 text-sm" />
+                                    </p>
+                                    }
+                                    <p className="basis-1/3 text-center">{item.quantity}</p>
+                                    <p onClick={() => increaseQuantity(item._id)} className="cursor-pointer basis-1/3 text-right">+</p>
                                 </div>
+
                             </div>
                             </div>
                             </div>
@@ -97,12 +197,12 @@ const Cart = () => {
                         </div>
                         )
                     })}
+                <div className="w-full text-right">
+                    <p className="text-lg font-bold">Total: {"(" + cartItems.length + " " + "Items)"} ₹{totalPrice.toLocaleString()}</p>
+                </div>
                 </div>
             )}
 
-            <div className="mt-6 w-full text-right border-t-2 border-black pt-4">
-                <p className="text-lg font-bold">Total: ₹{totalPrice.toLocaleString()}</p>
-            </div>
 
         </div>
     );

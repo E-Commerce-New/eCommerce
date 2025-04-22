@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import swal from "sweetalert2";
 
 const UpdateProduct = () => {
     const { id } = useParams();
@@ -9,10 +10,19 @@ const UpdateProduct = () => {
 
     useEffect(() => {
         const deleteProduct = async () => {
+            Swal.fire({
+                title: 'Deleting Product',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
             try {
                 const res = await axios.delete(`http://localhost:3000/api/product/delete/${id}`, {
                     withCredentials: true
                 });
+                Swal.close();
                 Swal.fire({
                     icon: 'success',
                     title: 'Deleted!',

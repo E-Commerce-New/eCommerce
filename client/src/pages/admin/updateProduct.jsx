@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import GoBack from "../../components/reUsable/Goback";
+import swal from "sweetalert2";
 
 const UpdateProduct = () => {
     const { id } = useParams();
@@ -19,6 +20,14 @@ const UpdateProduct = () => {
     });
 
     useEffect(() => {
+        Swal.fire({
+            title: 'Loading...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
         const fetchProduct = async () => {
             try {
                 const res = await axios.post(`http://localhost:3000/api/product/getproductbyid`, {id : id}, {
@@ -38,6 +47,8 @@ const UpdateProduct = () => {
                 });
             } catch (err) {
                 console.error("Error fetching product:", err);
+            } finally {
+                Swal.close();
             }
         };
 
@@ -68,6 +79,14 @@ const UpdateProduct = () => {
 
     const onSubmit = async (e) => {
         e.preventDefault();
+        Swal.fire({
+            title: 'Updating this Product',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
         try {
             const formData = new FormData();
             formData.append("name", form.name);
@@ -86,6 +105,7 @@ const UpdateProduct = () => {
                 withCredentials: true
             });
 
+            Swal.close();
             Swal.fire({
                 icon: 'success',
                 title: 'Product Updated',

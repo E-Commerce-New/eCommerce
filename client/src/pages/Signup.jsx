@@ -3,6 +3,8 @@ import {useState} from "react";
 import axios from "axios";
 import { useDispatch } from 'react-redux';
 import { setUser } from '../store/User.js';
+import Swal from "sweetalert2";
+import swal from "sweetalert2";
 
 const Signup = () => {
     const navigate = useNavigate();
@@ -19,6 +21,14 @@ const Signup = () => {
 
     const onSubmit = async (e) => {
         e.preventDefault();
+        Swal.fire({
+            title: 'Wait! We are signing up.',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
         console.log(form)
             try {
                 const res = await axios.post("http://localhost:3000/api/user/register", form);
@@ -34,12 +44,17 @@ const Signup = () => {
                 });
                 console.log(res.data.user)
                 dispatch(setUser(res.data.user));
+                swal.close();
                 if(res.status === 200){
                     navigate('/')
                 }
             } catch (err) {
                 console.error(err);
-                alert("Something went wrong");
+                swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Something went wrong"
+                })
             }
     }
     return (

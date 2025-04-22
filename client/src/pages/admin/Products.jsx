@@ -11,6 +11,7 @@ dayjs.extend(relativeTime);
 import RightTopNav from "../../components/reUsable/RightTopNav";
 // import { IKContext, IKImage, IKUpload } from 'imagekitio-react';
 import Categories from "../../components/Categories";
+import {useSelector} from "react-redux";
 
 const Products = () => {
     const [showAddProduct, setShowAddProduct] = useState(false);
@@ -27,6 +28,7 @@ const Products = () => {
     const [products, setProducts] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const navigate = useNavigate();
+    const { user } = useSelector((state) => state.user);
     const [lastUpdated, setLastUpdated] = useState(null);
     const [categories , setCategories] = useState([]);
     // const [auth, setAuth] = useState()
@@ -80,7 +82,7 @@ const Products = () => {
     const onSubmit = async (e) => {
         e.preventDefault();
         Swal.fire({
-            title: 'Loading categories...',
+            title: 'Adding this Product in your Inventory',
             allowOutsideClick: false,
             allowEscapeKey: false,
             didOpen: () => {
@@ -145,11 +147,23 @@ const Products = () => {
             });
         } finally {
             setShowAddProduct(!showAddProduct);
+            swal.close()
         }
     };
 
     useEffect(() => {
+        if (!user) {
+            navigate('/login');
+        }
         const getAllProducts = async () => {
+            Swal.fire({
+                title: 'Fetching Products',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
             try {
                 const res = await axios.get("http://localhost:3000/api/product/getProducts", {
                     withCredentials: true
@@ -157,6 +171,7 @@ const Products = () => {
                 console.log(res.data);
                 setProducts(res.data.data);
                 setLastUpdated(new Date());
+                swal.close()
             } catch (error) {
                 swal.fire({
                     icon: 'error',
@@ -174,7 +189,11 @@ const Products = () => {
                 setCategories(res.data.categories);
                 console.log("Fetched categories:", res.data.categories);
             } catch (e) {
-                console.log("Error fetching categories:", e);
+                swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: e.response?.data?.message || 'Error ferching categories!',
+                })
             }
         };
 

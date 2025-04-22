@@ -3,16 +3,26 @@ import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import { clearUserInfo } from "../../store/User.js";
+import Swal from "sweetalert2";
 
 const RightTopNav = () => {
     const [showdots , setShowdot] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const handleLogout = () => {
+        Swal.fire({
+            title: 'Loading...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
         setShowdot(false);
         localStorage.clear()
         dispatch(clearUserInfo(null))
         navigate('/')
+        Swal.close()
     }
     return (
         <>

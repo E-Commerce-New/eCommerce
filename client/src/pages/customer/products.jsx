@@ -3,6 +3,7 @@ import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
 import Swal from "sweetalert2";
+import swal from "sweetalert2";
 
 const Products = () => {
     const [products, setProducts] = useState([]);
@@ -19,14 +20,28 @@ const Products = () => {
 
     useEffect(()=> {
         const fetchProducts = async () => {
+            Swal.fire({
+                title: 'Loading...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
             try {
                 const res = await axios.get("http://localhost:3000/api/product/getProducts", {withCredentials: true})
                 console.log(res.data)
                 const shuffledProducts = shuffleArray(res.data.data);
                 setProducts(shuffledProducts);
+                swal.close()
             } catch (e) {
+                swal.close()
                 console.log(e)
-                alert("An error occurred")
+                swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Something went wrong...",
+                })
             }
         }
         fetchProducts()
@@ -37,7 +52,6 @@ const Products = () => {
     const navigate = useNavigate();
 
     const handleProduct = (id) => {
-    // alert(id)
         navigate(`/product-info/${id}`);
     }
 
