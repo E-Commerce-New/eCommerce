@@ -50,12 +50,21 @@ const Signup = () => {
                 }
             } catch (err) {
                 console.error(err);
-                swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: "Something went wrong"
-                })
+                if (err.response) {
+                    swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: err.response.data.message || "Something went wrong",
+                    });
+                } else {
+                    swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Server not responding or no response received",
+                    });
+                }
             }
+
     }
     return (
         <>
