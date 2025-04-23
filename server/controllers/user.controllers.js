@@ -168,6 +168,7 @@ const updateUserProfile = async (req, res) => {
 }
 
 
+
 module.exports = {
     getUserByUsernameAndPassword, register, addToCart, getUser, updateUserProfile
 }
