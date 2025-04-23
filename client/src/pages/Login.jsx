@@ -5,12 +5,21 @@ import { useDispatch} from "react-redux";
 import { setUser } from "../store/User";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { z } from "zod"
 
 const Login = () => {
     const [form , setForm] = useState({
         username: "",
         password: "",
     })
+    const [errors, setErrors] = useState({})
+
+    const schema = z.object({
+        username: z.string().min(3, "Username must be at least 3 characters long").max(15, "Username can't exceed more than 15 characters long"),
+        password: z.string().min(3, "Password should be 3 character long").max(15, "Password can't exceed more than 15 characters long"),
+    })
+
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const onSubmit = async (e) => {
@@ -23,6 +32,14 @@ const Login = () => {
             }
         });
         e.preventDefault()
+        const result = schema.safeParse(form)
+        if (!result.success) {
+        setErrors(result.error.flatten().fieldErrors);
+        swal.close()
+        return
+        } else {
+        setErrors({});
+        }
         try {
             const res = await axios.post("http://localhost:3000/api/user/login", form , {
                 withCredentials: true
@@ -65,10 +82,12 @@ const Login = () => {
                 <input type="text" placeholder="Enter your Username" className="border-b-2 border-black py-2 px-4 focus:outline-0"
                 onChange={(e) => setForm({...form, username: e.target.value})}
                 />
+                {errors.username && <p className="text-red-500 text-sm">{errors.username[0]}</p>}
                 <label htmlFor="">Password - </label>
                 <input type="text" placeholder="Enter your password" className="border-b-2 border-black py-2 px-4 focus:outline-0"
                 onChange={(e) => setForm({...form, password: e.target.value})}
                 />
+                {errors.password && <p className="text-red-500 text-sm">{errors.password[0]}</p>}
                 <input type="submit" value="LogIn" className="bg-sky-200 p-2"/>
                 <p>New here? <Link to="/signup" className="underline">SignUp Now</Link></p>
             </form>

@@ -217,10 +217,10 @@ const Cart = () => {
                         // console.log(item)
                         return (
                         <div key={item._id} className="border-b-2 p-4 border-black flex gap-2 justify-between">
-                            <div className="flex gap-2"
-                            onClick={() => handleProduct(item._id)}>
+                            <div className="flex gap-2">
                             <p>{index+1}</p>
                                 <img
+                                    onClick={() => handleProduct(item._id)}
                                     key={index}
                                     src={`https://ik.imagekit.io/0Shivams${item?.images?.[0]}`}
                                     alt={`Thumbnail ${index + 1}`}
