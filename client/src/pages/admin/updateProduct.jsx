@@ -4,6 +4,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import GoBack from "../../components/reUsable/Goback";
 import swal from "sweetalert2";
+import {CirclePlus, CircleX} from "lucide-react";
 
 const UpdateProduct = () => {
     const { id } = useParams();
@@ -18,6 +19,47 @@ const UpdateProduct = () => {
         active: false,
         attributes: [{ key: "", value: "" }],
     });
+    const [prevImages, setPrevImages] = useState([])
+    const [newImages, setNewImages] = useState([])
+    const [newImageFile, setNewImageFile] = useState([]);
+
+    // const removeImage = (index) => {
+    //     // console.log("remove");
+    //     setSingleFile([
+    //         ...singleFile.slice(0, index),
+    //         ...singleFile.slice(index + 1, singleFile.length)
+    //     ]);
+    //     setPrevImages(prevImages.filter((image, ind) => index !== ind));
+    //     // console.log("Images after removing image: ", images[0]);
+    // };
+    // console.log("IMages ", prevImages ,"Single File ",  singleFile)
+    //
+    const uploadNewImages = async (e) => {
+        // console.log('e.target.files ', e.target.files)
+        if (e.target?.files?.length > 0) {
+            for (let i = 0; i < e.target.files.length; i++) {
+                //For Frontend
+                const url = URL.createObjectURL(e.target.files[i])
+                await setNewImages(prev => [...prev, url])
+
+                //For Backend
+                await setNewImageFile(prev => [...prev, e.target.files[i]])
+            }
+            // console.log("New Images Files : ", newImageFile)
+            // console.log("New ImageS " , newImages)
+        }
+    };
+
+    // console.log("New Image FIles : ", newImageFile)
+    const removePrevImage = (index) => {
+        setPrevImages(prevImages.filter((image, ind) => index !== ind));
+    }
+    const removeNewImage = (index) => {
+        setNewImages(newImages.filter((image, ind) => index !== ind));
+        setNewImageFile(newImageFile.filter((image, ind) => index !== ind));
+        // console.log("New Images inside new removeNewImage ", newImages, newImageFile)
+    }
+
 
     useEffect(() => {
         Swal.fire({
@@ -45,6 +87,7 @@ const UpdateProduct = () => {
                     active: fetchedProduct.active || false,
                     attributes: fetchedProduct.attributes || [{ key: "", value: "" }],
                 });
+                setPrevImages(res.data.data.images)
             } catch (err) {
                 console.error("Error fetching product:", err);
             } finally {
@@ -95,7 +138,18 @@ const UpdateProduct = () => {
             formData.append("price", form.price);
             formData.append("quantity", form.quantity);
             formData.append("active", form.active);
-            if (form.image) formData.append("image", form.image);
+            // if (prevImages) {
+            //     prevImages.forEach(image => {
+            //     formData.append("imagesArr", image); // or just "imagesArr"
+            // });}
+            // console.log("Prev Images :",typeof prevImages, prevImages)
+            formData.append('imagesArr', JSON.stringify(prevImages))
+            if(newImageFile?.length>0){
+                for(let i = 0; i<newImageFile.length; i++){
+                    formData.append('imagesFile', newImageFile[i])
+                }
+            }
+            // formData.append('imagesFile', JSON.stringify(newImageFile));
             formData.append("attributes", JSON.stringify(form.attributes));
 
             const res = await axios.patch(`http://localhost:3000/api/product/update/${id}`, formData, {
@@ -131,7 +185,12 @@ const UpdateProduct = () => {
                     </div>
 
                     <div className="m-4">
-                        <form onSubmit={onSubmit} encType="multipart/form-data" className="flex flex-col gap-2 p-4 border-2 border-black">
+                        <form
+                            onSubmit={onSubmit}
+                            // onSubmit={(e)=>{console.log('Prev Files : ', prevImages, 'New Files : ', newImageFile)
+                            //     e.preventDefault();
+                            // }}
+                            encType="multipart/form-data" className="flex flex-col gap-2 p-4 border-2 border-black">
                             <h1 className="text-2xl font-mono font-bold">Update Product</h1>
 
                             <div className="flex flex-col gap-2">
@@ -196,12 +255,72 @@ const UpdateProduct = () => {
                                 />
                             </div>
 
-                            <input
-                                type="file"
-                                name="image"
-                                accept="image/png"
-                                onChange={handleChange}
-                            />
+                            {/*<input*/}
+                            {/*    type="file"*/}
+                            {/*    name="image"*/}
+                            {/*    accept="image/png"*/}
+                            {/*    onChange={handleChange}*/}
+                            {/*/>*/}
+
+
+                            <div className='bg-indigo-100 p-4'>
+                                {prevImages.length > 0 ? <div><p className='text-red-500'>**First selected image will be used as preview image of your product**</p><p className='bg-red-500 text-center font-bold text-white'>Previous Images</p> </div>: ""}
+                                <div className='flex flex-wrap gap-2 bg-gray-300'>
+                                    {prevImages.length !== 0 &&
+                                        prevImages.map((url, index) => (
+                                            <div key={url}
+                                                className={`img-block bg-gray w-[400px] h-[400px] relative bg-gray-500 flex flex-row border-4 mb-4 items-center ${index === 0 ? ' border-green-500 ' : 'border-black'}`}>
+                                                <img className="object-contain w-[400px] h-[400px]"
+                                                     src={'https://ik.imagekit.io/0Shivams/'+url} alt="..."/>
+                                                <span
+                                                    className="absolute top-2 right-2 cursor-pointer"
+                                                    onClick={() => removePrevImage(index)}
+                                                >
+                                                    <CircleX
+                                                        className='bg-red-500 text-white text-2xl rounded-full w-10 h-10'/>
+                                            </span>
+                                            </div>
+                                        ))}
+                                </div>
+
+                                <div className='mt-4'>
+                                    <p className='bg-red-500 text-center font-bold text-white'>Upload More Images</p>
+                                    {newImages.length !== 0 &&
+                                        newImages.map((url, index) => (
+                                            <div key={url}
+                                                className={`img-block bg-gray w-[400px] h-[400px] relative bg-gray-500 flex flex-row border-4 mb-4 items-center ${index === 0 ? ' border-green-500 ' : 'border-black'}`}>
+                                                <img className="object-contain w-[400px] h-[400px]"
+                                                     src={url} alt="..."/>
+                                                <span
+                                                    className="absolute top-2 right-2 cursor-pointer"
+                                                    onClick={() => removeNewImage(index)}
+                                                >
+                                                    <CircleX
+                                                        className='bg-red-500 text-white text-2xl rounded-full w-10 h-10'/>
+                                            </span>
+                                            </div>
+                                        ))}
+                                </div>
+
+                                <div className=''>
+                                    <label htmlFor="imgUploader"
+                                           className='bg-gray-400 p-2 rounded hover:cursor-pointer hover:bg-green-500'><CirclePlus
+                                        className='inline-block bg-green-500 rounded-full  text-white'/> Select
+                                        Images</label>
+                                    <p className=' ml-4 inline-block'>{prevImages.length + newImages.length} Files Selected</p>
+                                    <input
+                                        type="file"
+                                        name="myfile"
+                                        multiple
+                                        id='imgUploader'
+                                        accept="image/*"
+                                        onChange={uploadNewImages}
+                                        className='hidden'
+                                    />
+                                </div>
+
+
+                            </div>
 
                             <div className="flex flex-col gap-2">
                                 <label>Attributes</label>

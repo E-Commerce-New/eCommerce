@@ -110,7 +110,7 @@ const Products = () => {
                 for (let i = 0; i < images.length; i++) {
                     formData.append('image', images[i])
                     // console.log('From image ' ,form.image[i])
-                    console.log('Image ', images[i])
+                    // console.log('Image ', images[i])
                 }
             }
             // console.log('console form data after setting ', formData)
@@ -364,7 +364,6 @@ const Products = () => {
                                 />
                             </div>
 
-
                         </div>
                         <div className="flex flex-col gap-2">
                             <label>Attributes</label>
@@ -518,10 +517,7 @@ const Products = () => {
                     )}
                     </tbody>
                 </table>
-
             </div>
-
-
         </>
 
     );

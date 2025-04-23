@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 
 const secretKey = process.env.SECRET_KEY;
 
-
 const getAllUserName = async (req, res) => {
     const getUsers = await User.find({}, 'username')
     const usernames = getUsers.map(user => user.username)
