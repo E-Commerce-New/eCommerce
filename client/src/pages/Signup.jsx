@@ -32,7 +32,7 @@ const Signup = () => {
         console.log(form)
             try {
                 const res = await axios.post("http://localhost:3000/api/user/register", form);
-                alert(res.data.message);
+                alert(res.message);
                 setForm({
                     username: "",
                     email: "",
