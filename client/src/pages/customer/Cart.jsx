@@ -5,6 +5,8 @@ import {Trash2} from "lucide-react"
 import swal from "sweetalert2";
 import Swal from "sweetalert2";
 import {useNavigate} from "react-router-dom";
+import { ShoppingBag } from "lucide-react";
+import GoBack from "../../components/reUsable/Goback.jsx";
 
 const Cart = () => {
     const { user } = useSelector((state) => state.user)
@@ -139,15 +141,75 @@ const Cart = () => {
         }
     };
 
+    // Mastercard	5267 3181 8797 5449	Random CVV	Any future date
+    // Visa	4386 2894 0766 0153	Random CVV	Any future date
+
+    const handlePayment = async () => {
+        console.log("triggered")
+        const res = await axios.post('http://localhost:3000/api/payment/create-order', { amount : totalPrice });
+
+        const options = {
+            key: 'rzp_test_YkO4VIe1rAjpOw',
+            amount: res.data.order.amount,
+            currency: 'INR',
+            name: 'Ecommerce',
+            description: 'Store For You!',
+            order_id: res.data.order.id,
+            handler: async function (response) {
+                const verifyRes = await axios.post('http://localhost:3000/api/payment/verify', {
+                    razorpay_order_id: response.razorpay_order_id,
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    razorpay_signature: response.razorpay_signature,
+                });
+
+                if (verifyRes.data.success) {
+                    swal.fire({
+                        type: 'success',
+                        title: 'Success!',
+                        text: 'Your order successfully Placed!',
+                    })
+                } else {
+                    swal.fire({
+                        type: 'error',
+                        title: 'Ooops...',
+                        text: 'Something went wrong!',
+                    })
+                }
+            },
+            prefill: {
+                name: user?.firstname + ' ' + user?.lastname,
+                email: user?.email,
+                contact: user.phone,
+            },
+            theme: {
+                color: '#3399cc',
+            },
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+    };
+
+    const handleProduct = (id) => {
+        navigate(`/product-info/${id}`);
+    }
+
+
 
 
     return (
-        <div className="p-4">
-            <h1 className="text-xl font-bold mb-4">Your Cart</h1>
+        <div className="p-4 w-[70%] ml-[15%] h-[80vh] overflow-y-scroll scrollbar-hide
+        border rounded-2xl bg-white
+        shadow-2xl transform-gpu
+        hover:scale-[1.02] hover:-rotate-x-1 hover:rotate-y-1
+        transition-all duration-300 ease-in-out
+        bg-white/30 backdrop-blur-md border-white/20"
+        >
+        <h1 className="text-xl font-bold sticky -top-5 bg-white p-2 flex gap-2 items-center"><GoBack/> Your Cart</h1>
             {cartItems.length === 0 ? (
                 <p>Your cart is empty.</p>
             ) : (
-                <div className="space-y-4 w-2/3 ">
+                <div className=" w-full ">
                     {cartItems.map((item , index) => {
                         const originalPrice = item?.price;
                         const discountPercent = Math.floor(Math.random() * (80 - 50 + 1)) + 50;
@@ -155,7 +217,8 @@ const Cart = () => {
                         // console.log(item)
                         return (
                         <div key={item._id} className="border-b-2 p-4 border-black flex gap-2 justify-between">
-                            <div className="flex gap-2">
+                            <div className="flex gap-2"
+                            onClick={() => handleProduct(item._id)}>
                             <p>{index+1}</p>
                                 <img
                                     key={index}
@@ -197,8 +260,13 @@ const Cart = () => {
                         </div>
                         )
                     })}
-                <div className="w-full text-right">
+                <div className="w-full text-right sticky -bottom-4 bg-white">
                     <p className="text-lg font-bold">Total: {"(" + cartItems.length + " " + "Items)"} ₹{totalPrice.toLocaleString()}</p>
+                    <button onClick={()=>handlePayment()} className="px-4 py-2 border-2 rounded-xl border-black bg-green-200 font-medium mt-2 active:bg-gray-400">
+                        <p className="flex gap-2">
+                        <ShoppingBag /> Buy Your Cart
+                        </p>
+                    </button>
                 </div>
                 </div>
             )}

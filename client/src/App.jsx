@@ -14,6 +14,7 @@ import ProductInfo from "./pages/customer/Product-info.jsx";
 import AddToCart from "./components/reUsable/AddToCart.jsx";
 import Cart from "./pages/customer/Cart.jsx"
 import Profile from "./pages/customer/profile.jsx"
+import Explore from "./pages/customer/explore.jsx"
 import Swal from "sweetalert2";
 
 export default function App() {
@@ -28,7 +29,7 @@ export default function App() {
                     <Route path="add-to-cart/:productId/:userId" element={<AddToCart />} />
                     <Route path="Cart" element={<Cart />} />
                     <Route path="profile" element={<Profile />} />
-
+                    <Route path="explore" element={<Explore />} />
                 </Route>
 
                 <Route path="/admin" element={<AdminLayout />}>
