@@ -10,6 +10,24 @@ const imagekit = new ImageKit({
     privateKey: process.env.IK_PRIVATEKEY
 });
 
+const uploadFiles = async (imagesArray) => {
+    const filePath = []
+    // console.log("Image Arr : " ,imagesArray)
+    for (const file of imagesArray) {
+        // console.log("file : ", i++, "buffer :", file.buffer, "name :", file.originalname);
+        const fileBuff = file?.buffer
+        if (fileBuff) {
+            const result = await imagekit.upload({
+                file: fileBuff,//<url|base_64|binary>, //required
+                fileName: file.originalname,   //required
+            });
+            // console.log("Result", result)
+            filePath.push(result.filePath)
+        }
+    }
+    return filePath;
+}
+
 //Validations: Empty fields, 1 image required(Commented right now),
 const createProducts = async (req, res) => {
     try {
@@ -104,10 +122,18 @@ const updateProduct = async (req, res) => {
             price,
             quantity,
             active,
-            attributes
+            attributes,
+            imagesArr
         } = req.body;
 
+        // console.log("Images Array: ", JSON.parse(imagesArr))
+        // console.log('Req.files: ', typeof req.files)
+
+        const filePath = await uploadFiles(req.files)
+
         const parsedAttributes = typeof attributes === "string" ? JSON.parse(attributes) : attributes;
+
+        const imgArr = JSON.parse(imagesArr)
 
         const updateData = {
             name,
@@ -116,13 +142,19 @@ const updateProduct = async (req, res) => {
             price,
             quantity,
             active,
-            attributes: parsedAttributes
+            attributes: parsedAttributes,
+            images: [...imgArr, ...filePath]
         };
 
+
+        // console.log(" imgArr ", imgArr)
+        // console.log('Final images array and file path: ' , imagesArr, filePath)
+
+        // console.log("Images: ", updateData.images)
         await Product.findByIdAndUpdate(req.params.id, updateData);
 
         const product = await Product.findById(req.params.id);
-        res.status(200).json({product, message: 'Product updated successfully'});
+        res.status(200).json({ product, message: 'Product updated successfully', filePath});
     } catch (error) {
         console.log("Update Error:", error);
         res.status(500).send('Something went wrong...');

@@ -19,7 +19,7 @@ const Home = () => {
                 console.log(err);
             }
         }
-        fetchShipping();
+        // fetchShipping();
     },[])
 
     return (

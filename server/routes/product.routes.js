@@ -22,7 +22,7 @@ router.post('/createProduct', getUserAuthentication, upload.array('image'), crea
 
 router.get('/getProducts', getProducts)
 
-router.patch("/update/:id", getUserAuthentication, upload.single("image"), updateProduct);
+router.patch("/update/:id", getUserAuthentication, upload.array("imagesFile"), updateProduct);
 
 router.delete('/delete/:id', getUserAuthentication, deleteProduct)
 
