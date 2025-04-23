@@ -5,16 +5,17 @@ import Footer from "../components/Footer.jsx"
 
 const UserLayout = () => {
     return (
-        <div className="flex h-[100vh]">
-            <div className="w-[10vw] border-r-2">
+        <div className="flex w-full h-screen overflow-hidden">
+            <div className=" h-full">
                 <AdminNavbar />
             </div>
-            <div style={{ flex: 1, padding: "20px" }}>
+            <div className="flex-1 h-full overflow-y-auto p-5 ">
                 <Outlet />
                 <Footer />
             </div>
         </div>
     );
 };
+
 
 export default UserLayout;

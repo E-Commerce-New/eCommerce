@@ -7,20 +7,20 @@ const Home = () => {
     const { user } = useSelector((state) => state.user);
     console.log(user)
 
-    useEffect(() => {
-        const fetchShipping = async () => {
-            try {
-                const res = await axios.post("http://localhost:3000/api/user/shipping", {
-                    email: "alok@example.com",
-                    password: "alok"
-                });
-                console.log(res.data);
-            } catch (err) {
-                console.log(err);
-            }
-        }
-        // fetchShipping();
-    },[])
+    // useEffect(() => {
+    //     const fetchShipping = async () => {
+    //         try {
+    //             const res = await axios.post("http://localhost:3000/api/user/shipping", {
+    //                 email: "alok@example.com",
+    //                 password: "alok"
+    //             });
+    //             console.log(res.data);
+    //         } catch (err) {
+    //             console.log(err);
+    //         }
+    //     }
+    //     fetchShipping();
+    // },[])
 
     return (
         <>

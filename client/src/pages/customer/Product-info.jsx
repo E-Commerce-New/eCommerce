@@ -132,11 +132,11 @@ const ProductInfo = () => {
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A ab adipisci aliquid beatae consequatur ea eius error in laborum magni maiores maxime minima molestiae, mollitia neque perferendis, perspiciatis, provident quae quibusdam quisquam recusandae sed tempore temporibus veritatis voluptatum. Ad animi asperiores enim eveniet, fugiat iusto laborum provident quaerat quam quasi sequi sunt ullam ut voluptas voluptate. A accusantium assumenda consectetur distinctio dolores, eligendi ex illum in iste natus nulla, perferendis quas repudiandae sequi ullam ut, vel voluptates? Accusamus corporis dicta error iure iusto quaerat quibusdam quidem quisquam repudiandae soluta? Animi consequuntur doloremque dolorum est fugit maxime nam porro voluptate voluptatem?</p>
                     </div>
                     <p className="underline">Report a problem about this product</p>
-                    <div className="flex gap-4 ">
+                    <div className="flex gap-4 justify-end">
                         <button className="border-b-2 border-black p-2 w-1/2 hover:bg-gray-200"
                                 onClick={()=>handleAddToCart(product._id , user)}
                         >Add to Cart</button>
-                        <button className="border-b-2 border-black p-2 w-1/2 hover:bg-gray-200">Buy Now</button>
+                        {/*<button className="border-b-2 border-black p-2 w-1/2 hover:bg-gray-200">Buy Now</button>*/}
                     </div>
                     <hr/>
 

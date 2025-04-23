@@ -2,8 +2,9 @@ require("dotenv").config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const {userRouter, productRouter, orderRouter , cartRouter} = require('./routes/index')
+const {userRouter, productRouter, orderRouter , cartRouter , paymentRouter} = require('./routes/index')
 const cookieParser = require('cookie-parser')
+const Razorpay = require("razorpay");
 // const ImageKit = require('imagekit')
 
 const app = express()
@@ -28,6 +29,7 @@ app.use('/api/user', userRouter)
 app.use('/api/product', productRouter)
 app.use('/api/order', orderRouter)
 app.use('/api/cart', cartRouter)
+app.use('/api/payment', paymentRouter)
 
 // //ImageKit
 //
