@@ -27,8 +27,11 @@ const UpdateProduct = () => {
                     icon: 'success',
                     title: 'Deleted!',
                     text: res.data.message || 'Product has been deleted!',
-                });
-                navigate("/admin/products");
+                }).then((result) => {
+                    if(result.isConfirmed) {
+                        navigate("/admin/products");
+                    }
+                })
             } catch (err) {
                 console.error("Error deleting product:", err);
                 Swal.fire({

@@ -1,39 +1,114 @@
-import { SquareArrowOutUpRight , LayoutTemplate ,LayoutGrid , Settings , ChartSpline , StickyNote , Package , Tag , Users , Mail , Plus} from "lucide-react"
-import {Link} from "react-router-dom";
-import logo from "../../assets/logo.png"
+import {
+    SquareArrowOutUpRight,
+    LayoutTemplate,
+    LayoutGrid,
+    Settings,
+    ChartSpline,
+    StickyNote,
+    Package,
+    Tag,
+    Users,
+    Mail,
+    Plus
+} from "lucide-react";
+import {Link, useLocation} from "react-router-dom";
+import logo from "../../assets/logo.png";
 
 const AdminNavbar = () => {
-    return (
-        <>
-            <div className="flex flex-col p-4">
-            <div>
-                <img src={logo} alt="Logo"/>
-            </div>
-                <hr className="bg-gray-400 h-[3px] mt-2" />
-                <div className="flex flex-col mt-10 gap-3">
-                    <input type="search" name="" id="" placeholder="Search" className="border border-gray-300 p-2 focus:outline-0" />
-                    <div className="flex justify-between p-2 text-sm items-center">
-                        <LayoutTemplate />
-                    <Link to="/" className="text-center">View Live Site </Link>
-                        <SquareArrowOutUpRight />
-                    </div>
-                </div>
-                <hr className="bg-gray-400 h-[2px] mt-7" />
-                <div className="flex flex-col mt-5 gap-6">
-                    <Link to="/admin/panel" className="flex gap-3"> <LayoutGrid /> Overview </Link>
-                    <div className="flex gap-3"> <ChartSpline /> Analytics </div>
-                    <Link to="/admin/pages" className="flex gap-3 justify-between"> <div className="flex gap-3"> <StickyNote /> Pages </div> <Plus /> </Link>
-                    <Link to="/admin/products" className="flex gap-3"> <Package /> Products </Link>
-                    <div className="flex gap-3"> <Tag /> Tags </div>
-                    <div className="flex gap-3 justify-between"> <div className="flex gap-3"> <Users /> Members </div> <Plus /> </div>
-                    <div className="flex gap-3"> <Mail /> Inquiries </div>
-                    <Link to="/admin/setting" className="flex gap-3"> <Settings/> Setting </Link>
-                </div>
+    const location = useLocation();
 
+    const nav = [
+        { to: "/admin/panel", label: "Overview", icon: <LayoutGrid /> },
+        { to: "/admin/products", label: "Product", icon: <Package /> },
+        { to: "/admin/setting", label: "Setting", icon: <Settings /> },
+    ];
+
+    return (
+        <div className="flex flex-col w-16 hover:w-52 transition-all duration-300 bg-white shadow-lg h-screen p-4 overflow-hidden group">
+
+            <div className="flex items-center justify-center mb-6">
+                <img src={logo} alt="Logo" className="w-10 h-10" />
             </div>
-        </>
-    )
-}
+
+            <div className="flex items-center gap-2 text-sm text-gray-700 px-1 py-2">
+                <LayoutTemplate className="min-w-5" />
+                <Link to="/" className="truncate hidden group-hover:block">
+                    View Live Site
+                </Link>
+                <SquareArrowOutUpRight className="min-w-5 hidden group-hover:block" />
+            </div>
+
+            <hr className="my-4 border-gray-300" />
+
+            <nav className="flex flex-col gap-2">
+                {nav.map(({ to, label, icon }) => {
+                    const isActive = location.pathname.startsWith(to);
+
+                    return (
+                        <Link
+                            key={to}
+                            to={to}
+                            className={`flex items-center gap-3 text-gray-800 px-2 py-2 rounded transition-all duration-200 ${
+                                isActive ? 'border-l-4 border-black bg-gray-100' : 'hover:bg-gray-100'
+                            }`}
+                        >
+                            <span className="min-w-5">{icon}</span>
+                            <span className="hidden group-hover:inline-block truncate">{label}</span>
+                        </Link>
+                    );
+                })}
+            </nav>
+        </div>
+    );
+};
 
 export default AdminNavbar;
 
+
+
+
+
+
+
+
+
+{/*<nav className="flex flex-col gap-4">*/}
+            {/*    <Link to="/admin/panel" className={`flex items-center gap-3 text-gray-800 ${location.pathname === "admin/products" ? "border-l-2 border-black" : null}`}>*/}
+            {/*        <LayoutGrid className="min-w-5" />*/}
+            {/*        <span className="hidden group-hover:block">Overview</span>*/}
+            {/*    </Link>*/}
+            {/*    <div className="flex items-center gap-3 text-gray-800">*/}
+            {/*        <ChartSpline className="min-w-5" />*/}
+            {/*        <span className="hidden group-hover:block">Analytics</span>*/}
+            {/*    </div>*/}
+            {/*    <Link to="/admin/pages" className="flex items-center justify-between text-gray-800">*/}
+            {/*        <div className="flex items-center gap-3">*/}
+            {/*            <StickyNote className="min-w-5" />*/}
+            {/*            <span className="hidden group-hover:block">Pages</span>*/}
+            {/*        </div>*/}
+            {/*        <Plus className="hidden group-hover:block" />*/}
+            {/*    </Link>*/}
+            {/*    <Link to="/admin/products" className="flex items-center gap-3 text-gray-800">*/}
+            {/*        <Package className="min-w-5" />*/}
+            {/*        <span className="hidden group-hover:block">Products</span>*/}
+            {/*    </Link>*/}
+            {/*    <div className="flex items-center gap-3 text-gray-800">*/}
+            {/*        <Tag className="min-w-5" />*/}
+            {/*        <span className="hidden group-hover:block">Tags</span>*/}
+            {/*    </div>*/}
+            {/*    <div className="flex items-center justify-between text-gray-800">*/}
+            {/*        <div className="flex items-center gap-3">*/}
+            {/*            <Users className="min-w-5" />*/}
+            {/*            <span className="hidden group-hover:block">Members</span>*/}
+            {/*        </div>*/}
+            {/*        <Plus className="hidden group-hover:block" />*/}
+            {/*    </div>*/}
+            {/*    <div className="flex items-center gap-3 text-gray-800">*/}
+            {/*        <Mail className="min-w-5" />*/}
+            {/*        <span className="hidden group-hover:block">Inquiries</span>*/}
+            {/*    </div>*/}
+            {/*    <Link to="/admin/setting" className="flex items-center gap-3 text-gray-800">*/}
+            {/*        <Settings className="min-w-5" />*/}
+            {/*        <span className="hidden group-hover:block">Settings</span>*/}
+            {/*    </Link>*/}
+            {/*</nav>*/}

@@ -4,14 +4,20 @@ import { Outlet } from "react-router-dom";
 
 const AdminLayout = () => {
     return (
-        <div className="flex h-[100vh]">
-            <div className="w-[14vw] border-r-2">
-                <AdminNavbar />
+        <div className="flex h-screen">
+            {/* Sidebar */}
+            <div className="relative">
+                <div className="group hover:w-52 w-16 transition-all duration-300 h-full border-r-2 z-10 fixed">
+                    <AdminNavbar />
+                </div>
             </div>
-            <div style={{ flex: 1, padding: "20px" }}>
+
+            {/* Main Content */}
+            <div className="flex-1 ml-16 group-hover:ml-64 transition-all duration-300 p-4">
                 <Outlet />
             </div>
         </div>
+
     );
 };
 

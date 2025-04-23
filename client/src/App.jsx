@@ -4,8 +4,8 @@ import NoPage from "./pages/NoPage";
 import AdminPanel from "./pages/admin/AdminDashboard";
 import AdminLayout from "./layouts/AdminLayout";
 import Products from "./pages/admin/Products.jsx";
-import UpdateProduct from "./pages/admin/updateProduct";
-import DeleteProduct from "./pages/admin/DeleteProduct";
+import UpdateProduct from "./pages/admin/ProductModule/updateProduct.jsx";
+import DeleteProduct from "./pages/admin/ProductModule/DeleteProduct.jsx";
 import SignUp from "./pages/Signup.jsx"
 import Home from "./pages/Home.jsx"
 import UserLayout from "./layouts/UserLayout"

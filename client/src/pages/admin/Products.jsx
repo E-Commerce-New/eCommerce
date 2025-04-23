@@ -4,13 +4,14 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import swal from "sweetalert2";
 import {useNavigate} from "react-router-dom";
-import {Trash2} from 'lucide-react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-dayjs.extend(relativeTime);
 import RightTopNav from "../../components/reUsable/RightTopNav";
 import Categories from "../../components/Categories";
 import {useSelector} from "react-redux";
+import AddProduct from "./ProductModule/AddProduct.jsx";
+import ShowProducts from "./ProductModule/ShowProducts.jsx";
+dayjs.extend(relativeTime);
 
 const Products = () => {
     const [showAddProduct, setShowAddProduct] = useState(false);
@@ -92,7 +93,7 @@ const Products = () => {
                 Swal.showLoading();
             }
         });
-        // console.log("Submitted Form:", form);
+
         try {
             const formData = new FormData();
             formData.append("name", form.name);
@@ -101,11 +102,7 @@ const Products = () => {
             formData.append("price", form.price);
             formData.append("quantity", form.quantity);
             formData.append("active", form.active);
-            // formData.append("image", form.image);
             formData.append("attributes", JSON.stringify(form.attributes));
-            //form.image setup
-            // console.log('form.image ', form.image, 'typeof ', typeof form.image)
-            // console.log('images ', images, 'type of ', typeof images, 'lenght ', images.length)
             if (images?.length > 0) {
                 for (let i = 0; i < images.length; i++) {
                     formData.append('image', images[i])
@@ -204,15 +201,9 @@ const Products = () => {
 
         getAllCategories();
         getAllProducts();
-    }, [showAddProduct]);
+    }, []);
 
-    const handleEdit = (productId) => {
-        navigate(`/admin/update-product/${productId}`);
-    };
 
-    const handeldelete = (productId) => {
-        navigate(`/admin/delete-product/${productId}`);
-    }
 
     const filteredProducts = products.filter(product =>
         product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -246,179 +237,18 @@ const Products = () => {
                     <button className="font-medium py-2 border-2 m-2 rounded-2xl border-black px-4 "
                             onClick={() => setShowCate(!showCate)}>Show Category Section
                     </button>
-
                 </div>
-                {showAddProduct ?
-                    <form onSubmit={onSubmit} encType="multipart/form-data"
-                          className="flex flex-col gap-2 p-4 border-2 border-black">
-                        <h1 className="text-2xl font-mono font-bold">Add Product</h1>
-                        <div className="flex flex-col gap-2">
-                            <label>Product Name</label>
-                            <input
-                                type="text"
-                                name="name"
-                                value={form.name}
-                                onChange={handleChange}
-                                placeholder="Enter Product Name here..."
-                                className="border-b-2 border-black p-2"
-                            />
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                            <label>Description</label>
-                            <input
-                                type="text"
-                                name="description"
-                                value={form.description}
-                                onChange={handleChange}
-                                placeholder="Enter About Product here..."
-                                className="border-b-2 border-black p-2"
-                            />
-                        </div>
-
-                        <div>
-                            <select
-                                name="category"
-                                value={form.category}
-                                onChange={handleChange}
-                                className="p-2 border-b-2 border-black bg-transparent"
-                            >
-                                <option value="">Select Category</option>
-                                {categories.map((cate) => (
-                                    <option key={cate._id} value={cate.category}>
-                                        {cate.category}
-                                    </option>
-                                ))}
-
-                            </select>
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                            <label>Price</label>
-                            <input
-                                type="number"
-                                name="price"
-                                value={form.price}
-                                onChange={handleChange}
-                                placeholder="Enter Product Price here..."
-                                className="border-b-2 border-black p-2"
-                            />
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                            <label>Quantity in Stock</label>
-                            <input
-                                type="number"
-                                name="quantity"
-                                value={form.quantity}
-                                onChange={handleChange}
-                                placeholder="Enter Product Quantity here..."
-                                className="border-b-2 border-black p-2"
-                            />
-                        </div>
-
-                        {/*<input*/}
-                        {/*    type="file"*/}
-                        {/*    name="image"*/}
-                        {/*    id='image'*/}
-                        {/*    accept="image/*"*/}
-                        {/*    onChange={handleChange}*/}
-                        {/*    multiple*/}
-                        {/*/>*/}
-
-                        <div className='bg-indigo-100 p-4'>
-                            {singleFile.length > 0 ? <p className='text-red-500'>**First selected image will be used as preview image of your product**</p> : ""}
-                            <div className='flex flex-wrap gap-2 '>
-                                {singleFile.length !== 0 &&
-                                    singleFile.map((url, index) => (
-
-                                        <div
-                                            className={`img-block bg-gray w-[400px] h-[400px] relative bg-gray-500 flex flex-row border-4 mb-4 items-center ${index === 0 ? ' border-green-500 ' : 'border-black'}`}>
-                                            <img className="object-contain w-[400px] h-[400px]"
-                                                 src={url} alt="..."/>
-                                            <span
-                                                className="absolute top-2 right-2 cursor-pointer"
-                                                onClick={() => removeImage(index)}
-                                            >
-                                                    <CircleX
-                                                        className='bg-red-500 text-white text-2xl rounded-full w-10 h-10'/>
-                                            </span>
-                                        </div>
-                                    ))}
-                            </div>
-
-                            <div className=''>
-                                <label htmlFor="imgUploader"
-                                       className='bg-gray-400 p-2 rounded hover:cursor-pointer hover:bg-green-500'><CirclePlus
-                                    className='inline-block bg-green-500 rounded-full  text-white'/> Select
-                                    Images</label>
-                                <p className=' ml-4 inline-block'>{singleFile.length} Files Selected</p>
-                                <input
-                                    type="file"
-                                    name="myfile"
-                                    multiple
-                                    id='imgUploader'
-                                    accept="image/*"
-                                    onChange={uploadSingleFiles}
-                                    className='hidden'
-                                />
-                            </div>
-
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <label>Attributes</label>
-                            <div id="attr" className="flex flex-col gap-2">
-                                {form.attributes.map((attr, index) => (
-                                    <div key={index} className="flex gap-3 items-center">
-                                        <input
-                                            type="text"
-                                            placeholder="Key"
-                                            className="border-b-2 border-black p-2"
-                                            value={attr.key}
-                                            onChange={(e) =>
-                                                handleAttributeChange(index, "key", e.target.value)
-                                            }
-                                        />
-                                        <input
-                                            type="text"
-                                            placeholder="Value"
-                                            className="border-b-2 border-black p-2"
-                                            value={attr.value}
-                                            onChange={(e) =>
-                                                handleAttributeChange(index, "value", e.target.value)
-                                            }
-                                        />
-                                        {index === form.attributes.length - 1 && (
-                                            <button
-                                                className="border-2 border-black bg-sky-200 p-2 rounded-[50%] font-bold"
-                                                onClick={addAttribute}
-                                            >
-                                                +
-                                            </button>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            <label htmlFor="active">Active</label>
-                            <input
-                                type="checkbox"
-                                id="active"
-                                name="active"
-                                checked={form.active}
-                                onChange={handleChange}
-                                className="border-2 border-black"
-                            />
-                        </div>
-
-                        <input
-                            type="submit"
-                            className="border-b-2 border-black p-2 font-medium hover:bg-gray-200"
-                            value="Add Product"
-                        />
-                    </form> : ""}
+                    {showAddProduct ? <AddProduct
+                    onSubmit={onSubmit}
+                    addAttribute={addAttribute}
+                    handleAttributeChange={handleAttributeChange}
+                    handleChange={handleChange}
+                    removeImage={removeImage}
+                    uploadSingleFiles={uploadSingleFiles}
+                    singleFile={singleFile}
+                    categories={categories}
+                    form={form}
+                    /> : null}
             </div>
 
             {/*Category Section */}
@@ -428,96 +258,12 @@ const Products = () => {
             }
 
             {/*Show Products*/}
-            <div className="p-4">
-                <div className="flex justify-between items-center py-3 ">
-                    <h1 className="text-2xl font-bold">Product List</h1>
-                    <p>Total Fetched Products - {products.length}</p>
-                </div>
-                {/*search products */}
-                <div>
-                    <input
-                        type="text"
-                        placeholder="Search by name, description, or price"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="mb-4 px-4 py-2 border border-black rounded w-full sm:w-1/2 focus:outline-0"
-                    />
-                </div>
-                <table className="min-w-full table-auto border border-gray-300">
-                    <thead className="bg-gray-100">
-                    <tr>
-                        <th className="border px-4 py-2">S. No.</th>
-                        <th className="border px-4 py-2">Name</th>
-                        <th className="border px-4 py-2">Description</th>
-                        <th className="border px-4 py-2">Price</th>
-                        <th className="border px-4 py-2">Quantity</th>
-                        <th className="border px-4 py-2">Category</th>
-                        <th className="border px-4 py-2">Active</th>
-                        <th className="border px-4 py-2">Attributes</th>
-                        <th className="border px-4 py-2">Edit</th>
-                        <th className="border px-4 py-2">Delete</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    {filteredProducts && filteredProducts.length > 0 ? (
-                        filteredProducts.map((product, index) => (
-                            <tr key={product._id}>
-                                <td className="border px-4 py-2">{index + 1}</td>
-                                <td className="border px-4 py-2">{product.name}</td>
-                                <td className="border px-4 py-2">{product.description}</td>
-                                <td className="border px-4 py-2">₹{product?.price?.toLocaleString()}</td>
-                                <td className="border px-4 py-2">{product.quantity}</td>
-                                <td className="border px-4 py-2">{product.category}</td>
-                                <td className="border px-4 py-2">
-                                    <input type="checkbox" checked={product.active} readOnly/>
-                                </td>
-                                <td className="border px-4 py-2">
-                                    {product.attributes && product.attributes.length > 0 ? (
-                                        product.attributes.map((attr, idx) => (
-                                            <div key={idx}>
-                                                {attr.key || attr.value ? (
-                                                    <>
-                                                        <span
-                                                            className="font-medium">{attr.key || "N/A"}:</span> {attr.value || "N/A"}
-                                                    </>
-                                                ) : (
-                                                    "N/A"
-                                                )}
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <span className="text-gray-400 italic">N/A</span>
-                                    )}
-                                </td>
-                                <td className="border px-4 py-2 text-center">
-                                    <button
-                                        onClick={() => handleEdit(product._id)}
-                                        className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-                                    >
-                                        Edit
-                                    </button>
-                                </td>
-                                <td className="border px-4 py-2 text-center">
-                                    <button
-                                        onClick={() => handeldelete(product._id)}
-                                        className="bg-red-500 text-white p-1 py-1 rounded hover:bg-red-600"
-                                    >
-                                        <Trash2/>
-                                    </button>
-                                </td>
-                            </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan="10" className="text-center text-red-500 py-4">
-                                No products found
-                            </td>
-                        </tr>
-                    )}
-                    </tbody>
-                </table>
-            </div>
+            <ShowProducts
+            filteredProducts={filteredProducts}
+            products={products}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            />
         </>
 
     );

@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import GoBack from "../../components/reUsable/Goback";
+import GoBack from "../../../components/reUsable/Goback.jsx";
 import swal from "sweetalert2";
 import {CirclePlus, CircleX} from "lucide-react";
 
@@ -164,8 +164,11 @@ const UpdateProduct = () => {
                 icon: 'success',
                 title: 'Product Updated',
                 text: res.data.message || 'Product has been successfully updated!',
-            });
-            history.back()
+            }).then((result) => {
+                if(result.isConfirmed) {
+                    history.back()
+                }
+            })
         } catch (error) {
             Swal.fire({
                 icon: 'error',
