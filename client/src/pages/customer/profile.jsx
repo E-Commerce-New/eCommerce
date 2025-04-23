@@ -134,7 +134,7 @@ const Profile = () => {
                 swal.close()
                 Swal.fire({
                     icon: 'error',
-                    title: 'Oops...',
+                    title: 'Oops... else',
                     text: res.data.message || 'Something went wrong!',
                 });
             }
@@ -143,7 +143,7 @@ const Profile = () => {
             console.log("error: ", error)
             Swal.fire({
                 icon: 'error',
-                title: 'Oops...',
+                title: 'Oops... catch',
                 text: error.response?.data?.message || 'Something went wrong!',
             });
         }

@@ -30,7 +30,7 @@ router.post('/getproductbyid', getProductById)
 
 router.post('/addCategory', getUserAuthentication, addCategory)
 
-router.get('/getCategories', getUserAuthentication, getCategories)
+router.get('/getCategories', getCategories)
 
 // router.delete('/deleteCategory', getUserAuthentication, deleteCategory)
 
