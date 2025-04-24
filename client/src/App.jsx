@@ -11,11 +11,13 @@ import Home from "./pages/Home.jsx"
 import UserLayout from "./layouts/UserLayout"
 import AdminSettings from "./pages/admin/AdminSetting"
 import ProductInfo from "./pages/customer/Product-info.jsx";
-import AddToCart from "./components/reUsable/AddToCart.jsx";
+import AddToCart from "./components/reUsable/AddToCart.js";
 import Cart from "./pages/customer/Cart.jsx"
 import Profile from "./pages/customer/profile.jsx"
 import Explore from "./pages/customer/explore.jsx"
 import Swal from "sweetalert2";
+import AboutUs from "./pages/customer/About.jsx";
+import Contact from "./pages/customer/Contact.jsx";
 
 export default function App() {
     return (
@@ -30,6 +32,9 @@ export default function App() {
                     <Route path="Cart" element={<Cart />} />
                     <Route path="profile" element={<Profile />} />
                     <Route path="explore" element={<Explore />} />
+                    <Route path="aboutUs" element={<AboutUs />} />
+                    <Route path="contact" element={<Contact />} />
+
                 </Route>
 
                 <Route path="/admin" element={<AdminLayout />}>

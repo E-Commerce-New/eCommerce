@@ -51,9 +51,10 @@ const AdminNavbar = () => {
                             className={`flex items-center gap-3 text-gray-800 px-2 py-2 rounded transition-all duration-200 ${
                                 isActive ? 'border-l-4 border-black bg-gray-100' : 'hover:bg-gray-100'
                             }`}
+                            title={label}
                         >
                             <span className="min-w-5">{icon}</span>
-                            <span className="hidden group-hover:inline-block truncate">{label}</span>
+                            <span className="w-0  group-hover:w-full transition-all duration-1000 truncate">{label}</span>
                         </Link>
                     );
                 })}

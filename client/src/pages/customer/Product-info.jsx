@@ -4,6 +4,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import {useSelector} from "react-redux";
 import swal from "sweetalert2";
+import addToCart  from "../../components/reUsable/AddToCart.js";
 
 const ProductInfo = () => {
     const id = useParams();
@@ -59,7 +60,7 @@ const ProductInfo = () => {
             });
             return;
         }
-        navigate(`/add-to-cart/${productId}/${user._id}`);
+        addToCart(productId, user);
     }
 
 

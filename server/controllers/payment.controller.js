@@ -1,5 +1,6 @@
-import crypto from "crypto";
-import Razorpay from "razorpay";
+const crypto = require("crypto");
+const Razorpay = require("razorpay");
+const Payment = require("../models/payment");
 
 const instance = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
@@ -24,8 +25,9 @@ const createOrder = async (req, res) => {
     }
 }
 
-const verifyOrder = (req, res) => {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+const verifyOrder = async (req, res) => {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, userId, amount } = req.body;
+    console.log("Verify Body:", req.body);
 
     const body = razorpay_order_id + "|" + razorpay_payment_id;
 
@@ -35,10 +37,36 @@ const verifyOrder = (req, res) => {
         .digest("hex");
 
     if (expectedSignature === razorpay_signature) {
-        res.status(200).json({ success: true });
-    } else {
-        res.status(400).json({ success: false });
-    }
-}
+        try {
+            const payment = await Payment.create({
+                razorpay_order_id,
+                razorpay_payment_id,
+                razorpay_signature,
+                user: userId,
+                status: "success",
+                amount,
+            });
 
-export { createOrder , verifyOrder };
+            return res.status(200).json({
+                success: true,
+                message: "Payment verified and saved!",
+                payment,
+            });
+        } catch (error) {
+            console.error("Error saving payment:", error);
+            return res.status(500).json({
+                success: false,
+                message: "Payment verified but saving to DB failed.",
+                error,
+            });
+        }
+    } else {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid payment signature.",
+        });
+    }
+};
+
+
+module.exports = {verifyOrder , createOrder}

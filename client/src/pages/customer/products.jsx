@@ -4,6 +4,7 @@ import {useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
 import Swal from "sweetalert2";
 import swal from "sweetalert2";
+import  addToCart  from "../../components/reUsable/AddToCart.js";
 
 const Products = () => {
     const [products, setProducts] = useState([]);
@@ -70,7 +71,7 @@ const Products = () => {
             });
             return;
         }
-        navigate(`/add-to-cart/${productId}/${user._id}`);
+        addToCart(productId, user);
     }
 
     return (

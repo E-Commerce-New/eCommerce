@@ -248,6 +248,8 @@ const Products = () => {
                     singleFile={singleFile}
                     categories={categories}
                     form={form}
+                    setShowAddProduct={setShowAddProduct}
+                    showAddProduct={showAddProduct}
                     /> : null}
             </div>
 

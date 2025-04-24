@@ -2,13 +2,13 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const orderSchema = new Schema({
-    userId: Schema.Types.ObjectId, // Reference to user, null for guest checkout
-    status: String, // 'pending', 'processing', 'shipped', 'delivered', 'cancelled'
+    userId: Schema.Types.ObjectId,
+    status: String,
     items: [
     {
         productId: Schema.Types.ObjectId,
-        name: String, // Product name at time of purchase
-        price: Number, // Price at time of purchase
+        name: String,
+        price: Number,
         quantity: Number,
         sku: String
     }
@@ -19,7 +19,7 @@ const orderSchema = new Schema({
     discount: Number,
     total: Number,
     paymentMethod: String,
-    paymentStatus: String, // 'pending', 'completed', 'failed', 'refunded'
+    paymentStatus: String,
     transactionId: String,
     shippingAddress: {
     addressLine1: String,

@@ -50,9 +50,10 @@ const AdminNavbar = () => {
                         className={`flex items-center gap-4 p-2 rounded-md w-full transition-all duration-200 hover:bg-gray-100 ${
                             location.pathname === to ? "border-l-4 border-black bg-gray-100" : ""
                         }`}
+                        title={label}
                     >
                         <div className="text-lg">{icon}</div>
-                        <span className="text-sm font-medium hidden group-hover:inline">
+                        <span className="text-sm font-medium w-0 overflow-hidden group-hover:inline group-hover:w-full transition-all duration-1000 text-nowrap">
               {label}
             </span>
                     </Link>
