@@ -2,10 +2,8 @@ require("dotenv").config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const {userRouter, productRouter, orderRouter , cartRouter , paymentRouter} = require('./routes/index')
+const {userRouter, productRouter, orderRouter , cartRouter , paymentRouter, logisticRouter} = require('./routes/index')
 const cookieParser = require('cookie-parser')
-const Razorpay = require("razorpay");
-// const ImageKit = require('imagekit')
 
 const app = express()
 const port = process.env.PORT || 3002;
@@ -30,19 +28,8 @@ app.use('/api/product', productRouter)
 app.use('/api/order', orderRouter)
 app.use('/api/cart', cartRouter)
 app.use('/api/payment', paymentRouter)
+app.use('/api/logistic', logisticRouter)
 
-// //ImageKit
-//
-// const imagekit = new ImageKit({
-//     urlEndpoint: '',
-//     publicKey: '',
-//     privateKey: ''
-// });
-//
-// app.get('/auth', async(req,res)=>{
-//     const result = imagekit.getAuthenticationParameters();
-//     res.send(result);
-// })
 
 // Start server
 app.listen(port, () => {

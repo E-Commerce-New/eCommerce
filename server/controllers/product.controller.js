@@ -1,39 +1,14 @@
 const Product = require("../models/product");
 const Category = require("../models/category");
-// const multer = require("multer");
-const ImageKit = require("imagekit");
 const {Types} = require("mongoose");
+const {uploadFiles, deleteFiles} = require("../helper/fileHandelers");
 
-const imagekit = new ImageKit({
-    urlEndpoint: process.env.IK_URLENDPOINT,
-    publicKey: process.env.IK_PUBLICKEY,
-    privateKey: process.env.IK_PRIVATEKEY
-});
-
-const uploadFiles = async (imagesArray) => {
-    const filePath = []
-    // console.log("Image Arr : " ,imagesArray)
-    for (const file of imagesArray) {
-        // console.log("file : ", i++, "buffer :", file.buffer, "name :", file.originalname);
-        const fileBuff = file?.buffer
-        if (fileBuff) {
-            const result = await imagekit.upload({
-                file: fileBuff,//<url|base_64|binary>, //required
-                fileName: file.originalname,   //required
-            });
-            // console.log("Result", result)
-            filePath.push(result.filePath)
-        }
-    }
-    return filePath;
-}
 
 //Validations: Empty fields, 1 image required(Commented right now),
 const createProducts = async (req, res) => {
     try {
         // console.log("BODY:", req.body);
         // console.log("FILE:", req.files);
-
         const {
             name,
             description,
@@ -58,22 +33,7 @@ const createProducts = async (req, res) => {
 
         const parsedAttributes = JSON.parse(attributes);
 
-        const images = []
-
-        let i = 0;
-
-        for (const file of req.files) {
-            // console.log("file : ", i++, "buffer :", file.buffer, "name :", file.originalname);
-            const fileBuff = file?.buffer
-            if (fileBuff) {
-                const result = await imagekit.upload({
-                    file: fileBuff,//<url|base_64|binary>, //required
-                    fileName: file.originalname,   //required
-                });
-                // console.log("Result", result)
-                images.push(result.filePath)
-            }
-        }
+        const images = await uploadFiles(req.files)
 
         // console.log("Images: ", images)
 
