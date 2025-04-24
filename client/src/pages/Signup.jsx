@@ -109,7 +109,12 @@ const Signup = () => {
     }
     return (
         <>
-            <form onSubmit={onSubmit} className="flex flex-col gap-2 p-4 border mt-10 w-[60%] ml-[20%] font-mono border-black ">
+            <div className="fixed top-1/2 left-1/2 z-50
+    transform -translate-x-1/2 -translate-y-1/2
+    w-[60%] overflow-y-scroll scrollbar-hide
+    border rounded-2xl bg-white/30 backdrop-blur-md border-white/20
+    shadow-2xl transition-all duration-500 ease-out">
+            <form onSubmit={onSubmit} className="flex flex-col gap-2 p-4 mt-10 font-mono ">
                 <h1 className="text-center text-3xl font-medium font-mono">Hey dude! SignUp here</h1>
                 <label htmlFor="" className="">Username - </label>
                 <input type="text" placeholder="Enter your Username" className="border-b-2 border-black py-2 px-4 focus:outline-0"
@@ -170,6 +175,7 @@ const Signup = () => {
                 <input type="submit" value="Sign Up" className="bg-sky-200 p-2"/>
                 <p>Already have an account? <Link to="/login" className="underline">LogIn Now</Link></p>
             </form>
+            </div>
         </>
     )
 }

@@ -1,8 +1,7 @@
-// utils/cartUtils.js
 import axios from "axios";
 import Swal from "sweetalert2";
 
-export const addToCart = async (productId, userId) => {
+const addToCart = async (productId, userId) => {
     try {
         Swal.fire({
             title: 'Adding To Cart',
@@ -39,3 +38,5 @@ export const addToCart = async (productId, userId) => {
         return false;
     }
 };
+
+export default addToCart;

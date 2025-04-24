@@ -20,6 +20,8 @@ const Profile = () => {
         addresses: [],
     });
     const [errors, setErrors] = useState({});
+    const [placesOptions, setPlacesOptions] = useState([]);
+    const [manualCityEntry, setManualCityEntry] = useState([]);
 
     const addressSchema = z.object({
         addressLine1: z.string().min(1, "Address Line 1 is required"),
@@ -91,11 +93,56 @@ const Profile = () => {
         }));
     };
 
-    const handleAddressChange = (index, field, value) => {
-        const updated = [...formData.addresses];
-        updated[index][field] = value;
-        setFormData(prev => ({ ...prev, addresses: updated }));
+    const handleAddressChange = async (index, field, value) => {
+        const updatedAddresses = [...formData.addresses];
+        const updatedPlaces = [...placesOptions];
+        const updatedManualEntry = [...manualCityEntry];
+
+        updatedAddresses[index][field] = value;
+
+        if (field === "postalCode") {
+            if (value.length === 6) {
+                try {
+                    const res = await fetch(`https://api.zippopotam.us/IN/${value}`);
+                    if (!res.ok) throw new Error("Invalid PIN Code");
+                    const data = await res.json();
+
+                    const placeList = data.places.map((p) => p["place name"]);
+
+                    updatedAddresses[index].state = data.places[0]?.state || "";
+                    updatedAddresses[index].country = data.country || "";
+                    updatedAddresses[index].city = placeList[0] || "";
+
+                    updatedPlaces[index] = placeList;
+                    updatedManualEntry[index] = false;
+                } catch (error) {
+                    console.error("Postal code error:", error);
+                    updatedAddresses[index].state = "";
+                    updatedAddresses[index].country = "";
+                    updatedAddresses[index].city = "";
+                    updatedPlaces[index] = [];
+                    updatedManualEntry[index] = false;
+                }
+            } else {
+                updatedAddresses[index].city = "";
+                updatedAddresses[index].state = "";
+                updatedAddresses[index].country = "";
+                updatedPlaces[index] = [];
+                updatedManualEntry[index] = false;
+            }
+        }
+
+        if (field === "city" && value === "manual") {
+            updatedAddresses[index].city = "";
+            updatedManualEntry[index] = true;
+        }
+
+        setFormData((prev) => ({ ...prev, addresses: updatedAddresses }));
+        setPlacesOptions(updatedPlaces);
+        setManualCityEntry(updatedManualEntry);
     };
+
+
 
     const addNewAddress = () => {
         if (formData.addresses.length >= 4) return;
@@ -185,7 +232,12 @@ const Profile = () => {
 
 
     return (
-        <div className="p-6">
+        <div className="mt-5 p-4 w-[70%] ml-[15%] h-[80vh] overflow-y-scroll scrollbar-hide
+        border rounded-2xl bg-white
+        shadow-2xl transform-gpu
+        hover:scale-[1.02] hover:-rotate-x-1 hover:rotate-y-1
+        transition-all duration-300 ease-in-out
+        bg-white/30 backdrop-blur-md border-white/20">
             <h1 className="capitalize text-2xl font-medium mb-4">
                 Hey, {user?.firstname}{" "}
                 <span className="font-normal text-gray-700 text-xl">- Update your Profile here</span>
@@ -193,13 +245,14 @@ const Profile = () => {
 
             <hr/>
 
-            <form onSubmit={onSubmit} className="space-y-4 max-w-xl mt-5">
+            <div className="flex justify-between">
+            <form onSubmit={onSubmit} className="space-y-4 mt-5 w-[65%] ">
                 {/* Basic Info Fields */}
                 {["username", "email", "firstname", "lastname", "phone"].map((field) => (
                     <div key={field}>
                         <label htmlFor={field} className="capitalize">{field} :</label>
                         <input
-                            className="border-b-2 border-black p-2 w-full"
+                            className={`border-b-2 border-black p-2 w-full ${field === "email" ? null : "capitalize"}`}
                             id={field}
                             name={field}
                             value={formData[field]}
@@ -225,14 +278,9 @@ const Profile = () => {
                     )}
                 </div>
 
-                {formData.addresses.map((address, index) => {
-                    return (
-                        <>
-                            <p>
-                              Address - {index + 1}
-                            </p>
+                {formData.addresses.map((address, index) => (
                     <div key={index} className="border p-4 bg-gray-100 rounded-md space-y-2">
-                        {["addressLine1", "addressLine2", "city", "state", "postalCode", "country"].map(field => (
+                        {["postalCode", "addressLine1", "addressLine2"].map(field => (
                             <input
                                 key={field}
                                 className="border-b border-black px-4 py-2 w-full"
@@ -241,14 +289,43 @@ const Profile = () => {
                                 placeholder={field}
                             />
                         ))}
-                        {/*<select*/}
-                        {/*    className="p-1 border w-full"*/}
-                        {/*    value={address.type}*/}
-                        {/*    onChange={(e) => handleAddressChange(index, "type", e.target.value)}*/}
-                        {/*>*/}
-                        {/*    <option value="shipping">Shipping</option>*/}
-                        {/*    <option value="billing">Billing</option>*/}
-                        {/*</select>*/}
+
+                        {/* City field with dropdown/manual entry switch */}
+                        {placesOptions[index]?.length > 1 && !manualCityEntry[index] ? (
+                            <>
+                                <select
+                                    className="border-b border-black px-4 py-2 w-full"
+                                    value={address.city}
+                                    onChange={(e) => handleAddressChange(index, "city", e.target.value)}
+                                >
+                                    {placesOptions[index].map((place, i) => (
+                                        <option key={i} value={place}>{place}</option>
+                                    ))}
+                                    <option value="manual">Other (Enter Manually)</option>
+                                </select>
+                            </>
+                        ) : (
+                            <input
+                                className="border-b border-black px-4 py-2 w-full"
+                                value={address.city}
+                                onChange={(e) => handleAddressChange(index, "city", e.target.value)}
+                                placeholder="City"
+                            />
+                        )}
+
+                        <input
+                            className="border-b border-black px-4 py-2 w-full"
+                            value={address.state}
+                            onChange={(e) => handleAddressChange(index, "state", e.target.value)}
+                            placeholder="State"
+                        />
+                        <input
+                            className="border-b border-black px-4 py-2 w-full"
+                            value={address.country}
+                            onChange={(e) => handleAddressChange(index, "country", e.target.value)}
+                            placeholder="Country"
+                        />
+
                         <label className="flex items-center space-x-2">
                             <input
                                 type="checkbox"
@@ -258,8 +335,8 @@ const Profile = () => {
                             <span>Default Address</span>
                         </label>
                     </div>
-                        </>)
-                })}
+                ))}
+
 
                 {/* Passwords */}
                 <div>
@@ -274,14 +351,6 @@ const Profile = () => {
                         type="password"
                     />
                 </div>
-                {/*<input*/}
-                {/*    className="border-b-2 border-black p-2 w-full"*/}
-                {/*    name="newPassword"*/}
-                {/*    value={formData.newPassword}*/}
-                {/*    onChange={handleChange}*/}
-                {/*    placeholder="New Password"*/}
-                {/*    type="password"*/}
-                {/*/>*/}
 
                 <button
                     type="submit"
@@ -290,6 +359,11 @@ const Profile = () => {
                     Update Profile
                 </button>
             </form>
+
+                <div className="w-[30%] m-2">
+                    Quick Links will be here
+                </div>
+            </div>
         </div>
     );
 };
