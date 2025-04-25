@@ -1,0 +1,161 @@
+{
+    "data": {
+        "success": true,
+        "order": {
+            "amount": 187100,
+            "amount_due": 187100,
+            "amount_paid": 0,
+            "attempts": 0,
+            "created_at": 1745580037,
+            "currency": "INR",
+            "entity": "order",
+            "id": "order_QNGufHGauVEokn",
+            "notes": [],
+            "offer_id": null,
+            "receipt": "receipt#1",
+            "status": "created"
+        }
+    },
+    "status": 200,
+    "statusText": "OK",
+    "headers": {
+        "content-length": "245",
+        "content-type": "application/json; charset=utf-8"
+    },
+    "config": {
+        "transitional": {
+            "silentJSONParsing": true,
+            "forcedJSONParsing": true,
+            "clarifyTimeoutError": false
+        },
+        "adapter": [
+            "xhr",
+            "http",
+            "fetch"
+        ],
+        "transformRequest": [
+            null
+        ],
+        "transformResponse": [
+            null
+        ],
+        "timeout": 0,
+        "xsrfCookieName": "XSRF-TOKEN",
+        "xsrfHeaderName": "X-XSRF-TOKEN",
+        "maxContentLength": -1,
+        "maxBodyLength": -1,
+        "env": {},
+        "headers": {
+            "Accept": "application/json, text/plain, */*",
+            "Content-Type": "application/json"
+        },
+        "method": "post",
+        "url": "http://localhost:3000/api/payment/create-order",
+        "data": "{\"amount\":1871}",
+        "allowAbsoluteUrls": true
+    },
+    "request": {}
+}
+
+2nd API
+
+{
+    "data": {
+        "success": true,
+        "message": "Payment verified and saved!",
+        "payment": {
+            "user": "680520878bcbedf610c9fd66",
+            "razorpay_order_id": "order_QNGufHGauVEokn",
+            "razorpay_payment_id": "pay_QNGv0DZWTn9EKd",
+            "razorpay_signature": "ad4cd6e3614bc2538184928be5c12974ddd8b1a604f9bce05aa04ba38eb86426",
+            "amount": 1871,
+            "status": "success",
+            "_id": "680b702a74eb3267db42bcd4",
+            "createdAt": "2025-04-25T11:21:14.071Z",
+            "updatedAt": "2025-04-25T11:21:14.071Z",
+            "__v": 0
+        }
+    },
+    "status": 200,
+    "statusText": "OK",
+    "headers": {
+        "content-length": "428",
+        "content-type": "application/json; charset=utf-8"
+    },
+    "config": {
+        "transitional": {
+            "silentJSONParsing": true,
+            "forcedJSONParsing": true,
+            "clarifyTimeoutError": false
+        },
+        "adapter": [
+            "xhr",
+            "http",
+            "fetch"
+        ],
+        "transformRequest": [
+            null
+        ],
+        "transformResponse": [
+            null
+        ],
+        "timeout": 0,
+        "xsrfCookieName": "XSRF-TOKEN",
+        "xsrfHeaderName": "X-XSRF-TOKEN",
+        "maxContentLength": -1,
+        "maxBodyLength": -1,
+        "env": {},
+        "headers": {
+            "Accept": "application/json, text/plain, */*",
+            "Content-Type": "application/json"
+        },
+        "method": "post",
+        "url": "http://localhost:3000/api/payment/verify",
+        "data": "{\"razorpay_order_id\":\"order_QNGufHGauVEokn\",\"razorpay_payment_id\":\"pay_QNGv0DZWTn9EKd\",\"razorpay_signature\":\"ad4cd6e3614bc2538184928be5c12974ddd8b1a604f9bce05aa04ba38eb86426\",\"userId\":\"680520878bcbedf610c9fd66\",\"amount\":1871}",
+        "allowAbsoluteUrls": true
+    },
+    "request": {}
+}
+
+
+3rd API
+
+{
+    "data": {
+        "success": true,
+        "order": {
+            "userId": "680520878bcbedf610c9fd66",
+            "status": "Processing",
+            "items": [
+                {
+                    "name": "Apple MacBook Air",
+                    "price": 1871,
+                    "quantity": 1,
+                    "_id": "68074ce8fc13ae028a885914"
+                }
+            ],
+            "paymentMethod": "Unknown",
+            "paymentStatus": "Paid",
+            "transactionId": "Pending",
+            "shippingAddress": {
+                "addressLine1": "Anuvrat Vihar",
+                "addressLine2": "Sabhapur",
+                "city": "Delhi",
+                "state": "Delhi",
+                "postalCode": "110094",
+                "country": "India"
+            },
+            "billingAddress": {
+                "addressLine1": "Sonia Vihar",
+                "addressLine2": "1st Pusta",
+                "city": "Delhi",
+                "state": "Delhi",
+                "postalCode": "110094",
+                "country": "India"
+            },
+            "_id": "680b702a74eb3267db42bcd6",
+            "createdAt": "2025-04-25T11:21:14.219Z",
+            "updatedAt": "2025-04-25T11:21:14.219Z",
+            "__v": 0
+        }
+    },

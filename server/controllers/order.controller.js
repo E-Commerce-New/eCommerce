@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 const Order = require("../models/order");
 const User = require("../models/user");
-const sendOrderConfirmationEmail = require("../utils/sendMail");
+const { sendOrderConfirmationEmail } = require("../utils/sendMail");
 
 const placeOrder = async (req, res) => {
-    const { cartItems, shippingAddress, paymentInfo, totalAmount, userId } = req.body;
-    console.log("Place Order", req.body);
+    const { cartItems, shippingAddress, paymentInfo, totalPrice, userId } = req.body;
+    // console.log("total amount", req.body);
 
     try {
         const order = await Order.create({
@@ -16,7 +16,7 @@ const placeOrder = async (req, res) => {
             paymentMethod: paymentInfo?.method || "Unknown",
             paymentStatus: "Paid",
             transactionId: paymentInfo?.transactionId || "Pending",
-            total: totalAmount,
+            total: totalPrice,
             billingAddress: {
                 addressLine1 : "Sonia Vihar",
                 addressLine2 : "1st Pusta",
@@ -26,6 +26,7 @@ const placeOrder = async (req, res) => {
                 country: "India"
             },
         });
+        // console.log("Order Saved", order)
 
         await User.findByIdAndUpdate(userId, { cart: [] });
         await sendOrderConfirmationEmail(process.env.Your_Email, order.toObject());
