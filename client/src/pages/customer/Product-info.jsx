@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import {useSelector} from "react-redux";
 import swal from "sweetalert2";
 import addToCart  from "../../components/reUsable/AddToCart.js";
+import GoBack from "../../components/reUsable/Goback.jsx";
 
 const ProductInfo = () => {
     const id = useParams();
@@ -73,7 +74,6 @@ const ProductInfo = () => {
     return (
         <>
             <div className="flex justify-start">
-
                 {/*image section*/}
                 <div className="w-[30%] justify-start">
                     <div className="flex flex-col w-full max-w-[600px] mx-auto mt-8">
@@ -112,19 +112,27 @@ const ProductInfo = () => {
 
                 {/*product info section */}
                 <div className="flex flex-col gap-3 p-4 w-[70%]">
-                    <h1>{product?.name} — {product?.description}</h1>
+                    <div className="flex gap-2 items-center">
+                        <GoBack/>
+                        <h1>
+                        <span className="font-medium">
+                        {product?.name} {" "}
+                        </span>
+                            — {product?.description}
+                        </h1>
+                    </div>
                     <hr/>
                     <p className="flex gap-3 items-center"><span className="text-sm text-red-500 font-medium">{discountPercent}%</span> <span className="text-green-600 font-semibold">₹{originalPrice}</span></p>
                     <p className="line-through text-gray-500 mr-2" >M.R.P: {inflatedPrice}</p>
                     <p>Inclusive of all taxes</p>
                     <div className="w-1/2">
                         {product?.attributes?.map((attribute, index) => {
-                            return (
-                                <div className="flex gap-2 my-3 w-full justify-between items-center capitalize">
-                                    <p className="py-1 w-1/2 font-medium">{attribute.key}</p> -
-                                    <p className="py-1 w-1/2">{attribute.value}</p>
-                                </div>
-                            )
+                                return (
+                                    <div className="flex gap-2 my-3 w-full justify-between items-center capitalize">
+                                        <p className="py-1 w-1/2 font-medium">{attribute.key}</p> -
+                                        <p className="py-1 w-1/2">{attribute.value}</p>
+                                    </div>
+                                )
                             }
                         )}
                     </div>

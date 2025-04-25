@@ -18,6 +18,7 @@ import Explore from "./pages/customer/explore.jsx"
 import Swal from "sweetalert2";
 import AboutUs from "./pages/customer/About.jsx";
 import Contact from "./pages/customer/Contact.jsx";
+import Orders from "./pages/customer/Orders.jsx";
 
 export default function App() {
     return (
@@ -34,6 +35,7 @@ export default function App() {
                     <Route path="explore" element={<Explore />} />
                     <Route path="aboutUs" element={<AboutUs />} />
                     <Route path="contact" element={<Contact />} />
+                    <Route path="orders" element={<Orders />} />
 
                 </Route>
 
@@ -46,7 +48,7 @@ export default function App() {
 
                 </Route>
 
-                
+
                 <Route path="*" element={<NoPage />} />
             </Routes>
         </Router>

@@ -146,11 +146,20 @@ const Cart = () => {
                 });
 
                 if (verifyRes.data.success) {
+                    swal.fire({
+                        title: 'Processing Your Order',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
                     const placeRes = await axios.post('http://localhost:3000/api/order/place', {
                         cartItems, shippingAddress, paymentInfo: response, totalPrice, userId: user._id,
                     });
 
                     if (placeRes.data.success) {
+                        swal.close()
                         swal.fire("Success!", "Your order has been placed", "success").then((result) => {
                             if (result.isConfirmed) {
                                 location.reload();
@@ -179,7 +188,9 @@ const Cart = () => {
     }
 
 
-    return (<div className="p-4 w-[70%] ml-[15%] h-[80vh] overflow-y-scroll scrollbar-hide
+    return (
+
+        <div className="p-4 w-[70%] ml-[15%] h-[80vh] overflow-y-scroll scrollbar-hide
         border rounded-2xl bg-white
         shadow-2xl transform-gpu
         hover:scale-[1.02] hover:-rotate-x-1 hover:rotate-y-1
@@ -189,66 +200,66 @@ const Cart = () => {
             <h1 className="text-xl font-bold sticky -top-5 bg-white p-2 flex gap-2 items-center"><GoBack/> Your Cart
             </h1>
             {cartItems.length === 0 ? (<div className="text-center p-4 text-red-500 font-medium"><Link to="/" className="text-2xl">Your cart is empty. <br/> Shop Now</Link></div>) : (<div className=" w-full ">
-                    {cartItems.map((item, index) => {
-                        const originalPrice = item?.price;
-                        const discountPercent = Math.floor(Math.random() * (80 - 50 + 1)) + 50;
-                        const inflatedPrice = Math.round(originalPrice * (100 / (100 - discountPercent)));
-                        // console.log(item)
-                        return (<div key={item._id} className="border-b-2 p-4 border-black flex gap-2 justify-between">
-                                <div className="flex gap-2">
-                                    <p>{index + 1}</p>
-                                    <img
-                                        onClick={() => handleProduct(item._id)}
-                                        key={index}
-                                        src={`https://ik.imagekit.io/0Shivams${item?.images?.[0]}`}
-                                        alt={`Thumbnail ${index + 1}`}
-                                        className={`w-20 h-20 object-cover border-2 rounded-md cursor-pointer`}
+                {cartItems.map((item, index) => {
+                    const originalPrice = item?.price;
+                    const discountPercent = Math.floor(Math.random() * (80 - 50 + 1)) + 50;
+                    const inflatedPrice = Math.round(originalPrice * (100 / (100 - discountPercent)));
+                    // console.log(item)
+                    return (<div key={item._id} className="border-b-2 p-4 border-black flex gap-2 justify-between">
+                        <div className="flex gap-2">
+                            <p>{index + 1}</p>
+                            <img
+                                onClick={() => handleProduct(item._id)}
+                                key={index}
+                                src={`https://ik.imagekit.io/0Shivams${item?.images?.[0]}`}
+                                alt={`Thumbnail ${index + 1}`}
+                                className={`w-20 h-20 object-cover border-2 rounded-md cursor-pointer`}
 
-                                        onError={(e) => {
-                                            e.target.onerror = null;
-                                            e.target.src = fallbackImg;
-                                        }}
-                                    />
-                                    <div>
-                                        <div className="text-lg font-semibold flex gap-2 flex-col">
-                                            <p>{item.name}</p>
-                                            <div
-                                                className="flex border-2 border-yellow-400 rounded-2xl py-1 px-3 w-[5vw] text-sm">
-                                                {item.quantity > 1 ? <p onClick={() => decreaseQuanity(item._id)}
-                                                                        className="cursor-pointer basis-1/3 text-left">-</p> :
-                                                    <p onClick={() => deleteCartItem(item._id)}
-                                                       className="cursor-pointer basis-1/3"><Trash2
-                                                        className="w-4 h-4 text-sm"/>
-                                                    </p>}
-                                                <p className="basis-1/3 text-center">{item.quantity}</p>
-                                                <p onClick={() => increaseQuantity(item._id)}
-                                                   className="cursor-pointer basis-1/3 text-right">+</p>
-                                            </div>
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = fallbackImg;
+                                }}
+                            />
+                            <div>
+                                <div className="text-lg font-semibold flex gap-2 flex-col">
+                                    <p>{item.name}</p>
+                                    <div
+                                        className="flex border-2 border-yellow-400 rounded-2xl py-1 px-3 w-[5vw] text-sm">
+                                        {item.quantity > 1 ? <p onClick={() => decreaseQuanity(item._id)}
+                                                                className="cursor-pointer basis-1/3 text-left">-</p> :
+                                            <p onClick={() => deleteCartItem(item._id)}
+                                               className="cursor-pointer basis-1/3"><Trash2
+                                                className="w-4 h-4 text-sm"/>
+                                            </p>}
+                                        <p className="basis-1/3 text-center">{item.quantity}</p>
+                                        <p onClick={() => increaseQuantity(item._id)}
+                                           className="cursor-pointer basis-1/3 text-right">+</p>
+                                    </div>
 
-                                        </div>
-                                    </div>
                                 </div>
-                                <div className="flex flex-col items-end justify-center">
-                                    <p className="flex gap-3 items-center">
-                                        <span className="text-sm text-red-500 font-medium">{discountPercent}%</span>
-                                        <span className="text-green-600 font-semibold">₹{originalPrice}</span>
-                                    </p>
-                                    <div className="flex gap-2">
-                                        M.R.P : <p className="line-through text-gray-500 mr-2">{inflatedPrice}</p>
-                                    </div>
-                                </div>
-                            </div>)
-                    })}
-                    <div className="w-full text-right sticky -bottom-4 bg-white">
-                        <p className="text-lg font-bold">Total: {"(" + cartItems.length + " " + "Items)"} ₹{totalPrice.toLocaleString()}</p>
-                        <button onClick={() => handlePayment()}
-                                className="px-4 py-2 border-2 rounded-xl border-black bg-green-200 font-medium mt-2 active:bg-gray-400">
-                            <p className="flex gap-2">
-                                <ShoppingBag/> Buy Your Cart
+                            </div>
+                        </div>
+                        <div className="flex flex-col items-end justify-center">
+                            <p className="flex gap-3 items-center">
+                                <span className="text-sm text-red-500 font-medium">{discountPercent}%</span>
+                                <span className="text-green-600 font-semibold">₹{originalPrice}</span>
                             </p>
-                        </button>
-                    </div>
-                </div>)}
+                            <div className="flex gap-2">
+                                M.R.P : <p className="line-through text-gray-500 mr-2">{inflatedPrice}</p>
+                            </div>
+                        </div>
+                    </div>)
+                })}
+                <div className="w-full text-right sticky -bottom-4 bg-white">
+                    <p className="text-lg font-bold">Total: {"(" + cartItems.length + " " + "Items)"} ₹{totalPrice.toLocaleString()}</p>
+                    <button onClick={() => handlePayment()}
+                            className="px-4 py-2 border-2 rounded-xl border-black bg-green-200 font-medium mt-2 active:bg-gray-400">
+                        <p className="flex gap-2">
+                            <ShoppingBag/> Buy Your Cart
+                        </p>
+                    </button>
+                </div>
+            </div>)}
 
 
         </div>);

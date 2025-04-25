@@ -1,6 +1,6 @@
 import {
     LayoutGrid, Plus, PackageSearch, Store, Contact,
-    Key, LogOut, User, ShoppingCart
+    Key, LogOut, User, ShoppingCart , Package
 } from "lucide-react";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import logo from "../../assets/logo.png";
@@ -30,6 +30,7 @@ const AdminNavbar = () => {
         ? [
             { to: "/profile", label: "Profile", icon: <User /> },
             { to: "/cart", label: "Cart", icon: <ShoppingCart /> },
+            { to: "/Orders", label: "Orders", icon: <Package /> },
         ]
         : [
             { to: "/login", label: "LogIn", icon: <Key /> },

@@ -25,8 +25,8 @@ const addToCart = async (productId, userId) => {
             await Swal.fire({
                 icon: "success",
                 title: "Added to cart",
+                timer: 1500,
             });
-            return true;
         }
 
     } catch (err) {
@@ -35,7 +35,6 @@ const addToCart = async (productId, userId) => {
             title: "Oops...",
             text: err?.response?.data?.message || "Something went wrong",
         });
-        return false;
     }
 };
 
