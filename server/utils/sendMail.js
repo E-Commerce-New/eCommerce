@@ -1,24 +1,18 @@
 const nodemailer = require("nodemailer");
+const transporter = nodemailer.createTransport({
+    service: "gmail", auth: {
+        user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS,
+    },
+});
+
 
 const sendOrderConfirmationEmail = async (to, order) => {
     console.log(order)
-    const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-        },
-    });
 
-    const items = order.items.map(
-        item => `<li>${item.name} - ₹${item.price} x ${item.quantity}</li>`
-    ).join("");
+    const items = order.items.map(item => `<li>${item.name} - ₹${item.price} x ${item.quantity}</li>`).join("");
 
     const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to,
-        subject: "Order Confirmation",
-        html: `
+        from: process.env.EMAIL_USER, to, subject: "Order Confirmation", html: `
     <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: auto; background-color: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #e5e7eb;">
     <h2 style="color: #4F46E5; text-align: center;">🛍️ Thank you for your order!</h2>
     <p style="font-size: 16px; color: #374151; margin-top: 20px;">Hi there,</p>
@@ -48,4 +42,18 @@ const sendOrderConfirmationEmail = async (to, order) => {
     await transporter.sendMail(mailOptions);
 };
 
-module.exports = sendOrderConfirmationEmail;
+const sendResetPasswordEmail = async (user, token) => {
+
+    const resetLink = `http://localhost:5173/reset-password/${token}`;
+
+    const mailOptions = {
+        to: user.email, from: process.env.EMAIL_USER, subject: 'Password Reset', html: `
+            <p>You requested a password reset</p>
+            <p>Click <a href="${resetLink}">here</a> to reset your password</p>
+        `
+    };
+
+    return transporter.sendMail(mailOptions);
+}
+
+module.exports = {sendOrderConfirmationEmail, sendResetPasswordEmail};

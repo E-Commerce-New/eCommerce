@@ -19,6 +19,7 @@ import Swal from "sweetalert2";
 import AboutUs from "./pages/customer/About.jsx";
 import Contact from "./pages/customer/Contact.jsx";
 import Orders from "./pages/customer/Orders.jsx";
+import ResetPassword from "./pages/customer/ResetPassword.jsx";
 
 export default function App() {
     return (
@@ -36,6 +37,7 @@ export default function App() {
                     <Route path="aboutUs" element={<AboutUs />} />
                     <Route path="contact" element={<Contact />} />
                     <Route path="orders" element={<Orders />} />
+                    <Route path="/reset-password/:token" element={<ResetPassword />} />
 
                 </Route>
 
