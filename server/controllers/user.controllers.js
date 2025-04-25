@@ -41,6 +41,12 @@ const getUserByUsernameAndPassword = async (req, res) => {
 }
 
 const getUser = async (req, res) => {
+    if (!req.user) {
+        const user = await User.find({})
+        const totalUsers = user.length
+        res.status(200).json(totalUsers);
+    }
+
     try {
         const {id} = req.body;
 

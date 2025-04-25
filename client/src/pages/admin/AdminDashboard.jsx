@@ -8,7 +8,9 @@ import axios from "axios";
 const AdminDashboard = () => {
     const {user} = useSelector((state) => state.user)
     const [orders, setOrders] = useState([]);
+    const [revenue, setRevenue] = useState(null);
     const navigate = useNavigate();
+    const [totalUsers, setTotalUsers] = useState([]);
     useEffect(() => {
         if (!user) {
             navigate('/login');
@@ -24,14 +26,29 @@ const AdminDashboard = () => {
         };
         fetchOrders();
 
+        const getRevenue = async () => {
+            try{
+                const res = await axios.get("http://localhost:3000/api/order/revenue");
+                setRevenue(res.data.revenue);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        getRevenue()
+
+        const getUsers = async () => {
+            try{
+                const res = await axios.post("http://localhost:3000/api/user/getUser");
+                setTotalUsers(res.data);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        getUsers()
+
     }, [])
 
-    const getRevenue = () => {
-        orders.map(item => {
-            console.log(item?.totalamount);
-        })
-    }
-    orders ? getRevenue() : null;
+
 
     return (<>
             {/*Section One*/}
@@ -58,7 +75,7 @@ const AdminDashboard = () => {
             <div className="p-4 flex gap-2 items-center">
                 <div
                     className="border p-4 border-black w-[25%] bg-gradient-to-r from-[#1F0D8C] to-[#F5F4FF]  text-white">
-                    <h1 className="text-3xl pb-10">12K</h1>
+                    <h1 className="text-3xl pb-10">{totalUsers}</h1>
                     <p>Subscribers</p>
                 </div>
                 <div
@@ -73,7 +90,7 @@ const AdminDashboard = () => {
                 </div>
                 <div
                     className="border p-4 border-black w-[25%] bg-gradient-to-r from-[#8C0D51] to-[#F5F4FF] text-white">
-                    <h1 className="text-3xl pb-10">100k</h1>
+                    <h1 className="text-3xl pb-10">₹{revenue}</h1>
                     <p>Revenue</p>
                 </div>
             </div>

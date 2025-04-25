@@ -66,4 +66,14 @@ const getOrders = async (req, res) => {
     res.status(200).json(orders);
 }
 
-module.exports = { placeOrder  , getOrdersById , getOrders};
+const getTotalRevenue = async (req, res) => {
+    try {
+        const orders = await Order.find({});
+        const totalRevenue = orders.reduce((acc, order) => acc + (order.total || 0), 0);
+        res.json({ revenue: totalRevenue });
+    } catch (err) {
+        res.status(500).json({ message: 'Error calculating revenue' });
+    }
+};
+
+module.exports = { placeOrder  , getOrdersById , getOrders , getTotalRevenue};
