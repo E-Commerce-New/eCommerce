@@ -9,6 +9,7 @@ const imagekit = new ImageKit({
 //Upload Image Files
 const uploadFiles = async (imagesArray) => {
     const filePath = []
+    const fileId = []
     // console.log("Image Arr : " ,imagesArray)
     for (const file of imagesArray) {
         // console.log("file : ", i++, "buffer :", file.buffer, "name :", file.originalname);
@@ -19,11 +20,12 @@ const uploadFiles = async (imagesArray) => {
                 fileName: file.originalname,   //required
             });
             // console.log("Result", result)
+            fileId.push(result.fileId)
             filePath.push(result.filePath)
             // console.log("File Path : ", result)
         }
     }
-    return filePath;
+    return {filePath, fileId};
 }
 
 //Delete Image Files

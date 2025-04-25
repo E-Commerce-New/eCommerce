@@ -23,7 +23,13 @@ const productSchema = new Schema({
             key: String,
             value: String
         }
-    ]
+    ],
+    about: String,
+    length: Schema.Types.Double,
+    breadth: Schema.Types.Double,
+    height: Schema.Types.Double,
+    weight: Schema.Types.Double,
+    imagesId:[String]
 }, { timestamps: true });
 
 

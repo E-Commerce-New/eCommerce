@@ -17,11 +17,30 @@ const createProducts = async (req, res) => {
             quantity,
             active,
             attributes,
+            length,
+            breadth,
+            height,
+            weight,
+            about
         } = req.body;
 
-        // List of required fields
-        const requiredFields = {name, description, category, price, quantity, active, attributes};
 
+        // List of required fields
+        const requiredFields = {
+            name,
+            description,
+            category,
+            price,
+            quantity,
+            active,
+            attributes,
+            length,
+            breadth,
+            height,
+            weight,
+            about,
+
+        };
         // Check for missing or empty values
         for (const [key, value] of Object.entries(requiredFields)) {
             if (
@@ -34,7 +53,8 @@ const createProducts = async (req, res) => {
         const parsedAttributes = JSON.parse(attributes);
 
         const images = await uploadFiles(req.files)
-
+        const imagesURL = images.filePath
+        const imagesId = images.fileId
         // console.log("Images: ", images)
 
         //Atleast one image is required.
@@ -52,7 +72,14 @@ const createProducts = async (req, res) => {
             attributes: parsedAttributes,
             createdAt: new Date(),
             updatedAt: new Date(),
-            images
+            images:imagesURL,
+            imagesId,
+            length,
+            breadth,
+            height,
+            weight,
+            about
+
         });
 
         await product.save();
@@ -114,7 +141,7 @@ const updateProduct = async (req, res) => {
         await Product.findByIdAndUpdate(req.params.id, updateData);
 
         const product = await Product.findById(req.params.id);
-        res.status(200).json({ product, message: 'Product updated successfully', filePath});
+        res.status(200).json({product, message: 'Product updated successfully', filePath});
     } catch (error) {
         console.log("Update Error:", error);
         res.status(500).send('Something went wrong...');
@@ -135,17 +162,17 @@ const getProductById = async (req, res) => {
     const id = req.body?.id;
 
     if (!id || !Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ error: "Invalid or missing Product ID" });
+        return res.status(400).json({error: "Invalid or missing Product ID"});
     }
 
     try {
         const product = await Product.findById(id);
-        if (!product) return res.status(404).json({ error: "Product not found" });
+        if (!product) return res.status(404).json({error: "Product not found"});
 
-        return res.status(200).json({ data: product });
+        return res.status(200).json({data: product});
     } catch (error) {
         console.error("MongoDB Error:", error);
-        return res.status(500).json({ error: "Internal Server Error" });
+        return res.status(500).json({error: "Internal Server Error"});
     }
 };
 
@@ -177,4 +204,4 @@ const getCategories = async (req, res) => {
 //     console.log(req.params.id);
 // }
 
-module.exports = {deleteProduct, updateProduct, getProducts, createProducts, getProductById, addCategory, getCategories }
+module.exports = {deleteProduct, updateProduct, getProducts, createProducts, getProductById, addCategory, getCategories}

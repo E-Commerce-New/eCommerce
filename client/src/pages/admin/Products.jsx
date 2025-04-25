@@ -22,6 +22,11 @@ const Products = () => {
         price: "",
         quantity: "",
         image: null,
+        about: "",
+        length: "",
+        height:"",
+        breadth:"",
+        weight:"",
         active: false,
         attributes: [{key: "", value: ""}],
     });
@@ -63,6 +68,7 @@ const Products = () => {
 
     const handleChange = (e) => {
         const {name, value, type, checked, files} = e.target;
+        console.log("handleChange ", e.target)
         setForm((prev) => ({
             ...prev,
             [name]: type === "checkbox" ? checked : type === "file" ? files : value,
@@ -103,6 +109,11 @@ const Products = () => {
             formData.append("quantity", form.quantity);
             formData.append("active", form.active);
             formData.append("attributes", JSON.stringify(form.attributes));
+            formData.append("about", form.about);
+            formData.append("length", form.length);
+            formData.append("height", form.height);
+            formData.append("breadth", form.breadth);
+            formData.append("weight", form.weight);
             if (images?.length > 0) {
                 for (let i = 0; i < images.length; i++) {
                     formData.append('image', images[i])

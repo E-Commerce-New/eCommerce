@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 
 const secretKey = process.env.SECRET_KEY;
 
-const getAllUserName = async (req, res) => {
+const getAllUserName = async () => {
     const getUsers = await User.find({}, 'username')
     const usernames = getUsers.map(user => user.username)
     return usernames
@@ -22,7 +22,6 @@ const getUserByUsernameAndPassword = async (req, res) => {
         if (user.password === password) {
             //Setting Token
             const token = jwt.sign({
-                password: user.password,
                 username: user.username
             }, secretKey, {expiresIn: '30m'});
             //Sending Token to client as cookie
@@ -165,8 +164,6 @@ const updateUserProfile = async (req, res) => {
         res.status(500).json({message: 'Internal server error'})
     }
 }
-
-
 
 module.exports = {
     getUserByUsernameAndPassword, register, addToCart, getUser, updateUserProfile

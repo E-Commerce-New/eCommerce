@@ -18,7 +18,6 @@ const Products = () => {
         return shuffled;
     };
 
-
     useEffect(()=> {
         const fetchProducts = async () => {
             Swal.fire({
@@ -47,8 +46,6 @@ const Products = () => {
         }
         fetchProducts()
     },[])
-
-
 
     const navigate = useNavigate();
 
