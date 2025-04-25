@@ -75,7 +75,7 @@ const AdminDashboard = () => {
             <div className="p-4 flex gap-2 items-center">
                 <div
                     className="border p-4 border-black w-[25%] bg-gradient-to-r from-[#1F0D8C] to-[#F5F4FF]  text-white">
-                    <h1 className="text-3xl pb-10">{totalUsers}</h1>
+                    <h1 className="text-3xl pb-10">{totalUsers.length}</h1>
                     <p>Subscribers</p>
                 </div>
                 <div
