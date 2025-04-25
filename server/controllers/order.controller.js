@@ -59,4 +59,10 @@ const getOrdersById = async (req, res) => {
     }
 };
 
-module.exports = { placeOrder  , getOrdersById};
+const getOrders = async (req, res) => {
+    const orders = await Order.find({});
+
+    res.status(200).json(orders);
+}
+
+module.exports = { placeOrder  , getOrdersById , getOrders};

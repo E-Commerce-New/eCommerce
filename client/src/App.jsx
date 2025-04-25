@@ -20,6 +20,8 @@ import AboutUs from "./pages/customer/About.jsx";
 import Contact from "./pages/customer/Contact.jsx";
 import Orders from "./pages/customer/Orders.jsx";
 import ResetPassword from "./pages/customer/ResetPassword.jsx";
+import AdminOrders from "./pages/admin/Orders.jsx";
+
 
 export default function App() {
     return (
@@ -47,6 +49,7 @@ export default function App() {
                     <Route path="update-product/:id" element={<UpdateProduct />} />
                     <Route path="delete-product/:id" element={<DeleteProduct />} />
                     <Route path="setting" element={<AdminSettings />} />
+                    <Route path="orders" element={<AdminOrders />} />
 
                 </Route>
 
