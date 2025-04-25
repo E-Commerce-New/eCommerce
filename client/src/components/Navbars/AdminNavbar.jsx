@@ -3,6 +3,7 @@ import {
     LayoutTemplate,
     LayoutGrid,
     Settings,
+    HandCoins,
     ChartSpline,
     StickyNote,
     Package,
@@ -21,6 +22,7 @@ const AdminNavbar = () => {
         { to: "/admin/panel", label: "Overview", icon: <LayoutGrid /> },
         { to: "/admin/products", label: "Product", icon: <Package /> },
         { to: "/admin/setting", label: "Setting", icon: <Settings /> },
+        { to: "/admin/orders", label: "Orders", icon: <HandCoins /> },
     ];
 
     return (

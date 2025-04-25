@@ -126,7 +126,8 @@ const Cart = () => {
 
     const handlePayment = async () => {
         const res = await axios.post('http://localhost:3000/api/payment/create-order', {amount: totalPrice});
-        console.log(res.data.order.amount / 100)
+        console.log("1st Api of Create Order" , res)
+        // console.log(res.data.order.amount / 100)
 
         const options = {
             key: 'rzp_test_YkO4VIe1rAjpOw',
@@ -144,6 +145,7 @@ const Cart = () => {
                     userId: user._id,
                     amount: res.data.order.amount / 100,
                 });
+                console.log( "2nd Verify Api" , verifyRes);
 
                 if (verifyRes.data.success) {
                     swal.fire({
@@ -157,6 +159,7 @@ const Cart = () => {
                     const placeRes = await axios.post('http://localhost:3000/api/order/place', {
                         cartItems, shippingAddress, paymentInfo: response, totalPrice, userId: user._id,
                     });
+                    console.log("3rd Save data Api" , placeRes);
 
                     if (placeRes.data.success) {
                         swal.close()
@@ -164,6 +167,13 @@ const Cart = () => {
                             if (result.isConfirmed) {
                                 location.reload();
                             }
+                        })
+                    } else {
+                        swal.close()
+                        swal.fire({
+                            title: 'Error!',
+                            icon: 'error',
+                            text: placeRes.data.message,
                         })
                     }
                 } else {

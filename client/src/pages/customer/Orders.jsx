@@ -44,7 +44,7 @@ const Orders = () => {
             </div>
 
             {/*Heading*/}
-            <div className="flex gap-4 w-full mt-10 p-2">
+            <div className="flex gap-4 w-full mt-10 p-2 bg-gray-200 rounded-t-xl">
                 <div className="flex gap-2 w-[30%]">
                     <p className="font-medium w-[15%]">S. NO</p>
                     <p className="font-medium w-[85%]">Order ID</p>
@@ -62,11 +62,11 @@ const Orders = () => {
                 found.</p>) : (orders.map((order, index) => {
                 const dateString = order.createdAt;
                 const date = new Date(dateString);
-                const itemsSummary = `${order.items.length} items - ₹N/A`;
+                const itemsSummary = `${order.items.length} items - ${order.total}`;
 
                 return (
-                    <div key={order._id} className="border-b-2 pb-4 mb-4 border-black p-2">
-                        <div className="flex justify-evenly items-center cursor-pointer hover:bg-gray-200 py-2"
+                    <div key={order._id} className="border-b-2 pb-4 mb-4 border-black py-2">
+                        <div className="flex justify-evenly items-center cursor-pointer hover:bg-green-200 py-2 px-2"
                              onClick={() => toggleOrderDetails(order._id)}>
                             {/* Order Row */}
                             <div className="flex gap-4 w-full justify-between">
