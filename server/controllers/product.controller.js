@@ -199,9 +199,27 @@ const getCategories = async (req, res) => {
     }
 };
 
+const updateProductStock = async (cartItems) => {
+    for (const item of cartItems) {
+        const product = await Product.findById(item._id);
+
+        if (!product) {
+            throw new Error(`Product with ID ${item._id} not found`);
+        }
+
+        if (product.quantity < item.quantity) {
+            throw new Error(`Insufficient stock for ${product.name}`);
+        }
+
+        product.quantity -= item.quantity;
+        await product.save();
+    }
+};
+
+
 
 // const deleteCategory = async (req, res) => {
 //     console.log(req.params.id);
 // }
 
-module.exports = {deleteProduct, updateProduct, getProducts, createProducts, getProductById, addCategory, getCategories}
+module.exports = {deleteProduct, updateProduct, getProducts, createProducts, getProductById, addCategory, getCategories , updateProductStock}

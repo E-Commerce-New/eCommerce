@@ -2,20 +2,25 @@ const mongoose = require("mongoose");
 const Order = require("../models/order");
 const User = require("../models/user");
 const { sendOrderConfirmationEmail } = require("../utils/sendMail");
+const { updateProductStock } = require("./product.controller");
 
 const placeOrder = async (req, res) => {
     const { cartItems, shippingAddress, paymentInfo, totalPrice, userId } = req.body;
-    // console.log("total amount", req.body);
+    console.log("Place Order", req.body);
 
     try {
+        // Step 1: Reduce stock before order is created
+        await updateProductStock(cartItems);
+
+        // Step 2: Create order
         const order = await Order.create({
-            userId: userId,
+            userId,
             status: "Processing",
             items: cartItems,
             shippingAddress,
-            paymentMethod: paymentInfo?.method || "Unknown",
+            paymentMethod: "Razorpay",
             paymentStatus: "Paid",
-            transactionId: paymentInfo?.transactionId || "Pending",
+            transactionId: paymentInfo?.razorpay_payment_id || "Pending",
             total: totalPrice,
             billingAddress: {
                 addressLine1 : "Sonia Vihar",
@@ -26,17 +31,20 @@ const placeOrder = async (req, res) => {
                 country: "India"
             },
         });
-        // console.log("Order Saved", order)
+
+        console.log("Order Saved", order);
 
         await User.findByIdAndUpdate(userId, { cart: [] });
         await sendOrderConfirmationEmail(process.env.Your_Email, order.toObject());
 
         res.status(200).json({ success: true, order });
+
     } catch (err) {
         console.error("Error placing order:", err);
         res.status(500).json({ success: false, message: err.message });
     }
 };
+
 
 
 const getOrdersById = async (req, res) => {

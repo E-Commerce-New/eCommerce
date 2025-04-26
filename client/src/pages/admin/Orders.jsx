@@ -27,7 +27,7 @@ const Orders = () => {
     return (
         <div className="max-w-6xl mx-auto p-4">
             <h2 className="text-2xl font-bold mb-6">📦 Orders Overview</h2>
-
+            {orders.length > 0 ? null : <p className="text-2xl text-red-500 font-bold text-center my-32">No Order Found till now!</p>}
             {orders.map((order, index) => {
                 const total = order.items.reduce((acc, item) => acc + item.price * item.quantity, 0);
                 return (

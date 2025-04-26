@@ -7,7 +7,11 @@ const productSchema = new Schema({
     description: String,
     price: Number,
     salePrice: Number,
-    quantity: Number,
+    quantity: {
+        type: Number,
+        required: true,
+        default: 0,
+    },
     sku: String,
     images: [String],
     category: String,

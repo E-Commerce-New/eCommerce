@@ -40,6 +40,7 @@ const AdminDashboard = () => {
             try{
                 const res = await axios.post("http://localhost:3000/api/user/getUser");
                 setTotalUsers(res.data);
+                console.log(res.data);
             } catch (error) {
                 console.log(error);
             }
@@ -75,12 +76,12 @@ const AdminDashboard = () => {
             <div className="p-4 flex gap-2 items-center">
                 <div
                     className="border p-4 border-black w-[25%] bg-gradient-to-r from-[#1F0D8C] to-[#F5F4FF]  text-white">
-                    <h1 className="text-3xl pb-10">{totalUsers.length}</h1>
+                    <h1 className="text-3xl pb-10">{totalUsers?.length}</h1>
                     <p>Subscribers</p>
                 </div>
                 <div
                     className="border p-4 border-black w-[25%] bg-gradient-to-r from-[#0058AA] to-[#F5F4FF] text-white">
-                    <h1 className="text-3xl pb-10">{orders.length}</h1>
+                    <h1 className="text-3xl pb-10">{orders?.length}</h1>
                     <p>Orders</p>
                 </div>
                 <div

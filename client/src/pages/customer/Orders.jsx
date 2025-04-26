@@ -62,7 +62,7 @@ const Orders = () => {
                 found.</p>) : (orders.map((order, index) => {
                 const dateString = order.createdAt;
                 const date = new Date(dateString);
-                const itemsSummary = `${order.items.length} items - ${order.total}`;
+                const itemsSummary = `${order.items.length} items - ₹${order.total}`;
 
                 return (
                     <div key={order._id} className="border-b-2 pb-4 mb-4 border-black py-2">
