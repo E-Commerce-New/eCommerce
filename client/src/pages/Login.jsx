@@ -44,7 +44,7 @@ const Login = () => {
             const res = await axios.post("http://localhost:3000/api/user/login", form , {
                 withCredentials: true
             })
-            console.log(res.data)
+            // console.log(res.data)
             dispatch(setUser(res.data.user))
             swal.close()
             if(res.status === 200) {

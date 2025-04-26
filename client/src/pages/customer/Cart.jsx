@@ -14,6 +14,7 @@ const Cart = () => {
     const navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
     const shippingAddress = user.addresses?.[0]
+    const [userCart, setUserCart] = useState([]);
 
     useEffect(() => {
         if (!user) {
@@ -33,6 +34,8 @@ const Cart = () => {
 
                 if (userRes.status === 200) {
                     const cart = userRes.data.data.cart;
+                    setUserCart(cart);
+                    // console.log('Cart: ',cart)
 
                     const productPromises = cart.map((item) => axios.post("http://localhost:3000/api/product/getProductById", {
                         id: item.productId,
@@ -80,7 +83,6 @@ const Cart = () => {
             swal.close();
         }
     };
-
 
     const deleteCartItem = async (productId) => {
         Swal.fire({

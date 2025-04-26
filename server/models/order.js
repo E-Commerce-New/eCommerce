@@ -3,8 +3,8 @@ const { Schema } = mongoose;
 
 const orderSchema = new Schema({
     userId: Schema.Types.ObjectId,
-    status: String,
-    items: [
+    // orderId:Number,
+    order_items:[
         {
             productId: Schema.Types.ObjectId,
             name: String,
@@ -12,7 +12,8 @@ const orderSchema = new Schema({
             quantity: Number,
             sku: String
         }
-    ],
+        ]
+        ,
     subTotal: Number,
     tax: Number,
     shippingCost: Number,
@@ -40,6 +41,30 @@ const orderSchema = new Schema({
     trackingNumber: String,
     notes: String,
     couponCode: String,
+
+    // "order_id": 818383995,
+    // "channel_order_id": "224-446",
+    // "shipment_id": 814768418,
+    // "status": "NEW",
+    // "status_code": 1,
+    // "onboarding_completed_now": 0,
+    // "awb_code": "",
+    // "courier_company_id": "",
+    // "courier_name": "",
+    // "new_channel": false,
+    // "packaging_box_error": ""
+
+    order_id: Number,
+    shipment_id:Number,
+    status:String,
+    status_code:Number,
+    onboarding_completed_now:Number,
+    awb_code:String,
+    courier_company_id:String,
+    courier_name:String,
+    new_channel:Boolean,
+    packing_box_error:String,
+
     createdAt: Date,
     updatedAt: Date
 }, {timestamps: true})

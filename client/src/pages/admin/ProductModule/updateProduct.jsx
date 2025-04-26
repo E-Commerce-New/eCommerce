@@ -1,5 +1,5 @@
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import {useParams} from "react-router-dom";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import GoBack from "../../../components/reUsable/Goback.jsx";
@@ -7,7 +7,7 @@ import swal from "sweetalert2";
 import {CirclePlus, CircleX} from "lucide-react";
 
 const UpdateProduct = () => {
-    const { id } = useParams();
+    const {id} = useParams();
     const [product, setProduct] = useState(null);
     const [form, setForm] = useState({
         name: "",
@@ -15,25 +15,25 @@ const UpdateProduct = () => {
         category: "",
         price: "",
         quantity: "",
-        image: null,
         active: false,
-        attributes: [{ key: "", value: "" }],
+        attributes: [{key: "", value: ""}],
+        weight: "",
+        height: "",
+        breadth: "",
+        length: "",
+        about: ""
     });
+
+    //By DB
     const [prevImages, setPrevImages] = useState([])
+    const [prevFileId, setPrevFileId] = useState([])
+    const [deleteFileId, setDeleteFileId] = useState([])
+    //By User
+    //For Preview
     const [newImages, setNewImages] = useState([])
+    //For Upload
     const [newImageFile, setNewImageFile] = useState([]);
 
-    // const removeImage = (index) => {
-    //     // console.log("remove");
-    //     setSingleFile([
-    //         ...singleFile.slice(0, index),
-    //         ...singleFile.slice(index + 1, singleFile.length)
-    //     ]);
-    //     setPrevImages(prevImages.filter((image, ind) => index !== ind));
-    //     // console.log("Images after removing image: ", images[0]);
-    // };
-    // console.log("IMages ", prevImages ,"Single File ",  singleFile)
-    //
     const uploadNewImages = async (e) => {
         // console.log('e.target.files ', e.target.files)
         if (e.target?.files?.length > 0) {
@@ -53,26 +53,30 @@ const UpdateProduct = () => {
     // console.log("New Image FIles : ", newImageFile)
     const removePrevImage = (index) => {
         setPrevImages(prevImages.filter((image, ind) => index !== ind));
+        setPrevFileId(prev => {
+            const updatedPrev = [...prev];
+            const [removedFile] = updatedPrev.splice(index, 1);  // remove file
+            setDeleteFileId(deletePrev => [...deletePrev, removedFile]); // add to delete list
+            return updatedPrev; // update the prev list
+        });
     }
+
+
     const removeNewImage = (index) => {
         setNewImages(newImages.filter((image, ind) => index !== ind));
         setNewImageFile(newImageFile.filter((image, ind) => index !== ind));
-        // console.log("New Images inside new removeNewImage ", newImages, newImageFile)
     }
 
 
     useEffect(() => {
         Swal.fire({
-            title: 'Loading...',
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            didOpen: () => {
+            title: 'Loading...', allowOutsideClick: false, allowEscapeKey: false, didOpen: () => {
                 Swal.showLoading();
             }
         });
         const fetchProduct = async () => {
             try {
-                const res = await axios.post(`http://localhost:3000/api/product/getproductbyid`, {id : id}, {
+                const res = await axios.post(`http://localhost:3000/api/product/getproductbyid`, {id: id}, {
                     withCredentials: true
                 });
                 const fetchedProduct = res.data.data;
@@ -85,9 +89,15 @@ const UpdateProduct = () => {
                     quantity: fetchedProduct.quantity || "",
                     image: null,
                     active: fetchedProduct.active || false,
-                    attributes: fetchedProduct.attributes || [{ key: "", value: "" }],
+                    attributes: fetchedProduct.attributes || [{key: "", value: ""}],
+                    weight: fetchedProduct.weight || "",
+                    height: fetchedProduct.height || "",
+                    breadth: fetchedProduct.breadth || "",
+                    length: fetchedProduct.length || "",
+                    about: fetchedProduct.about || ""
                 });
                 setPrevImages(res.data.data.images)
+                setPrevFileId([...res.data.data.imagesId])
             } catch (err) {
                 console.error("Error fetching product:", err);
             } finally {
@@ -99,34 +109,29 @@ const UpdateProduct = () => {
     }, [id]);
 
     const handleChange = (e) => {
-        const { name, value, type, checked, files } = e.target;
+        const {name, value, type, checked, files} = e.target;
         setForm((prev) => ({
-            ...prev,
-            [name]: type === "checkbox" ? checked : type === "file" ? files[0] : value,
+            ...prev, [name]: type === "checkbox" ? checked : type === "file" ? files[0] : value,
         }));
     };
 
     const addAttribute = (e) => {
         e.preventDefault();
         setForm((prev) => ({
-            ...prev,
-            attributes: [...prev.attributes, { key: "", value: "" }],
+            ...prev, attributes: [...prev.attributes, {key: "", value: ""}],
         }));
     };
 
     const handleAttributeChange = (index, field, value) => {
         const updated = [...form.attributes];
         updated[index][field] = value;
-        setForm((prev) => ({ ...prev, attributes: updated }));
+        setForm((prev) => ({...prev, attributes: updated}));
     };
 
     const onSubmit = async (e) => {
         e.preventDefault();
         Swal.fire({
-            title: 'Updating this Product',
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            didOpen: () => {
+            title: 'Updating this Product', allowOutsideClick: false, allowEscapeKey: false, didOpen: () => {
                 Swal.showLoading();
             }
         });
@@ -138,25 +143,25 @@ const UpdateProduct = () => {
             formData.append("price", form.price);
             formData.append("quantity", form.quantity);
             formData.append("active", form.active);
-            // if (prevImages) {
-            //     prevImages.forEach(image => {
-            //     formData.append("imagesArr", image); // or just "imagesArr"
-            // });}
-            // console.log("Prev Images :",typeof prevImages, prevImages)
-            formData.append('imagesArr', JSON.stringify(prevImages))
-            if(newImageFile?.length>0){
-                for(let i = 0; i<newImageFile.length; i++){
+            formData.append("fileId", JSON.stringify(prevFileId));
+            formData.append("deleteImageArr", JSON.stringify(deleteFileId));
+            formData.append('imagesArr', JSON.stringify(prevImages));
+            formData.append("attributes", JSON.stringify(form.attributes));
+            formData.append("weight", form.weight);
+            formData.append("height", form.height);
+            formData.append("breadth", form.breadth);
+            formData.append("length", form.length);
+            formData.append("about", form.about);
+            if (newImageFile?.length > 0) {
+                for (let i = 0; i < newImageFile.length; i++) {
                     formData.append('imagesFile', newImageFile[i])
                 }
             }
-            // formData.append('imagesFile', JSON.stringify(newImageFile));
-            formData.append("attributes", JSON.stringify(form.attributes));
 
             const res = await axios.patch(`http://localhost:3000/api/product/update/${id}`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
-                },
-                withCredentials: true
+                }, withCredentials: true
             });
 
             Swal.close();
@@ -165,25 +170,21 @@ const UpdateProduct = () => {
                 title: 'Product Updated',
                 text: res.data.message || 'Product has been successfully updated!',
             }).then((result) => {
-                if(result.isConfirmed) {
+                if (result.isConfirmed) {
                     history.back()
                 }
             })
         } catch (error) {
             Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: error.response?.data?.message || 'Something went wrong!',
+                icon: 'error', title: 'Oops...', text: error.response?.data?.message || 'Something went wrong!',
             });
         }
     };
 
-    return (
-        <>
-            {product ? (
-                <>
+    return (<>
+            {product ? (<>
                     <div className="flex gap-2 items-center">
-                        <GoBack />
+                        <GoBack/>
                         <h1 className="text-2xl">You are Updating <span className="font-bold">{product.name}</span></h1>
                     </div>
 
@@ -267,42 +268,40 @@ const UpdateProduct = () => {
 
 
                             <div className='bg-indigo-100 p-4'>
-                                {prevImages.length > 0 ? <div><p className='text-red-500'>**First selected image will be used as preview image of your product**</p><p className='bg-red-500 text-center font-bold text-white'>Previous Images</p> </div>: ""}
+                                {prevImages.length > 0 ?
+                                    <div><p className='text-red-500'>**First selected image will be used as preview
+                                        image of your product**</p><p
+                                        className='bg-red-500 text-center font-bold text-white'>Previous Images</p>
+                                    </div> : ""}
                                 <div className='flex flex-wrap gap-2 bg-gray-300'>
-                                    {prevImages.length !== 0 &&
-                                        prevImages.map((url, index) => (
-                                            <div key={url}
-                                                className={`img-block bg-gray w-[400px] h-[400px] relative bg-gray-500 flex flex-row border-4 mb-4 items-center ${index === 0 ? ' border-green-500 ' : 'border-black'}`}>
-                                                <img className="object-contain w-[400px] h-[400px]"
-                                                     src={'https://ik.imagekit.io/0Shivams/'+url} alt="..."/>
-                                                <span
-                                                    className="absolute top-2 right-2 cursor-pointer"
-                                                    onClick={() => removePrevImage(index)}
-                                                >
+                                    {prevImages.length !== 0 && prevImages.map((url, index) => (<div key={url}
+                                                                                                     className={`img-block bg-gray w-[400px] h-[400px] relative bg-gray-500 flex flex-row border-4 mb-4 items-center ${index === 0 ? ' border-green-500 ' : 'border-black'}`}>
+                                            <img className="object-contain w-[400px] h-[400px]"
+                                                 src={'https://ik.imagekit.io/0Shivams/' + url} alt="..."/>
+                                            <span
+                                                className="absolute top-2 right-2 cursor-pointer"
+                                                onClick={() => removePrevImage(index)}
+                                            >
                                                     <CircleX
                                                         className='bg-red-500 text-white text-2xl rounded-full w-10 h-10'/>
                                             </span>
-                                            </div>
-                                        ))}
+                                        </div>))}
                                 </div>
 
                                 <div className='mt-4'>
                                     <p className='bg-red-500 text-center font-bold text-white'>Upload More Images</p>
-                                    {newImages.length !== 0 &&
-                                        newImages.map((url, index) => (
-                                            <div key={url}
-                                                className={`img-block bg-gray w-[400px] h-[400px] relative bg-gray-500 flex flex-row border-4 mb-4 items-center ${index === 0 ? ' border-green-500 ' : 'border-black'}`}>
-                                                <img className="object-contain w-[400px] h-[400px]"
-                                                     src={url} alt="..."/>
-                                                <span
-                                                    className="absolute top-2 right-2 cursor-pointer"
-                                                    onClick={() => removeNewImage(index)}
-                                                >
+                                    {newImages.length !== 0 && newImages.map((url, index) => (<div key={url}
+                                                                                                   className={`img-block bg-gray w-[400px] h-[400px] relative bg-gray-500 flex flex-row border-4 mb-4 items-center ${index === 0 ? ' border-green-500 ' : 'border-black'}`}>
+                                            <img className="object-contain w-[400px] h-[400px]"
+                                                 src={url} alt="..."/>
+                                            <span
+                                                className="absolute top-2 right-2 cursor-pointer"
+                                                onClick={() => removeNewImage(index)}
+                                            >
                                                     <CircleX
                                                         className='bg-red-500 text-white text-2xl rounded-full w-10 h-10'/>
                                             </span>
-                                            </div>
-                                        ))}
+                                        </div>))}
                                 </div>
 
                                 <div className=''>
@@ -310,7 +309,8 @@ const UpdateProduct = () => {
                                            className='bg-gray-400 p-2 rounded hover:cursor-pointer hover:bg-green-500'><CirclePlus
                                         className='inline-block bg-green-500 rounded-full  text-white'/> Select
                                         Images</label>
-                                    <p className=' ml-4 inline-block'>{prevImages.length + newImages.length} Files Selected</p>
+                                    <p className=' ml-4 inline-block'>{prevImages.length + newImages.length} Files
+                                        Selected</p>
                                     <input
                                         type="file"
                                         name="myfile"
@@ -344,16 +344,67 @@ const UpdateProduct = () => {
                                                 value={attr.value}
                                                 onChange={(e) => handleAttributeChange(index, "value", e.target.value)}
                                             />
-                                            {index === form.attributes.length - 1 && (
-                                                <button
+                                            {index === form.attributes.length - 1 && (<button
                                                     className="border-2 border-black bg-sky-200 p-2 rounded-[50%] font-bold"
                                                     onClick={addAttribute}
                                                 >
                                                     +
-                                                </button>
-                                            )}
-                                        </div>
-                                    ))}
+                                                </button>)}
+                                        </div>))}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label>About Product</label>
+                                <div id="attr" className="flex flex-col gap-2">
+                                  <textarea
+                                        name='about' rows="4"
+                                        className="border-b-2 border-black p-2 focus:outline-0"
+                                        placeholder="About Product ..."
+                                        onChange={handleChange}
+                                        value={form.about}
+                                     ></textarea>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label>Product Dimensions and Weight <span
+                                    className='text-red-500 text-[14px] font-bold float-end'>**Will not be visible to users**</span></label>
+                                <div>
+                                    <div className="flex gap-3 items-center">
+                                        <input
+                                            name='length'
+                                            type="number"
+                                            placeholder="Length (in cm)"
+                                            className="border-b-2 border-black p-2 focus:outline-0"
+                                            onChange={handleChange}
+                                            value={form.length}
+                                        />
+                                        <input
+                                            name='breadth'
+                                            type="number"
+                                            placeholder="Width (in cm)"
+                                            className="border-b-2 border-black p-2 focus:outline-0"
+                                            onChange={handleChange}
+                                            value={form.breadth}
+                                        />
+                                        <input
+                                            name='height'
+                                            type="number"
+                                            placeholder="Height (in cm)"
+                                            className="border-b-2 border-black p-2 focus:outline-0"
+                                            onChange={handleChange}
+                                            value={form.height}
+                                        />
+                                        <input
+                                            name='weight'
+                                            type="number"
+                                            placeholder="Weight (in Kg)"
+                                            className="border-b-2 border-black p-2 focus:outline-0"
+                                            onChange={handleChange}
+                                            value={form.weight}
+                                        />
+                                    </div>
                                 </div>
                             </div>
 
@@ -376,12 +427,8 @@ const UpdateProduct = () => {
                             />
                         </form>
                     </div>
-                </>
-            ) : (
-                <p>Loading product...</p>
-            )}
-        </>
-    );
+                </>) : (<p>Loading product...</p>)}
+        </>);
 };
 
 export default UpdateProduct;
