@@ -172,7 +172,6 @@ const AddProduct = ({
                             onChange={handleChange}
                             value={form.about}
                         ></textarea>
-
                     </div>
                 </div>
 

@@ -30,13 +30,14 @@ const uploadFiles = async (imagesArray) => {
 
 //Delete Image Files
 const deleteFiles = async (imagesArray) => {
-    // console.log("Image Arr : " ,imagesArray)
+    console.log("Image Arr : " ,imagesArray)
     for (const fileId of imagesArray) {
         if (fileId) {
             await imagekit.deleteFile(fileId, function (err, res){
                 if(err) console.log(err)
                 else console.log(res)
             });
+            // console.log("deleted fileid" , fileId)
         }
     }
     return true;

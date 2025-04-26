@@ -6,84 +6,87 @@ const {uploadFiles, deleteFiles} = require("../helper/fileHandelers");
 
 //Validations: Empty fields, 1 image required(Commented right now),
 const createProducts = async (req, res) => {
+
     try {
-        // console.log("BODY:", req.body);
-        // console.log("FILE:", req.files);
-        const {
-            name,
-            description,
-            category,
-            price,
-            quantity,
-            active,
-            attributes,
-            length,
-            breadth,
-            height,
-            weight,
-            about
-        } = req.body;
+        if (req.isAdmin) {
+            // console.log("BODY:", req.body);
+            // console.log("FILE:", req.files);
+            const {
+                name,
+                description,
+                category,
+                price,
+                quantity,
+                active,
+                attributes,
+                length,
+                breadth,
+                height,
+                weight,
+                about
+            } = req.body;
 
 
-        // List of required fields
-        const requiredFields = {
-            name,
-            description,
-            category,
-            price,
-            quantity,
-            active,
-            attributes,
-            length,
-            breadth,
-            height,
-            weight,
-            about,
-
-        };
-        // Check for missing or empty values
-        for (const [key, value] of Object.entries(requiredFields)) {
-            if (
-                value === undefined || (typeof value === 'string' && value.trim() === '')
-            ) {
-                return res.status(400).json({message: `Empty field: ${key.charAt(0).toUpperCase() + key.slice(1)}`});
+            // List of required fields
+            const requiredFields = {
+                name,
+                description,
+                category,
+                price,
+                quantity,
+                active,
+                attributes,
+                length,
+                breadth,
+                height,
+                weight,
+                about,
+            };
+            // Check for missing or empty values
+            for (const [key, value] of Object.entries(requiredFields)) {
+                if (
+                    value === undefined || (typeof value === 'string' && value.trim() === '')
+                ) {
+                    return res.status(400).json({message: `Empty field: ${key.charAt(0).toUpperCase() + key.slice(1)}`});
+                }
             }
+
+            const parsedAttributes = JSON.parse(attributes);
+
+            const images = await uploadFiles(req.files)
+            const imagesURL = images.filePath
+            const imagesId = images.fileId
+            // console.log("Images: ", images)
+
+            //Atleast one image is required.
+            // if(images.length === 0){
+            //     return res.status(400).json({message: "Please upload atleast one Image."})
+            // }
+
+            const product = new Product({
+                name,
+                description,
+                category,
+                price: Number(price),
+                quantity: Number(quantity),
+                active: active === 'true',
+                attributes: parsedAttributes,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                images: imagesURL,
+                imagesId,
+                length,
+                breadth,
+                height,
+                weight,
+                about
+
+            });
+            await product.save();
+            return res.status(200).json({message: 'Product Created Successfully'});
+        } else {
+            return res.status(401).json({message: 'Unauthorized'});
         }
-
-        const parsedAttributes = JSON.parse(attributes);
-
-        const images = await uploadFiles(req.files)
-        const imagesURL = images.filePath
-        const imagesId = images.fileId
-        // console.log("Images: ", images)
-
-        //Atleast one image is required.
-        // if(images.length === 0){
-        //     return res.status(400).json({message: "Please upload atleast one Image."})
-        // }
-
-        const product = new Product({
-            name,
-            description,
-            category,
-            price: Number(price),
-            quantity: Number(quantity),
-            active: active === 'true',
-            attributes: parsedAttributes,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            images:imagesURL,
-            imagesId,
-            length,
-            breadth,
-            height,
-            weight,
-            about
-
-        });
-
-        await product.save();
-        return res.status(200).json({message: 'Product Created Successfully'});
     } catch (err) {
         console.error(err);
         return res.status(500).json({message: 'Something went wrong'});
@@ -101,47 +104,76 @@ const getProducts = async (req, res) => {
 }
 
 const updateProduct = async (req, res) => {
+
     try {
-        const {
-            name,
-            description,
-            category,
-            price,
-            quantity,
-            active,
-            attributes,
-            imagesArr
-        } = req.body;
+        if (req.isAdmin) {
+            const {
+                name,
+                description,
+                category,
+                price,
+                quantity,
+                active,
+                attributes,
+                imagesArr,
+                fileId,
+                deleteImageArr,
+                weight,
+                height,
+                breadth,
+                length,
+                about
+            } = req.body;
 
-        // console.log("Images Array: ", JSON.parse(imagesArr))
-        // console.log('Req.files: ', typeof req.files)
+            // console.log("Images Array: ", JSON.parse(imagesArr), imagesArr)
+            // console.log('FileID : ', JSON.parse(fileId))
+            // console.log('Delete Image Array: ', deleteImageArr)
+            //
+            const uploadFile = await uploadFiles(req.files);
+            const gotFilePath = uploadFile.filePath;
+            const gotFileId = uploadFile.fileId;
+            const parsedAttributes = typeof attributes === "string" ? JSON.parse(attributes) : attributes;
+            //
+            const imgArr = JSON.parse(imagesArr);
+            const fileIdArr = JSON.parse(fileId);
+            const deleteFilesArr = JSON.parse(deleteImageArr);
+            //
+            // console.log("File Path: ", ...imgArr, ...gotFilePath)
+            // console.log("File Id: ", ...fileIdArr, ...gotFileId)
+            //
+            //
+            const updateData = {
+                name,
+                description,
+                category,
+                price,
+                quantity,
+                active,
+                attributes: parsedAttributes,
+                images: [...imgArr, ...gotFilePath],
+                imagesId: [...fileIdArr, ...gotFileId],
+                weight,
+                height,
+                breadth,
+                length,
+                about
+            };
 
-        const filePath = await uploadFiles(req.files)
+            // console.log(" imgArr ", imgArr)
+            // console.log('Final images array and file path: ' , imagesArr, filePath)
 
-        const parsedAttributes = typeof attributes === "string" ? JSON.parse(attributes) : attributes;
+            // console.log("Images: ", updateData.images)
+            await Product.findByIdAndUpdate(req.params.id, updateData);
 
-        const imgArr = JSON.parse(imagesArr)
+            const product = await Product.findById(req.params.id);
+            res.status(200).json({ message: 'Product updated successfully'});
 
-        const updateData = {
-            name,
-            description,
-            category,
-            price,
-            quantity,
-            active,
-            attributes: parsedAttributes,
-            images: [...imgArr, ...filePath]
-        };
-
-
-        // console.log(" imgArr ", imgArr)
-        // console.log('Final images array and file path: ' , imagesArr, filePath)
-
-        // console.log("Images: ", updateData.images)
-        await Product.findByIdAndUpdate(req.params.id, updateData);
-
-        const product = await Product.findById(req.params.id);
-        res.status(200).json({product, message: 'Product updated successfully', filePath});
+            // const deleteFilesArr = JSON.parse(req.body.deleteImageArr);
+            // console.log("Delete Files: ", deleteFilesArr)
+            await deleteFiles(deleteFilesArr);
+        } else {
+            return res.status(401).json({message: 'Unauthorized'});
+        }
     } catch (error) {
         console.log("Update Error:", error);
         res.status(500).send('Something went wrong...');
@@ -176,13 +208,16 @@ const getProductById = async (req, res) => {
     }
 };
 
-
 const addCategory = async (req, res) => {
     try {
-        const {category} = req.body;
-        const newCat = new Category({category});
-        await newCat.save();
-        res.status(200).json({message: "Category added successfully", category: newCat});
+        if (req.isAdmin) {
+            const {category} = req.body;
+            const newCat = new Category({category});
+            await newCat.save();
+            res.status(200).json({message: "Category added successfully", category: newCat});
+        } else {
+            return res.status(401).json({message: 'Unauthorized'});
+        }
     } catch (error) {
         console.error(error);
         res.status(500).json({message: "Error saving category"});

@@ -22,8 +22,9 @@ const getUserByUsernameAndPassword = async (req, res) => {
         if (user.password === password) {
             //Setting Token
             const token = jwt.sign({
-                username: user.username
-            }, secretKey, {expiresIn: '30m'});
+                username: user.username,
+                isAdmin: user.isAdmin
+            }, secretKey, {expiresIn: '120m'});
             //Sending Token to client as cookie
             res.cookie('access_token', token, {
                 httpOnly: true,

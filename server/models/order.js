@@ -3,6 +3,7 @@ const { Schema } = mongoose;
 
 const orderSchema = new Schema({
     userId: Schema.Types.ObjectId,
+    orderId:Number,
     status: String,
     items: [
         {

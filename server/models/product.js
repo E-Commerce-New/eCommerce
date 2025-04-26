@@ -10,6 +10,7 @@ const productSchema = new Schema({
     quantity: Number,
     sku: String,
     images: [String],
+    imagesId:[String],
     category: String,
     active: Boolean,
     isFeatured: Boolean,
@@ -28,8 +29,8 @@ const productSchema = new Schema({
     length: Schema.Types.Double,
     breadth: Schema.Types.Double,
     height: Schema.Types.Double,
-    weight: Schema.Types.Double,
-    imagesId:[String]
+    weight: Schema.Types.Double
+
 }, { timestamps: true });
 
 
