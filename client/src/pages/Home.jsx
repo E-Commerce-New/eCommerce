@@ -1,44 +1,36 @@
-import {useSelector, useDispatch} from 'react-redux'
+import { useSelector } from 'react-redux'
 import Products from "./customer/products.jsx"
-import {useEffect} from "react";
-import axios from "axios";
+import Carousel from "./customer/HomeSections/Carousel.jsx"
+
 
 const Home = () => {
     const { user } = useSelector((state) => state.user);
-    console.log(user)
-
-    // useEffect(() => {
-    //     const fetchShipping = async () => {
-    //         try {
-    //             const res = await axios.post("http://localhost:3000/api/user/shipping", {
-    //                 email: "alok@example.com",
-    //                 password: "alok"
-    //             });
-    //             console.log(res.data);
-    //         } catch (err) {
-    //             console.log(err);
-    //         }
-    //     }
-    //     fetchShipping();
-    // },[])
 
     return (
         <>
-        <div className="bg-sky-200 p-2 m-2">Promotional deals , seasonal offers , new arrivals will be here</div>
-        <div className="bg-sky-200 p-2 m-2">Carousel will be here</div>
-        <div className="bg-sky-200 p-2 m-2">main products categories</div>
-        <div className="bg-sky-200 p-2 m-2">flash deals/Limited time offers</div>
-        <div className="bg-sky-200 p-2 m-2">New Arrivals / Trending Now</div>
-        <div className="bg-sky-200 p-2 m-2">Recommended for you</div>
-        <div className="bg-sky-200 p-2 m-2">Top Rated Products</div>
-        <div className="bg-sky-200 p-2 m-2">User Reviews Section (dummy)</div>
-        <div className="bg-sky-200 p-2 m-2">NewsLetter Subscription</div>
-        <div className="bg-sky-200 p-2 m-2">footer</div>
-        <div className="bg-sky-200 p-2 m-2">Floating Help or chat with us button</div>
+            {/* Hero Banner Section */}
+            <Carousel />
+            {/* Other Sections */}
+            <div className="space-y-4">
+                <div className="bg-sky-200 p-4 rounded-lg">Promotional deals, seasonal offers, new arrivals</div>
+                <div className="bg-sky-200 p-4 rounded-lg">Secondary Carousel will be here</div>
+                <div className="bg-sky-200 p-4 rounded-lg">Main Product Categories</div>
+                <div className="bg-sky-200 p-4 rounded-lg">Flash Deals / Limited Time Offers</div>
+                <div className="bg-sky-200 p-4 rounded-lg">New Arrivals / Trending Now</div>
+                <div className="bg-sky-200 p-4 rounded-lg">Recommended For You</div>
+                <div className="bg-sky-200 p-4 rounded-lg">Top Rated Products</div>
+                <div className="bg-sky-200 p-4 rounded-lg">User Reviews Section</div>
+                <div className="bg-sky-200 p-4 rounded-lg">Newsletter Subscription</div>
+                <div className="bg-sky-200 p-4 rounded-lg">Footer Section</div>
+                <div className="bg-sky-200 p-4 rounded-lg">Floating Help or Chat Button</div>
+            </div>
 
-            <div><Products/></div>
+            {/* Products */}
+            <div className="mt-10">
+                <Products />
+            </div>
         </>
-    )
+    );
 }
 
-export default Home
+export default Home;

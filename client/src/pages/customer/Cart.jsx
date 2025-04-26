@@ -156,6 +156,7 @@ const Cart = () => {
                             Swal.showLoading();
                         }
                     });
+                    try {
                     const placeRes = await axios.post('http://localhost:3000/api/order/place', {
                         cartItems, shippingAddress, paymentInfo: response, totalPrice, userId: user._id,
                     });
@@ -168,12 +169,13 @@ const Cart = () => {
                                 location.reload();
                             }
                         })
-                    } else {
+                    }
+                    } catch (e) {
                         swal.close()
                         swal.fire({
                             title: 'Error!',
                             icon: 'error',
-                            text: placeRes.data.message,
+                            text: e.response?.data?.message || "Something went wrong",
                         })
                     }
                 } else {
@@ -245,7 +247,10 @@ const Cart = () => {
                                         <p onClick={() => increaseQuantity(item._id)}
                                            className="cursor-pointer basis-1/3 text-right">+</p>
                                     </div>
-
+                                    <div className="flex gap-1 text-sm items-center cursor-pointer"
+                                    onClick={()=>deleteCartItem(item._id)}>
+                                    <Trash2 className="w-4 h-4 text-sm"/> <p>Delete</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>

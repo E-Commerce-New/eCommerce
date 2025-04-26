@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import {ChevronDown, ChevronUp} from "lucide-react"
+import Swal from "sweetalert2";
 
 const Orders = () => {
     const {user} = useSelector((state) => state.user);
@@ -12,17 +13,30 @@ const Orders = () => {
 
     useEffect(() => {
         const fetchOrders = async () => {
+            Swal.fire({
+                title: 'Loading your Orders...',
+                text: 'Stay with us!',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
             try {
                 const res = await axios.post("http://localhost:3000/api/order/getOrdersById", user);
                 if (res.status === 200) {
-                    setOrders(res.data);
+                    Swal.close()
+                    const reversedata = res.data.reverse()
+                    setOrders(reversedata);
                     console.log(res.data);
                 }
             } catch (err) {
+                Swal.close()
                 console.log(err);
             }
         };
         if (user) fetchOrders();
+        if (orders) orders.reverse()
     }, [user]);
 
     const navigate = useNavigate();
@@ -36,11 +50,15 @@ const Orders = () => {
     };
 
 
-    return (<div
+    return (
+        <div
             className="p-4 w-[70%] mt-5 ml-[15%] h-[80vh] overflow-y-scroll scrollbar-hide border rounded-2xl bg-white shadow-2xl">
-            <div className="flex items-center gap-2 pb-3 border-b-2 border-gray-200">
+            <div className="pb-3 border-b-2 border-gray-200 flex justify-between">
+                <div className="flex items-center gap-2">
                 <Goback/>
                 <h2 className="text-2xl font-bold">Your Orders</h2>
+                </div>
+                <div className="p-2"><strong>Total Orders :</strong> {orders.length}</div>
             </div>
 
             {/*Heading*/}

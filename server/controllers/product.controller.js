@@ -130,7 +130,7 @@ const updateProduct = async (req, res) => {
             quantity,
             active,
             attributes: parsedAttributes,
-            images: [...imgArr, ...filePath]
+            images: [...imgArr]
         };
 
 

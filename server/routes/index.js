@@ -5,6 +5,7 @@ const cartRouter = require('./cart.routes');
 const paymentRouter = require('./payment.routes');
 const logisticRouter = require('./logistic.routes')
 const passwordRouter = require('./password.routes');
+const uiCustomize = require('./uiCustomize.routes');
 module.exports = {
     userRouter,
     productRouter,
@@ -13,4 +14,5 @@ module.exports = {
     paymentRouter,
     logisticRouter,
     passwordRouter,
+    uiCustomize,
 };

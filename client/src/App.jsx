@@ -1,26 +1,32 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+
+// Hybrid Imports
 import LogIn from "./pages/Login";
 import NoPage from "./pages/NoPage";
-import AdminPanel from "./pages/admin/AdminDashboard";
-import AdminLayout from "./layouts/AdminLayout";
-import Products from "./pages/admin/Products.jsx";
-import UpdateProduct from "./pages/admin/ProductModule/updateProduct.jsx";
-import DeleteProduct from "./pages/admin/ProductModule/DeleteProduct.jsx";
 import SignUp from "./pages/Signup.jsx"
 import Home from "./pages/Home.jsx"
-import UserLayout from "./layouts/UserLayout"
+
+// Admin Imports
+import AdminPanel from "./pages/admin/AdminDashboard";
+import AdminLayout from "./layouts/AdminLayout";
+import AdminCustomize from "./pages/admin/Customize.jsx"
+import UpdateProduct from "./pages/admin/ProductModule/updateProduct.jsx";
+import DeleteProduct from "./pages/admin/ProductModule/DeleteProduct.jsx";
+import AdminOrders from "./pages/admin/Orders.jsx";
 import AdminSettings from "./pages/admin/AdminSetting"
-import ProductInfo from "./pages/customer/Product-info.jsx";
+import Products from "./pages/admin/Products.jsx";
+
+// Users Imports
+import UserLayout from "./layouts/UserLayout"
 import AddToCart from "./components/reUsable/AddToCart.js";
 import Cart from "./pages/customer/Cart.jsx"
 import Profile from "./pages/customer/profile.jsx"
 import Explore from "./pages/customer/explore.jsx"
-import Swal from "sweetalert2";
 import AboutUs from "./pages/customer/About.jsx";
 import Contact from "./pages/customer/Contact.jsx";
 import Orders from "./pages/customer/Orders.jsx";
 import ResetPassword from "./pages/customer/ResetPassword.jsx";
-import AdminOrders from "./pages/admin/Orders.jsx";
+import ProductInfo from "./pages/customer/Product-info.jsx";
 
 
 export default function App() {
@@ -40,7 +46,6 @@ export default function App() {
                     <Route path="contact" element={<Contact />} />
                     <Route path="orders" element={<Orders />} />
                     <Route path="/reset-password/:token" element={<ResetPassword />} />
-
                 </Route>
 
                 <Route path="/admin" element={<AdminLayout />}>
@@ -50,9 +55,8 @@ export default function App() {
                     <Route path="delete-product/:id" element={<DeleteProduct />} />
                     <Route path="setting" element={<AdminSettings />} />
                     <Route path="orders" element={<AdminOrders />} />
-
+                    <Route path="customize" element={<AdminCustomize />} />
                 </Route>
-
 
                 <Route path="*" element={<NoPage />} />
             </Routes>
