@@ -1,6 +1,7 @@
 import { useSelector } from 'react-redux'
 import Products from "./customer/products.jsx"
 import Carousel from "./customer/HomeSections/Carousel.jsx"
+import MainProducts from "./customer/HomeSections/MainProducts.jsx"
 
 
 const Home = () => {
@@ -10,6 +11,7 @@ const Home = () => {
         <>
             {/* Hero Banner Section */}
             <Carousel />
+            <MainProducts />
             {/* Other Sections */}
             <div className="space-y-4">
                 <div className="bg-sky-200 p-4 rounded-lg">Promotional deals, seasonal offers, new arrivals</div>

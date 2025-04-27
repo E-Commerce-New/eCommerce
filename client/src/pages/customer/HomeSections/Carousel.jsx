@@ -16,13 +16,15 @@ const Carousel = () => {
         const fetchBanners = async () => {
             const res = await axios.get("http://localhost:3000/api/ui/get");
             if (res.data.success) {
-                setBanners(res.data.banners);
+                console.log(res.data.data.banners);
+                setBanners(res.data.data.banners);
             }
         };
         fetchBanners();
     }, []);
     return (
         <>
+
             <div className="max-w-[90vw] mx-auto rounded-lg relative">
                 <Swiper
                     modules={[Autoplay, Pagination, Navigation]}

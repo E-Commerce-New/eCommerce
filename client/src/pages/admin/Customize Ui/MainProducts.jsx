@@ -25,7 +25,6 @@ const MainProducts = () => {
         }
     };
 
-    // Function to remove a product from mainProducts
     const handleRemove = (productId) => {
         setMainProducts((prev) => prev.filter((product) => product._id !== productId));
     };
@@ -34,7 +33,7 @@ const MainProducts = () => {
         try {
             const productIds = mainProducts.map(product => product._id);  // Only send product IDs
             const res = await axios.post("http://localhost:3000/api/ui/addMainProducts", { productIds });
-            if (res.data.success) {
+            if (res.status === 200) {
                 alert("Products added successfully");
             };
         } catch (e) {
@@ -45,6 +44,7 @@ const MainProducts = () => {
     return (
         <div>
             <h1 className="text-2xl font-bold px-4 py-2">List Your Main Products Here! #2nd Section</h1>
+            <p className="text-red-500">We recommend you to add only best of product of yours</p>
             <div>
                 <div>
                     <select
@@ -61,7 +61,7 @@ const MainProducts = () => {
                         ))}
                     </select>
                     <button className="px-5 py-2 border bg-green-300 mx-3 rounded-lg"
-                            onClick={addMainProducts}
+                            onClick={()=>addMainProducts()}
                     >Add</button>
                 </div>
             </div>
@@ -73,7 +73,7 @@ const MainProducts = () => {
                         <p>{product.name}</p>
                         <button
                             className="px-2 bg-red-300"
-                            onClick={() => handleRemove(product._id)} // Remove product on click
+                            onClick={() => handleRemove(product._id)} 
                         >
                             X
                         </button>
