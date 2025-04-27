@@ -80,7 +80,7 @@ const Orders = () => {
                 found.</p>) : (orders.map((order, index) => {
                 const dateString = order.createdAt;
                 const date = new Date(dateString);
-                const itemsSummary = `${order.items.length} items - ₹${order.total}`;
+                const itemsSummary = `${order?.items?.length} items - ₹${order?.total}`;
 
                 return (
                     <div key={order._id} className="border-b-2 pb-4 mb-4 border-black py-2">
@@ -105,7 +105,7 @@ const Orders = () => {
                         {expandedOrderId === order._id && (<div className="mt-4 pl-6">
                             <div>
                                 <h4 className="font-semibold">Products - </h4>
-                                {order.items.map((item, index) => (
+                                {Array.isArray(order.items) && order.items.map((item, index) => (
                                     <div key={item._id} className="flex gap-2 cursor-pointer p-2 border-b-2 border-gray-200 hover:bg-gray-200 hover:rounded-2xl my-2 transition-all"
                                          onClick={() => navigate(`/product-info/${item._id}`)}
                                     >

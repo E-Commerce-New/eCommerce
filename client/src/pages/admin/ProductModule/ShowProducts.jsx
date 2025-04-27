@@ -1,11 +1,11 @@
 import {Trash2} from "lucide-react";
 import {useNavigate} from "react-router-dom";
+import swal from "sweetalert2";
+import axios from "axios";
 
 const ShowProducts = ({
-    filteredProducts,
-    products,
-    searchTerm,
-    setSearchTerm,}) => {
+                          filteredProducts, products, searchTerm, setSearchTerm,
+                      }) => {
 
     const navigate = useNavigate();
 
@@ -17,8 +17,26 @@ const ShowProducts = ({
     const handledelete = (productId) => {
         navigate(`/admin/delete-product/${productId}`);
     }
-    return (
-        <>
+
+    const changeActive = async (id) => {
+        // alert(id)
+        const res = await axios.post("http://localhost:3000/api/product/updateisactive", {
+            id
+        })
+        if (res.status === 200) {
+            swal.fire({
+                icon: "success", title: "Success", timer: 1500,
+            }).then((result) => {
+                if (result.dismiss) {
+                    location.reload();
+                } else if (result.isConfirmed) {
+                    location.reload();
+                }
+            })
+        }
+    }
+
+    return (<>
             <div className="p-4">
                 <div className="flex justify-between items-center py-3 ">
                     <h1 className="text-2xl font-bold">Product List</h1>
@@ -51,8 +69,7 @@ const ShowProducts = ({
                     </thead>
 
                     <tbody>
-                    {filteredProducts && filteredProducts.length > 0 ? (
-                        filteredProducts.map((product, index) => (
+                    {filteredProducts && filteredProducts.length > 0 ? (filteredProducts.map((product, index) => (
                             <tr key={product._id}>
                                 <td className="border px-4 py-2">{index + 1}</td>
                                 <td className="border px-4 py-2">{product.name}</td>
@@ -60,26 +77,18 @@ const ShowProducts = ({
                                 <td className="border px-4 py-2">₹{product?.price?.toLocaleString()}</td>
                                 <td className="border px-4 py-2">{product.quantity}</td>
                                 <td className="border px-4 py-2">{product.category}</td>
-                                <td className="border px-4 py-2">
-                                    <input type="checkbox" checked={product.active} readOnly/>
+                                <td className="border px-4 py-2"
+                                    onClick={() => changeActive(product._id)}>
+                                    <input type="checkbox" checked={product.active}/>
                                 </td>
                                 <td className="border px-4 py-2">
-                                    {product.attributes && product.attributes.length > 0 ? (
-                                        product.attributes.map((attr, idx) => (
+                                    {product.attributes && product.attributes.length > 0 ? (product.attributes.map((attr, idx) => (
                                             <div key={idx}>
-                                                {attr.key || attr.value ? (
-                                                    <>
+                                                {attr.key || attr.value ? (<>
                                                         <span
                                                             className="font-medium">{attr.key || "N/A"}:</span> {attr.value || "N/A"}
-                                                    </>
-                                                ) : (
-                                                    "N/A"
-                                                )}
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <span className="text-gray-400 italic">N/A</span>
-                                    )}
+                                                    </>) : ("N/A")}
+                                            </div>))) : (<span className="text-gray-400 italic">N/A</span>)}
                                 </td>
                                 <td className="border px-4 py-2 text-center">
                                     <button
@@ -97,20 +106,15 @@ const ShowProducts = ({
                                         <Trash2/>
                                     </button>
                                 </td>
-                            </tr>
-                        ))
-                    ) : (
-                        <tr>
+                            </tr>))) : (<tr>
                             <td colSpan="10" className="text-center text-red-500 py-4">
                                 No products found
                             </td>
-                        </tr>
-                    )}
+                        </tr>)}
                     </tbody>
                 </table>
             </div>
-        </>
-    )
+        </>)
 }
 
 export default ShowProducts;

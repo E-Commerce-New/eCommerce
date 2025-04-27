@@ -95,13 +95,14 @@ const createProducts = async (req, res) => {
 
 const getProducts = async (req, res) => {
     try {
-        const data = await Product.find({})
-        res.status(200).json({data, message: 'Products fetched successfully'})
+        const data = await Product.find({ active: true });
+        res.status(200).json({ data, message: 'Products fetched successfully' });
     } catch (error) {
-        console.log(error)
-        res.status(500).send('Something went wrong...')
+        console.log(error);
+        res.status(500).send('Something went wrong...');
     }
-}
+};
+
 
 const updateProduct = async (req, res) => {
     try {
@@ -251,10 +252,32 @@ const updateProductStock = async (cartItems) => {
     }
 };
 
+const updateisactive = async (req, res) => {
+    try {
+        const id = req.body?.id;
+        console.log(id);
+
+        const product = await Product.findById(id);
+        console.log(product);
+
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        product.active = !product.active;
+        await product.save();
+
+        res.status(200).json({ message: 'Product updated successfully', product });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+}
+
 
 
 // const deleteCategory = async (req, res) => {
 //     console.log(req.params.id);
 // }
 
-module.exports = {deleteProduct, updateProduct, getProducts, createProducts, getProductById, addCategory, getCategories , updateProductStock}
+module.exports = {deleteProduct, updateProduct, getProducts, createProducts, getProductById, addCategory, getCategories , updateProductStock , updateisactive}
