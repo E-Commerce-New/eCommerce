@@ -2,16 +2,16 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import {useSelector} from "react-redux";
 import swal from "sweetalert2";
-import addToCart  from "../../components/reUsable/AddToCart.js";
+import {useSelector} from "react-redux";
+import addToCart from "../../components/reUsable/AddToCart.js";
 import GoBack from "../../components/reUsable/Goback.jsx";
 
 const ProductInfo = () => {
     const id = useParams();
     const [product, setProduct] = useState({});
     const [mainImage, setMainImage] = useState("");
-    const { user } = useSelector((state) => state.user);
+    const {user} = useSelector((state) => state.user);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -27,7 +27,7 @@ const ProductInfo = () => {
             const pid = id.id
             console.log(pid)
             try {
-                const res = await axios.post(`http://localhost:3000/api/product/getProductById`, {id : pid}, {
+                const res = await axios.post(`http://localhost:3000/api/product/getProductById`, {id: pid}, {
                     withCredentials: true,
                 });
                 if (res.status === 200) {
@@ -122,8 +122,10 @@ const ProductInfo = () => {
                         </h1>
                     </div>
                     <hr/>
-                    <p className="flex gap-3 items-center"><span className="text-sm text-red-500 font-medium">{discountPercent}%</span> <span className="text-green-600 font-semibold">₹{originalPrice}</span></p>
-                    <p className="line-through text-gray-500 mr-2" >M.R.P: {inflatedPrice}</p>
+                    <p className="flex gap-3 items-center"><span
+                        className="text-sm text-red-500 font-medium">{discountPercent}%</span> <span
+                        className="text-green-600 font-semibold">₹{originalPrice}</span></p>
+                    <p className="line-through text-gray-500 mr-2">M.R.P: {inflatedPrice}</p>
                     <p>Inclusive of all taxes</p>
                     <div className="w-1/2">
                         {product?.attributes?.map((attribute, index) => {
@@ -138,13 +140,22 @@ const ProductInfo = () => {
                     </div>
                     <div className="flex flex-col">
                         <h1 className="text-xl font-medium">About this Item :- </h1>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A ab adipisci aliquid beatae consequatur ea eius error in laborum magni maiores maxime minima molestiae, mollitia neque perferendis, perspiciatis, provident quae quibusdam quisquam recusandae sed tempore temporibus veritatis voluptatum. Ad animi asperiores enim eveniet, fugiat iusto laborum provident quaerat quam quasi sequi sunt ullam ut voluptas voluptate. A accusantium assumenda consectetur distinctio dolores, eligendi ex illum in iste natus nulla, perferendis quas repudiandae sequi ullam ut, vel voluptates? Accusamus corporis dicta error iure iusto quaerat quibusdam quidem quisquam repudiandae soluta? Animi consequuntur doloremque dolorum est fugit maxime nam porro voluptate voluptatem?</p>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A ab adipisci aliquid beatae
+                            consequatur ea eius error in laborum magni maiores maxime minima molestiae, mollitia neque
+                            perferendis, perspiciatis, provident quae quibusdam quisquam recusandae sed tempore
+                            temporibus veritatis voluptatum. Ad animi asperiores enim eveniet, fugiat iusto laborum
+                            provident quaerat quam quasi sequi sunt ullam ut voluptas voluptate. A accusantium assumenda
+                            consectetur distinctio dolores, eligendi ex illum in iste natus nulla, perferendis quas
+                            repudiandae sequi ullam ut, vel voluptates? Accusamus corporis dicta error iure iusto
+                            quaerat quibusdam quidem quisquam repudiandae soluta? Animi consequuntur doloremque dolorum
+                            est fugit maxime nam porro voluptate voluptatem?</p>
                     </div>
                     <p className="underline">Report a problem about this product</p>
                     <div className="flex gap-4 justify-end">
                         <button className="border-b-2 border-black p-2 w-1/2 hover:bg-gray-200"
-                                onClick={()=>handleAddToCart(product._id , user)}
-                        >Add to Cart</button>
+                                onClick={() => handleAddToCart(product._id, user)}
+                        >Add to Cart
+                        </button>
                         {/*<button className="border-b-2 border-black p-2 w-1/2 hover:bg-gray-200">Buy Now</button>*/}
                     </div>
                     <hr/>

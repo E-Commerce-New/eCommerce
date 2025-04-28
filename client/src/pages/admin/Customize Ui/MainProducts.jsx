@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 
 const MainProducts = () => {
@@ -8,7 +8,7 @@ const MainProducts = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const res = await axios.get("http://localhost:3000/api/product/getProducts");
+                const res = await axios.get("http://localhost:3000/api/product/getActiveProducts");
                 setProducts(res.data.data);
             } catch (err) {
                 console.log(err);
@@ -32,10 +32,11 @@ const MainProducts = () => {
     const addMainProducts = async () => {
         try {
             const productIds = mainProducts.map(product => product._id);  // Only send product IDs
-            const res = await axios.post("http://localhost:3000/api/ui/addMainProducts", { productIds });
+            const res = await axios.post("http://localhost:3000/api/ui/addMainProducts", {productIds});
             if (res.status === 200) {
                 alert("Products added successfully");
-            };
+            }
+
         } catch (e) {
             console.log(e);
         }
@@ -45,6 +46,7 @@ const MainProducts = () => {
         <div>
             <h1 className="text-2xl font-bold px-4 py-2">List Your Main Products Here! #2nd Section</h1>
             <p className="text-red-500">We recommend you to add only best of product of yours</p>
+            <p className="text-red-500">This Selection will clear your Last Selections</p>
             <div>
                 <div>
                     <select
@@ -61,8 +63,9 @@ const MainProducts = () => {
                         ))}
                     </select>
                     <button className="px-5 py-2 border bg-green-300 mx-3 rounded-lg"
-                            onClick={()=>addMainProducts()}
-                    >Add</button>
+                            onClick={() => addMainProducts()}
+                    >Add
+                    </button>
                 </div>
             </div>
 
@@ -73,7 +76,7 @@ const MainProducts = () => {
                         <p>{product.name}</p>
                         <button
                             className="px-2 bg-red-300"
-                            onClick={() => handleRemove(product._id)} 
+                            onClick={() => handleRemove(product._id)}
                         >
                             X
                         </button>

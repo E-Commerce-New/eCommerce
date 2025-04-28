@@ -4,9 +4,8 @@ import axios from "axios";
 import {ShoppingBag, Trash2} from "lucide-react"
 import swal from "sweetalert2";
 import Swal from "sweetalert2";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import GoBack from "../../components/reUsable/Goback.jsx";
-import { Link } from "react-router-dom"
 
 const Cart = () => {
     const {user} = useSelector((state) => state.user)
@@ -128,7 +127,7 @@ const Cart = () => {
 
     const handlePayment = async () => {
         const res = await axios.post('http://localhost:3000/api/payment/create-order', {amount: totalPrice});
-        console.log("1st Api of Create Order" , res)
+        console.log("1st Api of Create Order", res)
         // console.log(res.data.order.amount / 100)
 
         const options = {
@@ -147,7 +146,7 @@ const Cart = () => {
                     userId: user._id,
                     amount: res.data.order.amount / 100,
                 });
-                console.log( "2nd Verify Api" , verifyRes);
+                console.log("2nd Verify Api", verifyRes);
 
                 if (verifyRes.data.success) {
                     swal.fire({
@@ -159,19 +158,19 @@ const Cart = () => {
                         }
                     });
                     try {
-                    const placeRes = await axios.post('http://localhost:3000/api/order/place', {
-                        cartItems, shippingAddress, paymentInfo: response, totalPrice, userId: user._id,
-                    });
-                    console.log("3rd Save data Api" , placeRes);
+                        const placeRes = await axios.post('http://localhost:3000/api/order/place', {
+                            cartItems, shippingAddress, paymentInfo: response, totalPrice, userId: user._id,
+                        });
+                        console.log("3rd Save data Api", placeRes);
 
-                    if (placeRes.data.success) {
-                        swal.close()
-                        swal.fire("Success!", "Your order has been placed", "success").then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        })
-                    }
+                        if (placeRes.data.success) {
+                            swal.close()
+                            swal.fire("Success!", "Your order has been placed", "success").then((result) => {
+                                if (result.isConfirmed) {
+                                    location.reload();
+                                }
+                            })
+                        }
                     } catch (e) {
                         swal.close()
                         swal.fire({
@@ -213,7 +212,9 @@ const Cart = () => {
         >
             <h1 className="text-xl font-bold sticky -top-5 bg-white p-2 flex gap-2 items-center"><GoBack/> Your Cart
             </h1>
-            {cartItems.length === 0 ? (<div className="text-center p-4 text-red-500 font-medium"><Link to="/" className="text-2xl">Your cart is empty. <br/> Shop Now</Link></div>) : (<div className=" w-full ">
+            {cartItems.length === 0 ? (
+                <div className="text-center p-4 text-red-500 font-medium"><Link to="/" className="text-2xl">Your cart is
+                    empty. <br/> Shop Now</Link></div>) : (<div className=" w-full ">
                 {cartItems.map((item, index) => {
                     const originalPrice = item?.price;
                     const discountPercent = Math.floor(Math.random() * (80 - 50 + 1)) + 50;
@@ -250,8 +251,8 @@ const Cart = () => {
                                            className="cursor-pointer basis-1/3 text-right">+</p>
                                     </div>
                                     <div className="flex gap-1 text-sm items-center cursor-pointer"
-                                    onClick={()=>deleteCartItem(item._id)}>
-                                    <Trash2 className="w-4 h-4 text-sm"/> <p>Delete</p>
+                                         onClick={() => deleteCartItem(item._id)}>
+                                        <Trash2 className="w-4 h-4 text-sm"/> <p>Delete</p>
                                     </div>
                                 </div>
                             </div>

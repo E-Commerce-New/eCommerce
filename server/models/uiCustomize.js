@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const {Schema} = mongoose;
 
 const UiCustomize = new mongoose.Schema({
     banners: [
@@ -11,14 +11,6 @@ const UiCustomize = new mongoose.Schema({
             redirectUrl: {
                 type: String,
                 required: true
-            },
-            createdAt: {
-                type: Date,
-                default: Date.now
-            },
-            active: {
-                type: Boolean,
-                default: true
             }
         }
     ],
@@ -28,6 +20,7 @@ const UiCustomize = new mongoose.Schema({
             ref: 'Product'
         }
     ],
+    Notice: String,
     createdAt: {
         type: Date,
         default: Date.now

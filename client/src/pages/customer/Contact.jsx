@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useState} from "react";
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -11,7 +11,7 @@ const Contact = () => {
     const [errors, setErrors] = useState({});
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        setFormData({...formData, [e.target.name]: e.target.value});
     };
 
     const validate = () => {
@@ -32,7 +32,7 @@ const Contact = () => {
         }
         console.log("Form submitted:", formData);
 
-        setFormData({ name: "", email: "", subject: "", message: "" });
+        setFormData({name: "", email: "", subject: "", message: ""});
         setErrors({});
         alert("Message sent!");
     };

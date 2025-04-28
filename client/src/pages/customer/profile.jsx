@@ -1,14 +1,13 @@
-import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import {useSelector} from "react-redux";
+import {useEffect, useState} from "react";
 import axios from "axios";
-import { Plus } from "lucide-react";
+import {Plus} from "lucide-react";
 import Swal from "sweetalert2";
-import swal from "sweetalert2";
 import {useNavigate} from "react-router-dom";
-import { z } from "zod";
+import {z} from "zod";
 
 const Profile = () => {
-    const { user } = useSelector((state) => state.user);
+    const {user} = useSelector((state) => state.user);
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         username: "",
@@ -52,20 +51,20 @@ const Profile = () => {
         }
 
         const fetchUser = async () => {
-        Swal.fire({
-            title: 'Finding your account',
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
+            Swal.fire({
+                title: 'Finding your account',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
             try {
                 const res = await axios.post("http://localhost:3000/api/user/getUser", {
                     id: user._id,
                 });
                 if (res.status === 200) {
-                    const { username, email, firstname, lastname, phone, addresses } = res.data.data;
+                    const {username, email, firstname, lastname, phone, addresses} = res.data.data;
                     setFormData(prev => ({
                         ...prev,
                         username,
@@ -86,7 +85,7 @@ const Profile = () => {
     }, [user?._id]);
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: value,
@@ -137,11 +136,10 @@ const Profile = () => {
             updatedManualEntry[index] = true;
         }
 
-        setFormData((prev) => ({ ...prev, addresses: updatedAddresses }));
+        setFormData((prev) => ({...prev, addresses: updatedAddresses}));
         setPlacesOptions(updatedPlaces);
         setManualCityEntry(updatedManualEntry);
     };
-
 
 
     const addNewAddress = () => {
@@ -166,7 +164,7 @@ const Profile = () => {
             ...addr,
             isDefault: i === index
         }));
-        setFormData(prev => ({ ...prev, addresses: updated }));
+        setFormData(prev => ({...prev, addresses: updated}));
     };
 
     const onSubmit = async (e) => {
@@ -246,119 +244,119 @@ const Profile = () => {
             <hr/>
 
             <div className="flex justify-between">
-            <form onSubmit={onSubmit} className="space-y-4 mt-5 w-[65%] ">
-                {/* Basic Info Fields */}
-                {["username", "email", "firstname", "lastname", "phone"].map((field) => (
-                    <div key={field}>
-                        <label htmlFor={field} className="capitalize">{field} :</label>
-                        <input
-                            className={`border-b-2 border-black p-2 w-full ${field === "email" ? null : "capitalize"}`}
-                            id={field}
-                            name={field}
-                            value={formData[field]}
-                            onChange={handleChange}
-                            placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-                        />
-                        {errors[field] && <p className="text-red-500 text-sm">{errors[field][0]}</p>}
-                    </div>
-                ))}
-
-
-                {/* Address Section */}
-                <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-semibold">Addresses</h2>
-                    {formData.addresses.length < 4 && (
-                        <button
-                            type="button"
-                            className="bg-green-600 text-white px-2 py-1 rounded flex items-center gap-1"
-                            onClick={addNewAddress}
-                        >
-                            <Plus size={18} /> Add Address
-                        </button>
-                    )}
-                </div>
-
-                {formData.addresses.map((address, index) => (
-                    <div key={index} className="border p-4 bg-gray-100 rounded-md space-y-2">
-                        {["postalCode", "addressLine1", "addressLine2"].map(field => (
+                <form onSubmit={onSubmit} className="space-y-4 mt-5 w-[65%] ">
+                    {/* Basic Info Fields */}
+                    {["username", "email", "firstname", "lastname", "phone"].map((field) => (
+                        <div key={field}>
+                            <label htmlFor={field} className="capitalize">{field} :</label>
                             <input
-                                key={field}
-                                className="border-b border-black px-4 py-2 w-full"
-                                value={address[field]}
-                                onChange={(e) => handleAddressChange(index, field, e.target.value)}
-                                placeholder={field}
+                                className={`border-b-2 border-black p-2 w-full ${field === "email" ? null : "capitalize"}`}
+                                id={field}
+                                name={field}
+                                value={formData[field]}
+                                onChange={handleChange}
+                                placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
                             />
-                        ))}
+                            {errors[field] && <p className="text-red-500 text-sm">{errors[field][0]}</p>}
+                        </div>
+                    ))}
 
-                        {/* City field with dropdown/manual entry switch */}
-                        {placesOptions[index]?.length > 1 && !manualCityEntry[index] ? (
-                            <>
-                                <select
+
+                    {/* Address Section */}
+                    <div className="flex justify-between items-center">
+                        <h2 className="text-xl font-semibold">Addresses</h2>
+                        {formData.addresses.length < 4 && (
+                            <button
+                                type="button"
+                                className="bg-green-600 text-white px-2 py-1 rounded flex items-center gap-1"
+                                onClick={addNewAddress}
+                            >
+                                <Plus size={18}/> Add Address
+                            </button>
+                        )}
+                    </div>
+
+                    {formData.addresses.map((address, index) => (
+                        <div key={index} className="border p-4 bg-gray-100 rounded-md space-y-2">
+                            {["postalCode", "addressLine1", "addressLine2"].map(field => (
+                                <input
+                                    key={field}
+                                    className="border-b border-black px-4 py-2 w-full"
+                                    value={address[field]}
+                                    onChange={(e) => handleAddressChange(index, field, e.target.value)}
+                                    placeholder={field}
+                                />
+                            ))}
+
+                            {/* City field with dropdown/manual entry switch */}
+                            {placesOptions[index]?.length > 1 && !manualCityEntry[index] ? (
+                                <>
+                                    <select
+                                        className="border-b border-black px-4 py-2 w-full"
+                                        value={address.city}
+                                        onChange={(e) => handleAddressChange(index, "city", e.target.value)}
+                                    >
+                                        {placesOptions[index].map((place, i) => (
+                                            <option key={i} value={place}>{place}</option>
+                                        ))}
+                                        <option value="manual">Other (Enter Manually)</option>
+                                    </select>
+                                </>
+                            ) : (
+                                <input
                                     className="border-b border-black px-4 py-2 w-full"
                                     value={address.city}
                                     onChange={(e) => handleAddressChange(index, "city", e.target.value)}
-                                >
-                                    {placesOptions[index].map((place, i) => (
-                                        <option key={i} value={place}>{place}</option>
-                                    ))}
-                                    <option value="manual">Other (Enter Manually)</option>
-                                </select>
-                            </>
-                        ) : (
+                                    placeholder="City"
+                                />
+                            )}
+
                             <input
                                 className="border-b border-black px-4 py-2 w-full"
-                                value={address.city}
-                                onChange={(e) => handleAddressChange(index, "city", e.target.value)}
-                                placeholder="City"
+                                value={address.state}
+                                onChange={(e) => handleAddressChange(index, "state", e.target.value)}
+                                placeholder="State"
                             />
-                        )}
-
-                        <input
-                            className="border-b border-black px-4 py-2 w-full"
-                            value={address.state}
-                            onChange={(e) => handleAddressChange(index, "state", e.target.value)}
-                            placeholder="State"
-                        />
-                        <input
-                            className="border-b border-black px-4 py-2 w-full"
-                            value={address.country}
-                            onChange={(e) => handleAddressChange(index, "country", e.target.value)}
-                            placeholder="Country"
-                        />
-
-                        <label className="flex items-center space-x-2">
                             <input
-                                type="checkbox"
-                                checked={address.isDefault}
-                                onChange={() => toggleDefault(index)}
+                                className="border-b border-black px-4 py-2 w-full"
+                                value={address.country}
+                                onChange={(e) => handleAddressChange(index, "country", e.target.value)}
+                                placeholder="Country"
                             />
-                            <span>Default Address</span>
-                        </label>
+
+                            <label className="flex items-center space-x-2">
+                                <input
+                                    type="checkbox"
+                                    checked={address.isDefault}
+                                    onChange={() => toggleDefault(index)}
+                                />
+                                <span>Default Address</span>
+                            </label>
+                        </div>
+                    ))}
+
+
+                    {/* Passwords */}
+                    <div>
+                        <label htmlFor="currentPassword">Password :</label>
+                        <input
+                            className="border-b-2 border-black p-2 w-full"
+                            name="currentPassword"
+                            id="currentPassword"
+                            value={formData.currentPassword}
+                            onChange={handleChange}
+                            placeholder="Password"
+                            type="password"
+                        />
                     </div>
-                ))}
 
-
-                {/* Passwords */}
-                <div>
-                    <label htmlFor="currentPassword" >Password :</label>
-                    <input
-                        className="border-b-2 border-black p-2 w-full"
-                        name="currentPassword"
-                        id="currentPassword"
-                        value={formData.currentPassword}
-                        onChange={handleChange}
-                        placeholder="Password"
-                        type="password"
-                    />
-                </div>
-
-                <button
-                    type="submit"
-                    className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
-                >
-                    Update Profile
-                </button>
-            </form>
+                    <button
+                        type="submit"
+                        className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
+                    >
+                        Update Profile
+                    </button>
+                </form>
 
                 <div className="w-[30%] m-2">
                     Quick Links will be here

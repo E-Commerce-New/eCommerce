@@ -27,7 +27,7 @@ const AdminDashboard = () => {
         fetchOrders();
 
         const getRevenue = async () => {
-            try{
+            try {
                 const res = await axios.get("http://localhost:3000/api/order/revenue");
                 setRevenue(res.data.revenue);
             } catch (error) {
@@ -37,7 +37,7 @@ const AdminDashboard = () => {
         getRevenue()
 
         const getUsers = async () => {
-            try{
+            try {
                 const res = await axios.post("http://localhost:3000/api/user/getUser");
                 setTotalUsers(res.data);
                 console.log(res.data);
@@ -48,7 +48,6 @@ const AdminDashboard = () => {
         getUsers()
 
     }, [])
-
 
 
     return (<>

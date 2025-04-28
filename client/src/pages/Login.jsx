@@ -1,16 +1,15 @@
 import {Link, useNavigate} from "react-router-dom";
 import {useState} from "react";
 import swal from "sweetalert2"
-import { useDispatch} from "react-redux";
-import { setUser } from "../store/User";
+import Swal from "sweetalert2"
+import {useDispatch} from "react-redux";
+import {setUser} from "../store/User";
 import axios from "axios";
-import Swal from "sweetalert2";
-import { z } from "zod"
+import {z} from "zod"
 
 const Login = () => {
-    const [form , setForm] = useState({
-        username: "",
-        password: "",
+    const [form, setForm] = useState({
+        username: "", password: "",
     })
     const [errors, setErrors] = useState({})
 
@@ -24,10 +23,7 @@ const Login = () => {
     const navigate = useNavigate();
     const onSubmit = async (e) => {
         Swal.fire({
-            title: 'Finding You!',
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            didOpen: () => {
+            title: 'Finding You!', allowOutsideClick: false, allowEscapeKey: false, didOpen: () => {
                 Swal.showLoading();
             }
         });
@@ -41,41 +37,34 @@ const Login = () => {
             setErrors({});
         }
         try {
-            const res = await axios.post("http://localhost:3000/api/user/login", form , {
+            const res = await axios.post("http://localhost:3000/api/user/login", form, {
                 withCredentials: true
             })
             // console.log(res.data)
             dispatch(setUser(res.data.user))
             swal.close()
-            if(res.status === 200) {
+            if (res.status === 200) {
                 swal.fire({
-                    icon: "success",
-                    title: "Yay! Found You.",
-                    timer: 1500,
+                    icon: "success", title: "Yay! Found You.", timer: 1500,
                 })
                 if (form.username === "admin") {
                     navigate("/admin/panel")
                 } else navigate("/")
             } else if (res.status === 404) {
                 swal.fire({
-                    icon: "error",
-                    title: "You might need to Signup.",
-                    text: res.data.message,
-                    timer: 1500,
+                    icon: "error", title: "You might need to Signup.", text: res.data.message, timer: 1500,
                 })
             }
         } catch (error) {
             console.error(error)
             swal.fire({
-                icon: "warning",
-                title: "You might need to Signup.",
-                timer: 1500,
+                icon: "warning", title: "You might need to Signup.", timer: 1500,
             })
         }
     }
 
     const handleForgotPassword = async () => {
-        const { value: email } = await Swal.fire({
+        const {value: email} = await Swal.fire({
             title: 'Enter your email address',
             input: 'email',
             inputLabel: 'Email',
@@ -86,41 +75,37 @@ const Login = () => {
 
         if (email) {
             try {
-                Swal.fire({ title: 'Sending email...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-                const res = await axios.post("http://localhost:3000/api/password/forgot-password", { email });
+                Swal.fire({title: 'Sending email...', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
+                const res = await axios.post("http://localhost:3000/api/password/forgot-password", {email});
 
                 Swal.fire({
-                    icon: 'success',
-                    title: 'Check your inbox!',
-                    text: res.data.msg,
+                    icon: 'success', title: 'Check your inbox!', text: res.data.msg,
                 });
             } catch (err) {
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Oops!',
-                    text: err.response?.data?.msg || 'Something went wrong',
+                    icon: 'error', title: 'Oops!', text: err.response?.data?.msg || 'Something went wrong',
                 });
             }
         }
     };
 
 
-    return (
-        <>
-            <div className="fixed top-1/3 left-1/2 z-50
-    transform -translate-x-1/2 -translate-y-1/2
+    return (<>
+            <div className="z-50 ml-[15%] mt-10
     w-[70%] overflow-y-scroll scrollbar-hide
     border rounded-2xl bg-white/30 backdrop-blur-md border-white/20
     shadow-2xl transition-all duration-500 ease-out">
                 <form onSubmit={onSubmit} className="flex flex-col gap-2 p-4 font-mono w-full">
                     <h1 className="text-center text-3xl font-medium font-mono">Welcome Back! Login here</h1>
                     <label htmlFor="" className="">Username - </label>
-                    <input type="text" placeholder="Enter your Username" className="border-b-2 border-black py-2 px-4 focus:outline-0"
+                    <input type="text" placeholder="Enter your Username"
+                           className="border-b-2 border-black py-2 px-4 focus:outline-0"
                            onChange={(e) => setForm({...form, username: e.target.value})}
                     />
                     {errors.username && <p className="text-red-500 text-sm">{errors.username[0]}</p>}
                     <label htmlFor="">Password - </label>
-                    <input type="text" placeholder="Enter your password" className="border-b-2 border-black py-2 px-4 focus:outline-0"
+                    <input type="text" placeholder="Enter your password"
+                           className="border-b-2 border-black py-2 px-4 focus:outline-0"
                            onChange={(e) => setForm({...form, password: e.target.value})}
                     />
                     {errors.password && <p className="text-red-500 text-sm">{errors.password[0]}</p>}

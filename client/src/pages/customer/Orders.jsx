@@ -43,9 +43,9 @@ const Orders = () => {
 
     const toggleOrderDetails = (orderId) => {
         if (expandedOrderId === orderId) {
-            setExpandedOrderId(null); // Collapse if the same order is clicked
+            setExpandedOrderId(null);
         } else {
-            setExpandedOrderId(orderId); // Expand the clicked order
+            setExpandedOrderId(orderId);
         }
     };
 
@@ -55,8 +55,8 @@ const Orders = () => {
             className="p-4 w-[70%] mt-5 ml-[15%] h-[80vh] overflow-y-scroll scrollbar-hide border rounded-2xl bg-white shadow-2xl">
             <div className="pb-3 border-b-2 border-gray-200 flex justify-between">
                 <div className="flex items-center gap-2">
-                <Goback/>
-                <h2 className="text-2xl font-bold">Your Orders</h2>
+                    <Goback/>
+                    <h2 className="text-2xl font-bold">Your Orders</h2>
                 </div>
                 <div className="p-2"><strong>Total Orders :</strong> {orders.length}</div>
             </div>
@@ -106,7 +106,8 @@ const Orders = () => {
                             <div>
                                 <h4 className="font-semibold">Products - </h4>
                                 {Array.isArray(order.items) && order.items.map((item, index) => (
-                                    <div key={item._id} className="flex gap-2 cursor-pointer p-2 border-b-2 border-gray-200 hover:bg-gray-200 hover:rounded-2xl my-2 transition-all"
+                                    <div key={item._id}
+                                         className="flex gap-2 cursor-pointer p-2 border-b-2 border-gray-200 hover:bg-gray-200 hover:rounded-2xl my-2 transition-all"
                                          onClick={() => navigate(`/product-info/${item._id}`)}
                                     >
                                         <p>{index + 1}</p>

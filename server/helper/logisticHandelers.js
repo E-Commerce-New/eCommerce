@@ -13,7 +13,7 @@ const getPinCodeMapping = async (pinCode) => {
                 }
             }
         );
-        return { success: true, data: res.data };
+        return {success: true, data: res.data};
     } catch (error) {
         return {
             success: false,
@@ -37,8 +37,8 @@ const serviceability = async (pickUpPinCode, deliveryPinCode) => {
                 'authorization': requiredBase
             }
         })
-        return { success: true, data: res.data };
-    }catch(error){
+        return {success: true, data: res.data};
+    } catch (error) {
         return {
             success: false,
             status: error.response?.status || 500,
@@ -47,7 +47,6 @@ const serviceability = async (pickUpPinCode, deliveryPinCode) => {
         };
     }
 }
-
 
 
 module.exports = {

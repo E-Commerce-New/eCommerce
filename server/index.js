@@ -2,13 +2,24 @@ require("dotenv").config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const {userRouter, productRouter, orderRouter , cartRouter , paymentRouter, logisticRouter , passwordRouter , uiCustomize} = require('./routes/index')
+const {
+    userRouter,
+    productRouter,
+    orderRouter,
+    cartRouter,
+    paymentRouter,
+    logisticRouter,
+    passwordRouter,
+    uiCustomize,
+    faq,
+    newsletter
+} = require('./routes/index')
 const cookieParser = require('cookie-parser')
 
 const app = express()
 const port = process.env.PORT || 3002;
 
-//Middlewares
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
@@ -16,7 +27,7 @@ app.use(cors({
     credentials: true
 }));
 
-// Connect to MongoDB Atlas
+
 mongoose
     .connect(process.env.MONGO_URI, {})
     .then(() => console.log("MongoDB Connected"))
@@ -31,6 +42,8 @@ app.use('/api/payment', paymentRouter)
 app.use('/api/logistic', logisticRouter)
 app.use('/api/password', passwordRouter)
 app.use('/api/ui', uiCustomize)
+app.use('/api/faq', faq)
+app.use('/api/newsletter', newsletter)
 
 
 // Start server

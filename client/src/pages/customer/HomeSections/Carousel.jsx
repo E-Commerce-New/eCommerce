@@ -1,6 +1,5 @@
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Navigation } from 'swiper/modules';
-import { Autoplay } from 'swiper/modules';
+import {Swiper, SwiperSlide} from 'swiper/react';
+import {Autoplay, Navigation, Pagination} from 'swiper/modules';
 import 'swiper/css';
 import {useEffect, useState} from "react";
 import axios from "axios";
@@ -41,20 +40,21 @@ const Carousel = () => {
                 >
                     {banners.map((banner) => (
                         <SwiperSlide key={banner._id}>
-                            <div className="flex justify-center items-center h-[500px] overflow-hidden relative">
+                            <div className="relative w-full h-[300px] md:h-[400px] lg:h-[500px] overflow-hidden">
                                 <a href={banner.redirectUrl}>
                                     <img
                                         src={banner.imageUrl}
                                         alt="Banner"
-                                        className="w-auto h-[400px] object-contain mx-auto my-0"
+                                        className="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+
                                     />
                                 </a>
                             </div>
-
                         </SwiperSlide>
                     ))}
                 </Swiper>
             </div>
+
 
 
         </>

@@ -1,8 +1,8 @@
-import {Bell, EllipsisVertical, RefreshCcw, LogOut, CircleX, CirclePlus} from "lucide-react";
+import {RefreshCcw} from "lucide-react";
 import {useEffect, useState} from "react";
 import Swal from "sweetalert2";
-import axios from "axios";
 import swal from "sweetalert2";
+import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -11,6 +11,7 @@ import Categories from "../../components/Categories";
 import {useSelector} from "react-redux";
 import AddProduct from "./ProductModule/AddProduct.jsx";
 import ShowProducts from "./ProductModule/ShowProducts.jsx";
+
 dayjs.extend(relativeTime);
 
 const Products = () => {
@@ -24,9 +25,9 @@ const Products = () => {
         image: null,
         about: "",
         length: "",
-        height:"",
-        breadth:"",
-        weight:"",
+        height: "",
+        breadth: "",
+        weight: "",
         active: false,
         attributes: [{key: "", value: ""}],
     });
@@ -215,7 +216,6 @@ const Products = () => {
     }, []);
 
 
-
     const filteredProducts = products.filter(product =>
         product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -249,7 +249,7 @@ const Products = () => {
                             onClick={() => setShowCate(!showCate)}>Show Category Section
                     </button>
                 </div>
-                    {showAddProduct ? <AddProduct
+                {showAddProduct ? <AddProduct
                     onSubmit={onSubmit}
                     addAttribute={addAttribute}
                     handleAttributeChange={handleAttributeChange}
@@ -261,7 +261,7 @@ const Products = () => {
                     form={form}
                     setShowAddProduct={setShowAddProduct}
                     showAddProduct={showAddProduct}
-                    /> : null}
+                /> : null}
             </div>
 
             {/*Category Section */}
@@ -272,10 +272,10 @@ const Products = () => {
 
             {/*Show Products*/}
             <ShowProducts
-            filteredProducts={filteredProducts}
-            products={products}
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
+                filteredProducts={filteredProducts}
+                products={products}
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
             />
         </>
     );

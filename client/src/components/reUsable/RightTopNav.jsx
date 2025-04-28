@@ -2,11 +2,11 @@ import {Bell, EllipsisVertical, LogOut} from "lucide-react";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
-import { clearUserInfo } from "../../store/User.js";
+import {clearUserInfo} from "../../store/User.js";
 import Swal from "sweetalert2";
 
 const RightTopNav = () => {
-    const [showdots , setShowdot] = useState(false);
+    const [showdots, setShowdot] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const handleLogout = () => {
@@ -27,7 +27,7 @@ const RightTopNav = () => {
     return (
         <>
             <div className="flex gap-10 items-center">
-                <Bell />
+                <Bell/>
                 <div className="flex gap-3 items-center">
                     <img
                         className="w-[50px] rounded-[50%]"
@@ -37,11 +37,12 @@ const RightTopNav = () => {
                     <p>Admin Panel</p>
                 </div>
                 <div className="relative">
-                    <EllipsisVertical onClick={()=>setShowdot(!showdots)}/>
-                    <div className={`gap-2 items-center justify-between absolute top-8 p-2 right-0 bg-white ${showdots ? "flex" : "hidden"}`}>
+                    <EllipsisVertical onClick={() => setShowdot(!showdots)}/>
+                    <div
+                        className={`gap-2 items-center justify-between absolute top-8 p-2 right-0 bg-white ${showdots ? "flex" : "hidden"}`}>
                         <p className="px-10 py-2 border-2 border-black font-mono flex gap-2 items-center"
                            onClick={handleLogout}
-                        >Logout <LogOut /></p>
+                        >Logout <LogOut/></p>
                     </div>
                 </div>
             </div>

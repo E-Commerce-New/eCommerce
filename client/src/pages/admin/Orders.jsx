@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
-import { motion, AnimatePresence } from "framer-motion";
+import {AnimatePresence, motion} from "framer-motion";
 import {useNavigate} from "react-router-dom";
 
 const Orders = () => {
@@ -27,7 +27,8 @@ const Orders = () => {
     return (
         <div className="max-w-6xl mx-auto p-4">
             <h2 className="text-2xl font-bold mb-6">📦 Orders Overview</h2>
-            {orders.length > 0 ? null : <p className="text-2xl text-red-500 font-bold text-center my-32">No Order Found till now!</p>}
+            {orders.length > 0 ? null :
+                <p className="text-2xl text-red-500 font-bold text-center my-32">No Order Found till now!</p>}
             {orders.map((order, index) => {
                 const total = order.items.reduce((acc, item) => acc + item.price * item.quantity, 0);
                 return (
@@ -50,10 +51,10 @@ const Orders = () => {
                         <AnimatePresence>
                             {activeOrder === order._id && (
                                 <motion.div
-                                    initial={{ height: 0, opacity: 0 }}
-                                    animate={{ height: "auto", opacity: 1 }}
-                                    exit={{ height: 0, opacity: 0 }}
-                                    transition={{ duration: 0.3 }}
+                                    initial={{height: 0, opacity: 0}}
+                                    animate={{height: "auto", opacity: 1}}
+                                    exit={{height: 0, opacity: 0}}
+                                    transition={{duration: 0.3}}
                                     className="overflow-hidden bg-white"
                                 >
                                     <div className="p-4">
@@ -88,7 +89,7 @@ const Orders = () => {
                                             <tbody>
                                             {order.items.map((item, idx) => (
                                                 <tr key={item._id}
-                                                onClick={()=>navigate(`/product-info/${item._id}`)}
+                                                    onClick={() => navigate(`/product-info/${item._id}`)}
                                                 >
                                                     <td className="p-2 border text-center">{idx + 1}</td>
                                                     <td className="p-2 border">{item.name}</td>
@@ -101,7 +102,8 @@ const Orders = () => {
                                         </table>
 
                                         {/* Footer Info */}
-                                        <div className="flex flex-col sm:flex-row justify-between text-sm text-gray-700 mt-4">
+                                        <div
+                                            className="flex flex-col sm:flex-row justify-between text-sm text-gray-700 mt-4">
                                             <p><strong>Status:</strong> {order.status}</p>
                                             <p><strong>Payment Method:</strong> {order.paymentMethod}</p>
                                             <p><strong>Transaction ID:</strong> {order.transactionId}</p>

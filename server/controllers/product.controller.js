@@ -95,8 +95,18 @@ const createProducts = async (req, res) => {
 
 const getProducts = async (req, res) => {
     try {
-        const data = await Product.find({ active: true });
-        res.status(200).json({ data, message: 'Products fetched successfully' });
+        const data = await Product.find({});
+        res.status(200).json({data, message: 'Products fetched successfully'});
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Something went wrong...');
+    }
+};
+
+const getActiveProducts = async (req, res) => {
+    try {
+        const data = await Product.find({active: true});
+        res.status(200).json({data, message: 'Products fetched successfully'});
     } catch (error) {
         console.log(error);
         res.status(500).send('Something went wrong...');
@@ -166,7 +176,7 @@ const updateProduct = async (req, res) => {
             await Product.findByIdAndUpdate(req.params.id, updateData);
 
             const product = await Product.findById(req.params.id);
-            res.status(200).json({ message: 'Product updated successfully'});
+            res.status(200).json({message: 'Product updated successfully'});
 
             // const deleteFilesArr = JSON.parse(req.body.deleteImageArr);
             // console.log("Delete Files: ", deleteFilesArr)
@@ -235,6 +245,21 @@ const getCategories = async (req, res) => {
     }
 };
 
+const getProductsByCategory = async (req, res) => {
+    try {
+        const { categoryId } = req.params;
+        const thisCategory = await Category.findById(categoryId);
+        const { category } = thisCategory;
+        console.log(category)
+
+        const products = await Product.find({ category: category });
+        res.status(200).json({ products });
+    } catch (err) {
+        console.error("Error fetching products:", err);
+        res.status(500).json({ message: "Error fetching products" });
+    }
+};
+
 const updateProductStock = async (cartItems) => {
     for (const item of cartItems) {
         const product = await Product.findById(item._id);
@@ -261,23 +286,90 @@ const updateisactive = async (req, res) => {
         console.log(product);
 
         if (!product) {
-            return res.status(404).json({ message: "Product not found" });
+            return res.status(404).json({message: "Product not found"});
         }
 
         product.active = !product.active;
         await product.save();
 
-        res.status(200).json({ message: 'Product updated successfully', product });
+        res.status(200).json({message: 'Product updated successfully', product});
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({message: 'Server error'});
     }
 }
 
+const searchProducts = async (req, res) => {
+    try {
+        const { keyword, category, minPrice, maxPrice, sortBy } = req.body;
+
+        let query = {};
+
+        // Search by keyword
+        if (keyword) {
+            query.$or = [
+                { name: { $regex: keyword, $options: "i" } },
+                { description: { $regex: keyword, $options: "i" } },
+                {
+                    $or: [
+                        { "attributes.name": { $regex: keyword, $options: "i" } },
+                        { "attributes.value": { $regex: keyword, $options: "i" } }
+                    ]
+                }
+
+            ];
+        }
+
+        // Filter by category
+        if (category) {
+            query.category = category;
+        }
+
+        // Filter by price
+        if (minPrice || maxPrice) {
+            query.price = {};
+            if (minPrice) query.price.$gte = minPrice;
+            if (maxPrice) query.price.$lte = maxPrice;
+        }
+
+        // Sorting
+        let sortOptions = {};
+        if (sortBy === "price_low_high") {
+            sortOptions.price = 1;
+        } else if (sortBy === "price_high_low") {
+            sortOptions.price = -1;
+        } else if (sortBy === "newest") {
+            sortOptions.createdAt = -1;
+        } else if (sortBy === "oldest") {
+            sortOptions.createdAt = 1;
+        }
+
+        const products = await Product.find(query).sort(sortOptions);
+
+        res.status(200).json({ products });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server Error" });
+    }
+};
 
 
 // const deleteCategory = async (req, res) => {
 //     console.log(req.params.id);
 // }
 
-module.exports = {deleteProduct, updateProduct, getProducts, createProducts, getProductById, addCategory, getCategories , updateProductStock , updateisactive}
+module.exports = {
+    getActiveProducts,
+    deleteProduct,
+    updateProduct,
+    getProducts,
+    createProducts,
+    getProductById,
+    addCategory,
+    getCategories,
+    updateProductStock,
+    updateisactive,
+    getProductsByCategory,
+    searchProducts
+}

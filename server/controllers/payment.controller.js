@@ -8,8 +8,8 @@ const instance = new Razorpay({
 });
 
 const createOrder = async (req, res) => {
-    const { amount } = req.body;
-    console.log("create Order" , req.body);
+    const {amount} = req.body;
+    console.log("create Order", req.body);
 
     const options = {
         amount: amount * 100,
@@ -19,16 +19,16 @@ const createOrder = async (req, res) => {
 
     try {
         const order = await instance.orders.create(options);
-        console.log("Order Saved" , order);
-        return res.status(200).json({ success: true, order });
+        console.log("Order Saved", order);
+        return res.status(200).json({success: true, order});
     } catch (error) {
         console.error(error);
-        res.status(500).json({ success: false, error });
+        res.status(500).json({success: false, error});
     }
 }
 
 const verifyOrder = async (req, res) => {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, userId, amount } = req.body;
+    const {razorpay_order_id, razorpay_payment_id, razorpay_signature, userId, amount} = req.body;
     console.log("Verify Order", req.body);
 
     const body = razorpay_order_id + "|" + razorpay_payment_id;
@@ -48,7 +48,7 @@ const verifyOrder = async (req, res) => {
                 status: "success",
                 amount,
             });
-            console.log("Verify Order and Payment saved" , payment);
+            console.log("Verify Order and Payment saved", payment);
             return res.status(200).json({
                 success: true,
                 message: "Payment verified and saved!",
@@ -71,4 +71,4 @@ const verifyOrder = async (req, res) => {
 };
 
 
-module.exports = {verifyOrder , createOrder}
+module.exports = {verifyOrder, createOrder}

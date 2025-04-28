@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const {Schema} = mongoose;
 
 const orderSchema = new Schema({
     userId: Schema.Types.ObjectId,
     // orderId:Number,
-    order_items:[
+    order_items: [
         {
             productId: Schema.Types.ObjectId,
             name: String,
@@ -12,8 +12,8 @@ const orderSchema = new Schema({
             quantity: Number,
             sku: String
         }
-        ]
-        ,
+    ]
+    ,
     subTotal: Number,
     tax: Number,
     shippingCost: Number,
@@ -55,15 +55,15 @@ const orderSchema = new Schema({
     // "packaging_box_error": ""
 
     order_id: Number,
-    shipment_id:Number,
-    status:String,
-    status_code:Number,
-    onboarding_completed_now:Number,
-    awb_code:String,
-    courier_company_id:String,
-    courier_name:String,
-    new_channel:Boolean,
-    packing_box_error:String,
+    shipment_id: Number,
+    status: String,
+    status_code: Number,
+    onboarding_completed_now: Number,
+    awb_code: String,
+    courier_company_id: String,
+    courier_name: String,
+    new_channel: Boolean,
+    packing_box_error: String,
 
     createdAt: Date,
     updatedAt: Date

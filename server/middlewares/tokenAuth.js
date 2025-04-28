@@ -12,9 +12,9 @@ const getUserAuthentication = (req, res, next) => {
         // console.log(isAdmin.isAdmin)
         jwt.verify(token, secretKey)
         next()
-    }catch(error){
+    } catch (error) {
         console.log(error)
-        res.status(404).json({message:"Token Expired or Invalid", error})
+        res.status(404).json({message: "Token Expired or Invalid", error})
     }
 }
 

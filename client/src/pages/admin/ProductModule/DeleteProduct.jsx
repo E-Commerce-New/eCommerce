@@ -1,11 +1,10 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import {useNavigate, useParams} from "react-router-dom";
+import {useEffect} from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import swal from "sweetalert2";
 
 const UpdateProduct = () => {
-    const { id } = useParams();
+    const {id} = useParams();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -28,7 +27,7 @@ const UpdateProduct = () => {
                     title: 'Deleted!',
                     text: res.data.message || 'Product has been deleted!',
                 }).then((result) => {
-                    if(result.isConfirmed) {
+                    if (result.isConfirmed) {
                         navigate("/admin/products");
                     }
                 })

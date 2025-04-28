@@ -1,5 +1,3 @@
-import {RefreshCcw , Trash2} from "lucide-react";
-import RightTopNav from "./reUsable/RightTopNav.jsx";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import swal from "sweetalert2";

@@ -194,7 +194,7 @@ const AddProduct = ({
                                 className="border-b-2 border-black p-2 focus:outline-0"
                                 onChange={handleChange}
                                 value={form.breadth}
-                                />
+                            />
                             <input
                                 name='height'
                                 type="number"
@@ -202,7 +202,7 @@ const AddProduct = ({
                                 className="border-b-2 border-black p-2 focus:outline-0"
                                 onChange={handleChange}
                                 value={form.height}
-                                />
+                            />
                             <input
                                 name='weight'
                                 type="number"
@@ -210,7 +210,7 @@ const AddProduct = ({
                                 className="border-b-2 border-black p-2 focus:outline-0"
                                 onChange={handleChange}
                                 value={form.weight}
-                                />
+                            />
                         </div>
                     </div>
                 </div>

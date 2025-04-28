@@ -1,36 +1,27 @@
-import { useSelector } from 'react-redux'
+import {useSelector} from 'react-redux'
 import Products from "./customer/products.jsx"
 import Carousel from "./customer/HomeSections/Carousel.jsx"
 import MainProducts from "./customer/HomeSections/MainProducts.jsx"
+import FAQ from "./customer/HomeSections/FAQ.jsx"
+import Newsletter from "./customer/HomeSections/Newsletter.jsx"
+import UserReviews from "./customer/HomeSections/UserReviews.jsx"
+import ShowCategory from "./customer/HomeSections/ShopByCategory.jsx"
+import SearchBar from "./customer/HomeSections/SearchBar.jsx"
 
 
 const Home = () => {
-    const { user } = useSelector((state) => state.user);
-
     return (
         <>
-            {/* Hero Banner Section */}
-            <Carousel />
-            <MainProducts />
-            {/* Other Sections */}
-            <div className="space-y-4">
-                <div className="bg-sky-200 p-4 rounded-lg">Promotional deals, seasonal offers, new arrivals</div>
-                <div className="bg-sky-200 p-4 rounded-lg">Secondary Carousel will be here</div>
-                <div className="bg-sky-200 p-4 rounded-lg">Main Product Categories</div>
-                <div className="bg-sky-200 p-4 rounded-lg">Flash Deals / Limited Time Offers</div>
-                <div className="bg-sky-200 p-4 rounded-lg">New Arrivals / Trending Now</div>
-                <div className="bg-sky-200 p-4 rounded-lg">Recommended For You</div>
-                <div className="bg-sky-200 p-4 rounded-lg">Top Rated Products</div>
-                <div className="bg-sky-200 p-4 rounded-lg">User Reviews Section</div>
-                <div className="bg-sky-200 p-4 rounded-lg">Newsletter Subscription</div>
-                <div className="bg-sky-200 p-4 rounded-lg">Footer Section</div>
-                <div className="bg-sky-200 p-4 rounded-lg">Floating Help or Chat Button</div>
-            </div>
-
-            {/* Products */}
-            <div className="mt-10">
-                <Products />
-            </div>
+            <SearchBar/>
+            <Carousel/>
+            <h1 className="text-2xl mx-6 py-2 px-2 border-b-2 mb-4 border-black font-bold ">Trending Products</h1>
+            <MainProducts/>
+            <ShowCategory/>
+            <h1 className="text-2xl mx-6 py-2 px-2 border-b-2 mb-4 border-black font-bold ">Explore Products</h1>
+            <Products/>
+            <UserReviews/>
+            <Newsletter/>
+            <FAQ/>
         </>
     );
 }

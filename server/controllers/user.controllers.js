@@ -133,12 +133,12 @@ const updateUserProfile = async (req, res) => {
         } else {
             const userById = await User.findOne({
                 $and: [
-                    { _id:id },
-                    { password: currentPassword }
+                    {_id: id},
+                    {password: currentPassword}
                 ]
             }, 'username password')
 
-            if(!userById){
+            if (!userById) {
                 return res.status(400).json({message: "Incorrect Password"})
             }
             //Verifying Password

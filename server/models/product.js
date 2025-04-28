@@ -14,7 +14,7 @@ const productSchema = new Schema({
     },
     sku: String,
     images: [String],
-    imagesId:[String],
+    imagesId: [String],
     category: String,
     active: Boolean,
     isFeatured: Boolean,
@@ -35,8 +35,7 @@ const productSchema = new Schema({
     height: Schema.Types.Double,
     weight: Schema.Types.Double
 
-}, { timestamps: true });
-
+}, {timestamps: true});
 
 
 module.exports = mongoose.model('Product', productSchema);

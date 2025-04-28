@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
-import { Trash2 } from "lucide-react";
+import {Trash2} from "lucide-react";
 import Swal from "sweetalert2";
 
 const Banner = () => {
@@ -50,7 +50,7 @@ const Banner = () => {
             confirmButtonText: "Yes",
             cancelButtonText: "No",
         }).then(async (result) => {
-            if(result.isConfirmed) {
+            if (result.isConfirmed) {
                 try {
                     const res = await axios.delete(`http://localhost:3000/api/ui/deleteBanner/${bannerId}`);
                     if (res.data.success) {
@@ -81,10 +81,12 @@ const Banner = () => {
         <>
             <div className="flex flex-col p-2">
                 <h1 className="font-bold text-2xl">Add Banner #1st Section</h1>
+                <p className="text-red-500">Recommended aspect ratio : Around 16:9 or 21:9.</p>
                 <div>
                     <button className="py-2 px-5 border rounded-2xl bg-green-600 font-bold text-white"
                             onClick={() => setShowAddBanner(!showAddBanner)}
-                    > Add Banner</button>
+                    > Add Banner
+                    </button>
                     {showAddBanner ? (
                         <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-[50%] p-4">
                             <input
@@ -109,13 +111,14 @@ const Banner = () => {
                         </form>
                     ) : null}
                     {banners.map((banner, index) => (
-                        <div className="flex flex-col p-2 w-full max-w-md border-b-2 border-black my-2" key={banner._id}>
+                        <div className="flex flex-col p-2 w-full max-w-md border-b-2 border-black my-2"
+                             key={banner._id}>
                             <div className="flex justify-between items-center gap-2">
                                 <div className="flex gap-2">
                                     <img src={banner.imageUrl} alt="Banner Image" className="h-full w-[20%]"/>
                                     <div className="flex flex-col overflow-hidden text-ellipsis">
                                         <p>{index + 1}. Redirect Url :-</p>
-                                        <input type="text" value={banner.redirectUrl} />
+                                        <input type="text" value={banner.redirectUrl}/>
                                     </div>
                                 </div>
                                 <button

@@ -8,7 +8,10 @@ const {
     createProducts,
     addCategory,
     getCategories,
-    updateisactive
+    updateisactive,
+    getActiveProducts,
+    getProductsByCategory,
+    searchProducts
 } = require('../controllers/product.controller')
 const getUserAuthentication = require('../middlewares/tokenAuth')
 
@@ -23,6 +26,8 @@ router.post('/createProduct', getUserAuthentication, upload.array('image'), crea
 
 router.get('/getProducts', getProducts)
 
+router.get('/getActiveProducts', getActiveProducts)
+
 router.patch("/update/:id", getUserAuthentication, upload.array("imagesFile"), updateProduct);
 
 router.delete('/delete/:id', getUserAuthentication, deleteProduct)
@@ -33,7 +38,12 @@ router.post('/addCategory', getUserAuthentication, addCategory)
 
 router.get('/getCategories', getCategories)
 
-router.post('/updateisactive' , updateisactive)
+router.post('/updateisactive', updateisactive)
+
+router.get('/getProductsByCategory/:categoryId' , getProductsByCategory)
+
+router.post('/search', searchProducts);
+
 
 // router.delete('/deleteCategory', getUserAuthentication, deleteCategory)
 

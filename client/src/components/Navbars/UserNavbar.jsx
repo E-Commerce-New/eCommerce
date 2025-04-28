@@ -1,14 +1,11 @@
-import {
-    LayoutGrid, Plus, PackageSearch, Store, Contact,
-    Key, LogOut, User, ShoppingCart , Package
-} from "lucide-react";
+import {Contact, Key, LayoutGrid, LogOut, Package, PackageSearch, Plus, ShoppingCart, Store, User} from "lucide-react";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import logo from "../../assets/logo.png";
-import { useDispatch, useSelector } from "react-redux";
-import { clearUserInfo } from '../../store/User.js';
+import {useDispatch, useSelector} from "react-redux";
+import {clearUserInfo} from '../../store/User.js';
 
 const AdminNavbar = () => {
-    const { user } = useSelector(state => state.user);
+    const {user} = useSelector(state => state.user);
     const dispatch = useDispatch();
     const location = useLocation();
     const navigate = useNavigate();
@@ -20,31 +17,32 @@ const AdminNavbar = () => {
     };
 
     const navLinks = [
-        { to: "/", label: "Home", icon: <LayoutGrid /> },
-        { to: "/explore", label: "Explore", icon: <PackageSearch /> },
-        { to: "/aboutUs", label: "About Us", icon: <Store /> },
-        { to: "/contact", label: "Contact", icon: <Contact /> },
+        {to: "/", label: "Home", icon: <LayoutGrid/>},
+        {to: "/explore", label: "Explore", icon: <PackageSearch/>},
+        {to: "/aboutUs", label: "About Us", icon: <Store/>},
+        {to: "/contact", label: "Contact", icon: <Contact/>},
     ];
 
     const authLinks = user
         ? [
-            { to: "/profile", label: "Profile", icon: <User /> },
-            { to: "/cart", label: "Cart", icon: <ShoppingCart /> },
-            { to: "/Orders", label: "Orders", icon: <Package /> },
+            {to: "/profile", label: "Profile", icon: <User/>},
+            {to: "/cart", label: "Cart", icon: <ShoppingCart/>},
+            {to: "/Orders", label: "Orders", icon: <Package/>},
         ]
         : [
-            { to: "/login", label: "LogIn", icon: <Key /> },
-            { to: "/signup", label: "SignUp", icon: <Plus /> },
+            {to: "/login", label: "LogIn", icon: <Key/>},
+            {to: "/signup", label: "SignUp", icon: <Plus/>},
         ];
 
     return (
-        <div className="group transition-all duration-300 ease-in-out hover:w-52 w-20 bg-white h-screen flex flex-col items-center p-4 border-r shadow-md">
-            <img src={logo} alt="Logo" className="w-10 h-10 mb-4" />
+        <div
+            className="group transition-all duration-300 ease-in-out hover:w-52 w-20 bg-white h-screen flex flex-col items-center p-4 border-r shadow-md">
+            <img src={logo} alt="Logo" className="w-10 h-10 mb-4"/>
 
-            <hr className="bg-gray-400 h-[2px] w-full mt-2 mb-4" />
+            <hr className="bg-gray-400 h-[2px] w-full mt-2 mb-4"/>
 
             <nav className="flex flex-col gap-2 w-full">
-                {[...navLinks, ...authLinks].map(({ to, label, icon }) => (
+                {[...navLinks, ...authLinks].map(({to, label, icon}) => (
                     <Link
                         key={to}
                         to={to}
@@ -54,7 +52,8 @@ const AdminNavbar = () => {
                         title={label}
                     >
                         <div className="text-lg">{icon}</div>
-                        <span className="text-sm font-medium w-0 overflow-hidden group-hover:inline group-hover:w-full transition-all duration-1000 text-nowrap">
+                        <span
+                            className="text-sm font-medium w-0 overflow-hidden group-hover:inline group-hover:w-full transition-all duration-1000 text-nowrap">
               {label}
             </span>
                     </Link>
@@ -65,7 +64,7 @@ const AdminNavbar = () => {
                         onClick={handleLogout}
                         className="flex items-center gap-4 p-2 rounded-md w-full transition-all duration-200 hover:bg-gray-100 cursor-pointer"
                     >
-                        <LogOut />
+                        <LogOut/>
                         <span className="text-sm font-medium hidden group-hover:inline">
               Logout
             </span>
