@@ -9,7 +9,7 @@ const ShopByCategory = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/api/product/getCategories');
+                const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/product/getCategories`);
                 console.log(response.data.categories);
                 setCategories(response.data.categories);
             } catch (err) {

@@ -8,7 +8,7 @@ const MainProducts = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const res = await axios.get("http://localhost:3000/api/product/getActiveProducts");
+                const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/product/getActiveProducts`);
                 setProducts(res.data.data);
             } catch (err) {
                 console.log(err);
@@ -32,7 +32,7 @@ const MainProducts = () => {
     const addMainProducts = async () => {
         try {
             const productIds = mainProducts.map(product => product._id);  // Only send product IDs
-            const res = await axios.post("http://localhost:3000/api/ui/addMainProducts", {productIds});
+            const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/ui/addMainProducts`, {productIds});
             if (res.status === 200) {
                 alert("Products added successfully");
             }

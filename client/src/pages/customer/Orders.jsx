@@ -23,7 +23,7 @@ const Orders = () => {
                 }
             });
             try {
-                const res = await axios.post("http://localhost:3000/api/order/getOrdersById", user);
+                const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/order/getOrdersById`, user);
                 if (res.status === 200) {
                     Swal.close()
                     const reversedata = res.data.reverse()

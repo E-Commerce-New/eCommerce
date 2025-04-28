@@ -9,7 +9,7 @@ const CategoryProducts = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await fetch(`http://localhost:3000/api/product/getProductsByCategory/${categoryId}`);
+                const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/product/getProductsByCategory/${categoryId}`);
                 const data = await response.json();
                 setProducts(data.products);
                 console.log(data.products[0])

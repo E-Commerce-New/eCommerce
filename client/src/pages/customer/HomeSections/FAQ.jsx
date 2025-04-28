@@ -8,7 +8,7 @@ const FAQPage = () => {
     useEffect(() => {
         const fetchFaqs = async () => {
             try {
-                const res = await axios.get("http://localhost:3000/api/faq/");
+                const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/faq/`);
                 setFaqs(res.data.faqs);
             } catch (error) {
                 console.error(error);

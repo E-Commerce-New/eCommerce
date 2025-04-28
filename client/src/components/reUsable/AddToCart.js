@@ -13,7 +13,7 @@ const addToCart = async (productId, userId) => {
             }
         });
 
-        const res = await axios.post("http://localhost:3000/api/user/addToCart", {
+        const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/user/addToCart`, {
             productId,
             userId,
         }, {

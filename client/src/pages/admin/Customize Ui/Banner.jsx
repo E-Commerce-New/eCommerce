@@ -11,7 +11,7 @@ const Banner = () => {
 
     useEffect(() => {
         const fetchBanners = async () => {
-            const res = await axios.get("http://localhost:3000/api/ui/get");
+            const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/ui/get`);
             if (res.data.success) {
                 setBanners(res.data.data.banners);
             }
@@ -22,7 +22,7 @@ const Banner = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post("http://localhost:3000/api/ui/create", {
+            const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/ui/create`, {
                 imageUrl, redirectUrl,
             });
             if (res.data.success) {
@@ -52,7 +52,7 @@ const Banner = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const res = await axios.delete(`http://localhost:3000/api/ui/deleteBanner/${bannerId}`);
+                    const res = await axios.delete(`${import.meta.env.VITE_BASE_URL}/api/ui/deleteBanner/${bannerId}`);
                     if (res.data.success) {
                         Swal.fire({
                             icon: "success",

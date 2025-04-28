@@ -18,7 +18,7 @@ const AddFaqForm = () => {
             }
         });
         try {
-            const res = await axios.delete(`http://localhost:3000/api/faq/delete/${faqId}`);
+            const res = await axios.delete(`${import.meta.env.VITE_BASE_URL}/api/faq/delete/${faqId}`);
             if(res.status === 200) {
                 swal.close();
                 swal.fire({
@@ -39,7 +39,7 @@ const AddFaqForm = () => {
     useEffect(() => {
         const fetchFaqs = async () => {
             try {
-                const res = await axios.get("http://localhost:3000/api/faq/");
+                const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/faq/`);
                 setFaqs(res.data.faqs);
                 console.log(res.data.faqs)
             } catch (error) {
@@ -53,7 +53,7 @@ const AddFaqForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post("http://localhost:3000/api/faq/create", {
+            const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/faq/create`, {
                 question,
                 answer,
             });

@@ -124,7 +124,7 @@ const Products = () => {
             }
             // console.log('console form data after setting ', formData)
 
-            const res = await axios.post("http://localhost:3000/api/product/createProduct", formData, {
+            const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/createProduct`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -179,7 +179,7 @@ const Products = () => {
                 }
             });
             try {
-                const res = await axios.get("http://localhost:3000/api/product/getProducts", {
+                const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/product/getProducts`, {
                     withCredentials: true
                 });
                 // console.log(res.data);
@@ -197,7 +197,7 @@ const Products = () => {
 
         const getAllCategories = async () => {
             try {
-                const res = await axios.get("http://localhost:3000/api/product/getCategories", {
+                const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/product/getCategories`, {
                     withCredentials: true
                 });
                 setCategories(res.data.categories);

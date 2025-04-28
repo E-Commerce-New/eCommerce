@@ -27,7 +27,7 @@ const ProductInfo = () => {
             const pid = id.id
             console.log(pid)
             try {
-                const res = await axios.post(`http://localhost:3000/api/product/getProductById`, {id: pid}, {
+                const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/getProductById`, {id: pid}, {
                     withCredentials: true,
                 });
                 if (res.status === 200) {

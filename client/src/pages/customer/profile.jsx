@@ -60,7 +60,7 @@ const Profile = () => {
                 }
             });
             try {
-                const res = await axios.post("http://localhost:3000/api/user/getUser", {
+                const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/user/getUser`, {
                     id: user._id,
                 });
                 if (res.status === 200) {
@@ -199,7 +199,7 @@ const Profile = () => {
                 ...formData,
             };
 
-            const res = await axios.put("http://localhost:3000/api/user/profileupdate", payload);
+            const res = await axios.put(`${import.meta.env.VITE_BASE_URL}/api/user/profileupdate`, payload);
 
             Swal.close();
 

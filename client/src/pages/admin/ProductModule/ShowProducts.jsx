@@ -20,7 +20,7 @@ const ShowProducts = ({
 
     const changeActive = async (id) => {
         // alert(id)
-        const res = await axios.post("http://localhost:3000/api/product/updateisactive", {
+        const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/updateisactive`, {
             id
         })
         if (res.status === 200) {

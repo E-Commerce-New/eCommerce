@@ -11,7 +11,7 @@ const Orders = () => {
     useEffect(() => {
         const FetchOrders = async () => {
             try {
-                const res = await axios.get("http://localhost:3000/api/order/getOrders");
+                const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/order/getOrders`);
                 setOrders(res.data);
             } catch (error) {
                 console.log(error);

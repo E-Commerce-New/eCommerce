@@ -24,7 +24,7 @@ const Categories = () => {
             return
         }
         try {
-            const res = await axios.post("http://localhost:3000/api/product/addCategory", {category: category}, {
+            const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/addCategory`, {category: category}, {
                 withCredentials: true
             });
             console.log(res.data)
@@ -63,7 +63,7 @@ const Categories = () => {
                 }
             });
             try {
-                const res = await axios.get("http://localhost:3000/api/product/getCategories", {
+                const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/product/getCategories`, {
                     withCredentials: true
                 });
                 console.log(res.data.categories)

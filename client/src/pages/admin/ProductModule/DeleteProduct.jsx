@@ -18,7 +18,7 @@ const UpdateProduct = () => {
                 }
             });
             try {
-                const res = await axios.delete(`http://localhost:3000/api/product/delete/${id}`, {
+                const res = await axios.delete(`${import.meta.env.VITE_BASE_URL}/api/product/delete/${id}`, {
                     withCredentials: true
                 });
                 Swal.close();

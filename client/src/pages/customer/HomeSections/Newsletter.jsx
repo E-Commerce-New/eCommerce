@@ -8,7 +8,7 @@ const NewsletterForm = () => {
     const handleSubscribe = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post("http://localhost:3000/api/newsletter/subscribe", {email});
+            const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/newsletter/subscribe`, {email});
             if (res.status === 201) {
                 Swal.fire({
                     icon: "success",

@@ -18,7 +18,7 @@ const AdminDashboard = () => {
 
         const fetchOrders = async () => {
             try {
-                const res = await axios.get("http://localhost:3000/api/order/getOrders");
+                const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/order/getOrders`);
                 setOrders(res.data);
             } catch (error) {
                 console.log(error);
@@ -28,7 +28,7 @@ const AdminDashboard = () => {
 
         const getRevenue = async () => {
             try {
-                const res = await axios.get("http://localhost:3000/api/order/revenue");
+                const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/order/revenue`);
                 setRevenue(res.data.revenue);
             } catch (error) {
                 console.log(error);
@@ -38,7 +38,7 @@ const AdminDashboard = () => {
 
         const getUsers = async () => {
             try {
-                const res = await axios.post("http://localhost:3000/api/user/getUser");
+                const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/user/getUser`);
                 setTotalUsers(res.data);
                 console.log(res.data);
             } catch (error) {

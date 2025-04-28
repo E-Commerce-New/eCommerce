@@ -17,7 +17,7 @@ const SearchPage = () => {
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.post("http://localhost:3000/api/product/search", {
+            const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/search`, {
                 ...filters,
                 sortBy,
             });

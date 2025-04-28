@@ -27,7 +27,7 @@ const Cart = () => {
                 }
             });
             try {
-                const userRes = await axios.post("http://localhost:3000/api/user/getUser", {
+                const userRes = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/user/getUser`, {
                     id: user._id,
                 });
 
@@ -36,7 +36,7 @@ const Cart = () => {
                     setUserCart(cart);
                     // console.log('Cart: ',cart)
 
-                    const productPromises = cart.map((item) => axios.post("http://localhost:3000/api/product/getProductById", {
+                    const productPromises = cart.map((item) => axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/getProductById`, {
                         id: item.productId,
                     }));
 
@@ -70,7 +70,7 @@ const Cart = () => {
             }
         });
         try {
-            const res = await axios.put("http://localhost:3000/api/cart/increase", {
+            const res = await axios.put(`${import.meta.env.VITE_BASE_URL}/api/cart/increase`, {
                 userId: user._id, productId,
             });
             if (res.status === 200) {
@@ -90,7 +90,7 @@ const Cart = () => {
             }
         });
         try {
-            const res = await axios.delete("http://localhost:3000/api/cart/delete", {
+            const res = await axios.delete(`${import.meta.env.VITE_BASE_URL}/api/cart/delete`, {
                 data: {
                     userId: user._id, productId,
                 }
@@ -112,7 +112,7 @@ const Cart = () => {
             }
         });
         try {
-            const res = await axios.put("http://localhost:3000/api/cart/decrease", {
+            const res = await axios.put(`${import.meta.env.VITE_BASE_URL}/api/cart/decrease`, {
                 userId: user._id, productId,
             });
             if (res.status === 200) {
@@ -126,7 +126,7 @@ const Cart = () => {
     };
 
     const handlePayment = async () => {
-        const res = await axios.post('http://localhost:3000/api/payment/create-order', {amount: totalPrice});
+        const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/payment/create-order`, {amount: totalPrice});
         console.log("1st Api of Create Order", res)
         // console.log(res.data.order.amount / 100)
 
@@ -139,7 +139,7 @@ const Cart = () => {
             order_id: res.data.order.id,
             handler: async function (response) {
                 console.log(response);
-                const verifyRes = await axios.post('http://localhost:3000/api/payment/verify', {
+                const verifyRes = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/payment/verify`, {
                     razorpay_order_id: response.razorpay_order_id,
                     razorpay_payment_id: response.razorpay_payment_id,
                     razorpay_signature: response.razorpay_signature,
@@ -158,7 +158,7 @@ const Cart = () => {
                         }
                     });
                     try {
-                        const placeRes = await axios.post('http://localhost:3000/api/order/place', {
+                        const placeRes = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/order/place`, {
                             cartItems, shippingAddress, paymentInfo: response, totalPrice, userId: user._id,
                         });
                         console.log("3rd Save data Api", placeRes);

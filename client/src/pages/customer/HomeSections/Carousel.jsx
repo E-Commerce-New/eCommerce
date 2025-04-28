@@ -13,7 +13,7 @@ const Carousel = () => {
 
     useEffect(() => {
         const fetchBanners = async () => {
-            const res = await axios.get("http://localhost:3000/api/ui/get");
+            const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/ui/get`);
             if (res.data.success) {
                 console.log(res.data.data.banners);
                 setBanners(res.data.data.banners);

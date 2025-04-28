@@ -37,7 +37,7 @@ const Login = () => {
             setErrors({});
         }
         try {
-            const res = await axios.post("http://localhost:3000/api/user/login", form, {
+            const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/user/login`, form, {
                 withCredentials: true
             })
             // console.log(res.data)
@@ -76,7 +76,7 @@ const Login = () => {
         if (email) {
             try {
                 Swal.fire({title: 'Sending email...', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
-                const res = await axios.post("http://localhost:3000/api/password/forgot-password", {email});
+                const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/password/forgot-password`, {email});
 
                 Swal.fire({
                     icon: 'success', title: 'Check your inbox!', text: res.data.msg,

@@ -15,12 +15,12 @@ const MainProducts = () => {
     useEffect(() => {
         const fetchMainProducts = async () => {
             try {
-                const res = await axios.get("http://localhost:3000/api/ui/get");
+                const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/ui/get`);
 
                 if (res.status === 200) {
                     const productIds = res.data.data.mainProducts;
                     const productRequests = productIds.map((id) =>
-                        axios.post("http://localhost:3000/api/product/getProductById", {id})
+                        axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/getProductById`, {id})
                     );
 
                     const productResponses = await Promise.all(productRequests);

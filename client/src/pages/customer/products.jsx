@@ -29,7 +29,7 @@ const Products = () => {
                 }
             });
             try {
-                const res = await axios.get("http://localhost:3000/api/product/getActiveProducts", {withCredentials: true})
+                const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/product/getActiveProducts`, {withCredentials: true})
                 console.log(res.data)
                 const shuffledProducts = shuffleArray(res.data.data);
                 setProducts(shuffledProducts);
