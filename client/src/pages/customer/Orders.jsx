@@ -3,14 +3,14 @@ import {useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
-import {ChevronDown, ChevronUp} from "lucide-react"
+import {ChevronDown, ChevronUp, LocationEdit, CircleX} from "lucide-react"
 import Swal from "sweetalert2";
 
 const Orders = () => {
     const {user} = useSelector((state) => state.user);
     const [orders, setOrders] = useState([]);
     const [expandedOrderId, setExpandedOrderId] = useState(null);
-
+    const [orderCancelForm, setOrderCancelForm] = useState(false);
     useEffect(() => {
         const fetchOrders = async () => {
             Swal.fire({
@@ -53,10 +53,21 @@ const Orders = () => {
     return (
         <div
             className="p-4 w-[70%] mt-5 ml-[15%] h-[80vh] overflow-y-scroll scrollbar-hide border rounded-2xl bg-white shadow-2xl">
+
+            {/*Change Address Form will be here*/}
+            {/*<div className={`*/}
+            {/*fixed top-1/2 left-1/2 z-50*/}
+            {/*transform -translate-x-1/2 -translate-y-1/2*/}
+            {/*w-[70%] h-[80vh] overflow-y-scroll scrollbar-hide*/}
+            {/*border rounded-2xl bg-white/30 backdrop-blur-lg border-white/20*/}
+            {/*shadow-2xl transition-all duration-500 ease-out*/}
+            {/*${orderCancelForm ? "opacity-100 scale-100" : "opacity-0 scale-50 pointer-events-none"}*/}
+            {/*    `}>*/}
+            {/*        </div>*/}
             <div className="pb-3 border-b-2 border-gray-200 flex justify-between">
                 <div className="flex items-center gap-2">
-                <Goback/>
-                <h2 className="text-2xl font-bold">Your Orders</h2>
+                    <Goback/>
+                    <h2 className="text-2xl font-bold">Your Orders</h2>
                 </div>
                 <div className="p-2"><strong>Total Orders :</strong> {orders.length}</div>
             </div>
@@ -65,7 +76,7 @@ const Orders = () => {
             <div className="flex gap-4 w-full mt-10 p-2 bg-gray-200 rounded-t-xl">
                 <div className="flex gap-2 w-[30%]">
                     <p className="font-medium w-[15%]">S. NO</p>
-                    <p className="font-medium w-[85%]">Order ID</p>
+                    <p className="font-medium w-[85%]">Prouct Name</p>
                 </div>
                 <p className="font-medium w-[20%]">Items Summary</p>
                 <p className="font-medium w-[20%]">Payment Status</p>
@@ -78,52 +89,96 @@ const Orders = () => {
             {/*Show Orders*/}
             {orders.length === 0 ? (<p className="text-center text-red-500 font-medium">No orders
                 found.</p>) : (orders.map((order, index) => {
-                const dateString = order.createdAt;
-                const date = new Date(dateString);
-                const itemsSummary = `${order.items.length} items - ₹${order.total}`;
+                    const dateString = order.createdAt;
+                    const date = new Date(dateString);
+                    const itemsSummary = `QTY ${order?.order_items[0].quantity} - ₹${order?.total / order?.order_items[0].quantity}`;
 
-                return (
-                    <div key={order._id} className="border-b-2 pb-4 mb-4 border-black py-2">
-                        <div className="flex justify-evenly items-center cursor-pointer hover:bg-green-200 py-2 px-2"
-                             onClick={() => toggleOrderDetails(order._id)}>
-                            {/* Order Row */}
-                            <div className="flex gap-4 w-full justify-between">
-                                <div className="flex gap-2 w-[30%]">
-                                    <p className="font-medium w-[15%]">{index + 1}</p>
-                                    <p className="font-medium w-[85%]">{order._id}</p>
-                                </div>
-                                <p className="font-medium w-[20%]">{itemsSummary}</p>
-                                <p className="font-medium w-[20%]">{order.paymentStatus}</p>
-                                <p className="font-medium w-[20%]">{date.toLocaleString()}</p>
-                                <div className="flex items-center w-[10%]">
-                                    {expandedOrderId === order._id ? (<ChevronUp className="ml-2"/>) : (
-                                        <ChevronDown className="ml-2"/>)}
+                    return (
+                        <div key={order._id} className="border-b-2 pb-4 mb-4 border-black py-2">
+
+                            <div
+                                className="flex justify-evenly items-center cursor-pointer hover:bg-green-200 py-2 px-2"
+                                onClick={() => toggleOrderDetails(order._id)}>
+                                {/* Order Row */}
+                                <div className="flex gap-4 w-full justify-between">
+                                    <div className="flex gap-2 w-[30%]">
+                                        <p className="font-medium w-[15%]">{index + 1}</p>
+                                        <p className="font-medium w-[85%]">{order.order_items[0].name}</p>
+                                    </div>
+                                    <p className="font-medium w-[20%]">{itemsSummary}</p>
+                                    <p className="font-medium w-[20%]">{order.paymentStatus}</p>
+                                    <p className="font-medium w-[20%]">{date.toLocaleString()}</p>
+                                    <div className="flex items-center w-[10%]">
+                                        {expandedOrderId === order._id ? (<ChevronUp className="ml-2"/>) : (
+                                            <ChevronDown className="ml-2"/>)}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        {/* Order Details (collapsed/expanded) */}
-                        {expandedOrderId === order._id && (<div className="mt-4 pl-6">
-                            <div>
-                                <h4 className="font-semibold">Products - </h4>
-                                {order.items.map((item, index) => (
-                                    <div key={item._id} className="flex gap-2 cursor-pointer p-2 border-b-2 border-gray-200 hover:bg-gray-200 hover:rounded-2xl my-2 transition-all"
-                                         onClick={() => navigate(`/product-info/${item._id}`)}
-                                    >
-                                        <p>{index + 1}</p>
-                                        <p>{item.name} - ₹{item.price} × {item.quantity}</p>
-                                    </div>))}
+                            {/* Order Details (collapsed/expanded) */}
+                            {expandedOrderId === order._id && (<div className="mt-4 pl-6">
+                                <div>
+                                    <h4 className="font-semibold"><strong>Order Id : {order.order_id}</strong> -
+                                        ₹{order.order_items[0].price} × {order.order_items[0].quantity}
+                                        <span className='float-end inline-block mr-4 w-[80px] scale-150'>
+                                           <LocationEdit
+                                               className="cursor-pointer inline mr-2 bg-blue-500 text-white rounded-full p-1 "/>
+                                           <CircleX
+                                               className="cursor-pointer inline bg-red-500 text-white rounded-full p-1"
+                                               onClick={
+                                                   () => {
+
+                                                       Swal.fire({
+                                                           title: 'Are you sure?',
+                                                           text: "Want to cancel this order?",
+                                                           icon: 'warning',
+                                                           showCancelButton: true,
+                                                           confirmButtonColor: '#3085d6',
+                                                           cancelButtonColor: '#d33',
+                                                           confirmButtonText: 'Proceed',
+                                                           cancelButtonText: 'Cancel'
+                                                       }).then((result) => {
+                                                           if (result.isConfirmed) {
+                                                               // User clicked "Yes"
+                                                               console.log('Confirmed!');
+                                                               axios.post("http://localhost:3000/api/order/cancelOrder", {
+                                                                   orderId: order.order_id,
+                                                                   documentId: order._id
+                                                               }, {withCredentials: true})
+                                                               // You can call your delete function here
+                                                           } else {
+                                                               console.log('Cancelled!');
+                                                           }
+                                                       });
+                                                   }
+
+                                                   } />
+                                                   </span>
+                                                   </h4>
+
+                                                   <div key={order.order_items[0]._id}
+                                               className="flex gap-2 cursor-pointer p-2 border-b-2 border-gray-200 hover:bg-gray-200 hover:rounded-2xl my-2 transition-all"
+                                               onClick={() => navigate(`/product-info/${order._id}`)}
+                                           >
+                                        {/*<p>{index + 1}</p>*/}
+                                               <p>{order.order_items[0].name}</p>
+                                </div>
+
                             </div>
-                            <div className="mt-2">
+                                <div className="mt-2">
                                 <p>
-                                    <strong>Shipping:</strong> {order.shippingAddress?.addressLine1}, {order.shippingAddress?.city}, {order.shippingAddress?.postalCode}
-                                </p>
-                                {order.billingAddress && (<p>
-                                    <strong>Billing:</strong> {order.billingAddress.addressLine1}, {order.billingAddress.city}, {order.billingAddress.postalCode}
-                                </p>)}
-                            </div>
-                        </div>)}
-                    </div>);
-            }))}
+                                <strong>Shipping:</strong> {order.shippingAddress?.addressLine1}, {order.shippingAddress?.city}, {order.shippingAddress?.postalCode}
+                        </p>
+                {
+                    order.billingAddress && (<p>
+                        <strong>Billing:</strong> {order.billingAddress.addressLine1}, {order.billingAddress.city}, {order.billingAddress.postalCode}
+                    </p>)
+                }
+                </div>
+                </div>)}
+                </div>)
+                    ;
+                })
+            )}
         </div>
     );
 };
