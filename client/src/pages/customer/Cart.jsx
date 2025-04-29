@@ -30,16 +30,15 @@ const Cart = () => {
                 }
             });
             try {
-                const userRes = await axios.post("http://localhost:3000/api/user/getUser", {
+                const userRes = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/user/getUser`, {
                     id: user._id,
                 });
 
                 if (userRes.status === 200) {
                     const cart = userRes.data.data.cart;
                     setUserCart(cart);
-                    // console.log('Cart: ',cart)
 
-                    const productPromises = cart.map((item) => axios.post("http://localhost:3000/api/product/getProductById", {
+                    const productPromises = cart.map((item) => axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/getProductById`, {
                         id: item.productId,
                     }));
 
@@ -49,7 +48,6 @@ const Cart = () => {
                     }));
 
                     setCartItems(products);
-                    // console.log("Products ", products)
                 }
             } catch (err) {
                 console.error("Error fetching cart products:", err);
@@ -75,7 +73,7 @@ const Cart = () => {
             }
         });
         try {
-            const res = await axios.put("http://localhost:3000/api/cart/increase", {
+            const res = await axios.put(`${import.meta.env.VITE_BASE_URL}/api/cart/increase`, {
                 userId: user._id, productId,
             });
             if (res.status === 200) {
@@ -95,7 +93,7 @@ const Cart = () => {
             }
         });
         try {
-            const res = await axios.delete("http://localhost:3000/api/cart/delete", {
+            const res = await axios.delete(`${import.meta.env.VITE_BASE_URL}/api/cart/delete`, {
                 data: {
                     userId: user._id, productId,
                 }
@@ -117,7 +115,7 @@ const Cart = () => {
             }
         });
         try {
-            const res = await axios.put("http://localhost:3000/api/cart/decrease", {
+            const res = await axios.put(`${import.meta.env.VITE_BASE_URL}/api/cart/decrease`, {
                 userId: user._id, productId,
             });
             if (res.status === 200) {
@@ -134,7 +132,7 @@ const Cart = () => {
         // console.log("Payment Method", totalPrice, paymentMethod, shippingAddress, deliveryCharge, estimateDays)
         if (paymentMethod === "Prepaid") {
             console.log("Online Payment")
-            const res = await axios.post('http://localhost:3000/api/payment/create-order', {amount: totalPrice});
+            const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/payment/create-order`, {amount: totalPrice});
             //console.log("1st Api of Create Order" , res)
             console.log(res.data)
 
@@ -147,7 +145,7 @@ const Cart = () => {
                 order_id: res.data.order.id,
                 handler: async function (response) {
                     console.log(response);
-                    const verifyRes = await axios.post('http://localhost:3000/api/payment/verify', {
+                    const verifyRes = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/payment/verify`, {
                         razorpay_order_id: response.razorpay_order_id,
                         razorpay_payment_id: response.razorpay_payment_id,
                         razorpay_signature: response.razorpay_signature,
@@ -166,7 +164,7 @@ const Cart = () => {
                             }
                         });
                         try {
-                            const placeRes = await axios.post('http://localhost:3000/api/order/place', {
+                            const placeRes = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/order/place`, {
                                 // cartItems, shippingAddress, paymentInfo: response, totalPrice, userId: user._id,
                                 cartItems, shippingAddress, totalPrice, userId: user._id, userCart, paymentMethod, deliveryCharge, estimateDays
                             });
@@ -204,7 +202,7 @@ const Cart = () => {
             const rzp = new window.Razorpay(options);
             rzp.open();
         } else {
-            await axios.post('http://localhost:3000/api/order/place', {
+            await axios.post(`${import.meta.env.VITE_BASE_URL}/api/order/place`, {
                 cartItems, shippingAddress, totalPrice, userId: user._id, userCart, paymentMethod, deliveryCharge, estimateDays
             });
         }
@@ -217,7 +215,6 @@ const Cart = () => {
 
 
     return (
-
         <div className="p-4 w-[70%] ml-[15%] h-[80vh] overflow-y-scroll scrollbar-hide
         border rounded-2xl bg-white
         shadow-2xl transform-gpu
@@ -225,8 +222,6 @@ const Cart = () => {
         transition-all duration-300 ease-in-out
         bg-white/30 backdrop-blur-md border-white/20"
         >
-
-
             <div className={`
             fixed top-1/2 left-1/2 z-50
             transform -translate-x-1/2 -translate-y-1/2
@@ -253,7 +248,7 @@ const Cart = () => {
                              // const pinCodeCharge = await weight.map(async (weight)=> await axios.get(`http://localhost:3000/api/order/getCharges/${address.postalCode}/${weight}`))
                              const pinCodeCharge = await Promise.all(
                                  weight.map(weight =>
-                                     axios.get(`http://localhost:3000/api/order/getCharges/${address.postalCode}/${weight}`)
+                                     axios.get(`${import.meta.env.VITE_BASE_URL}/api/order/getCharges/${address.postalCode}/${weight}`)
                                  )
                              )
 

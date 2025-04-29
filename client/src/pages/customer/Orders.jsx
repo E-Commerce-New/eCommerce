@@ -129,7 +129,7 @@ const Orders = () => {
                                                            if (result.isConfirmed) {
                                                                // User clicked "Yes"
                                                                console.log('Confirmed!');
-                                                               axios.post("http://localhost:3000/api/order/cancelOrder", {
+                                                               axios.post(`${import.meta.env.VITE_BASE_URL}/api/order/cancelOrder`, {
                                                                    orderId: order.order_id,
                                                                    documentId: order._id
                                                                }, {withCredentials: true})
