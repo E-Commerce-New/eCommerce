@@ -32,7 +32,7 @@ router.patch("/update/:id", getUserAuthentication, upload.array("imagesFile"), u
 
 router.delete('/delete/:id', getUserAuthentication, deleteProduct)
 
-router.post('/getproductbyid', getProductById)
+router.post('/getproductbyId', getProductById)
 
 router.post('/addCategory', getUserAuthentication, addCategory)
 
