@@ -22,11 +22,11 @@ const port = process.env.PORT || 3002;
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors(*
-    // {
-    // origin: 'http://localhost:5173', // your frontend origin
-    // credentials: true
-// }
+app.use(cors(
+    {
+    origin: 'https://ecommerce-tau-puce.vercel.app/', // your frontend origin
+    credentials: true
+}
 ));
 
 
