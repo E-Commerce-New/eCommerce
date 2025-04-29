@@ -10,7 +10,7 @@ const Orders = () => {
     const {user} = useSelector((state) => state.user);
     const [orders, setOrders] = useState([]);
     const [expandedOrderId, setExpandedOrderId] = useState(null);
-    const [orderCancelForm, setOrderCancelForm] = useState(false);
+    // const [orderCancelForm, setOrderCancelForm] = useState(false);
     useEffect(() => {
         const fetchOrders = async () => {
             Swal.fire({
@@ -142,15 +142,18 @@ const Orders = () => {
 
                                                    } />
                                                    </span>
-                                                   </h4>
 
-                                                   <div key={order.order_items[0]._id}
+                                                   </h4>
+                                    <p><strong>DeliveryCharges : ₹{Math.ceil(order.deliveryCharges)}</strong></p>
+                                    <p><strong>Total Spent: ₹{Math.ceil((order.order_items[0].price * order.order_items[0].quantity ) +order.deliveryCharges )}</strong></p>
+
+                                    <div key={order.order_items[0]._id}
                                                className="flex gap-2 cursor-pointer p-2 border-b-2 border-gray-200 hover:bg-gray-200 hover:rounded-2xl my-2 transition-all"
                                                onClick={() => navigate(`/product-info/${order._id}`)}
                                            >
                                         {/*<p>{index + 1}</p>*/}
                                                <p>{order.order_items[0].name}</p>
-                                </div>
+                                                            </div>
 
                             </div>
                                 <div className="mt-2">
