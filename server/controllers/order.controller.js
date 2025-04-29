@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const Order = require("../models/order");
 const User = require("../models/user");
-const {sendOrderConfirmationEmail} = require("../utils/sendMail");
-const {updateProductStock} = require("./product.controller");
+const { sendOrderConfirmationEmail } = require("../utils/sendMail");
+const { updateProductStock } = require("./product.controller");
 
 const axios = require("axios");
 
@@ -17,7 +17,7 @@ const getValidDateAndTime = () => {
 }
 
 const placeOrder = async (req, res) => {
-    const {cartItems, shippingAddress, paymentInfo, totalPrice, userId} = req.body;
+    const {cartItems, shippingAddress, paymentInfo, totalPrice, userId, userCart} = req.body;
     console.log("Place Order", req.body);
 
     try {
@@ -43,7 +43,7 @@ const placeOrder = async (req, res) => {
             },
         });
 
-        console.log("Order Saved", order);
+        // console.log("Order Saved", order);
         // console.log(req.body.cartItems);
         const user = await User.findOne({_id: userId});
 
@@ -70,6 +70,7 @@ const placeOrder = async (req, res) => {
             //     })
 
             // console.log("Data " , data);
+
             const data = {
                 order_id: userCart[0]._id,
                 order_date: getValidDateAndTime(),
@@ -96,7 +97,7 @@ const placeOrder = async (req, res) => {
                 giftwrap_charges: 0,
                 transaction_charges: 0,
                 total_discount: 0,
-                sub_total: cartItems[i].price,
+                sub_total: cartItems[i].price*cartItems[i].quantity,
                 length: cartItems[i].length,
                 breadth: cartItems[i].breadth,
                 height: cartItems[i].height,
@@ -108,14 +109,19 @@ const placeOrder = async (req, res) => {
                 headers: {
                     'content-type': 'application/json',
                     Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjY0MDU5ODEsInNvdXJjZSI6InNyLWF1dGgtaW50IiwiZXhwIjoxNzQ2NDI3OTYzLCJqdGkiOiJMSmw3eDJNbUJNNTV4VWpkIiwiaWF0IjoxNzQ1NTYzOTYzLCJpc3MiOiJodHRwczovL3NyLWF1dGguc2hpcHJvY2tldC5pbi9hdXRob3JpemUvdXNlciIsIm5iZiI6MTc0NTU2Mzk2MywiY2lkIjo2MTg2NzAwLCJ0YyI6MzYwLCJ2ZXJib3NlIjpmYWxzZSwidmVuZG9yX2lkIjowLCJ2ZW5kb3JfY29kZSI6IiJ9.uGlIvFc-hFkb3Ikm_7jHXYvbrg2dwzZpbVZTHsYGies'
+                    headers: {
+                        'content-type': 'application/json',
+                        Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjY0MDU5ODEsInNvdXJjZSI6InNyLWF1dGgtaW50IiwiZXhwIjoxNzQ2NDI3OTYzLCJqdGkiOiJMSmw3eDJNbUJNNTV4VWpkIiwiaWF0IjoxNzQ1NTYzOTYzLCJpc3MiOiJodHRwczovL3NyLWF1dGguc2hpcHJvY2tldC5pbi9hdXRob3JpemUvdXNlciIsIm5iZiI6MTc0NTU2Mzk2MywiY2lkIjo2MTg2NzAwLCJ0YyI6MzYwLCJ2ZXJib3NlIjpmYWxzZSwidmVuZG9yX2lkIjowLCJ2ZW5kb3JfY29kZSI6IiJ9.uGlIvFc-hFkb3Ikm_7jHXYvbrg2dwzZpbVZTHsYGies'
+                    }
                 }
-            })
+            } )
 
-            console.log("Response", res);
+            // console.log("Response : ", res.data);
 
-            const order = await Order.create({
+            await Order.create({
                 userId: userId,
                 order_id: res.data.order_id,
+                channel_order_id:res.data.channel_order_id,
                 shipment_id: res.data.shipment_id,
                 status: res.data.status,
                 status_code: res.data.status_code,
@@ -126,17 +132,19 @@ const placeOrder = async (req, res) => {
                 packaging_box_error: res.data.packaging_box_error,
                 order_items: [
                     {
+                        _id:userCart[i].productId,
                         name: cartItems[i].name,
-                        units: cartItems[i].quantity,
+                        price: cartItems[i].price,
+                        quantity: cartItems[i].quantity,
                         selling_price: cartItems[i].price,
                         sku: cartItems[i].name
                     }
                 ],
-                shippingAddress,
                 paymentMethod: paymentInfo?.method || "Prepaid",
                 paymentStatus: "Paid",
                 transactionId: paymentInfo?.transactionId || "Pending",
-                total: cartItems[i].price,
+                total: cartItems[i].price*cartItems[i].quantity,
+                shippingAddress,
                 billingAddress: {
                     addressLine1: "Sonia Vihar",
                     addressLine2: "1st Pusta",
@@ -146,57 +154,21 @@ const placeOrder = async (req, res) => {
                     country: "India"
                 },
             });
-            console.log(order)
+            // console.log('shipment_id:,', res.data.shipment_id, "OrderID: ", userCart[0]._id)
         }
 
-
+        await updateProductStock(cartItems);
         await User.findByIdAndUpdate(userId, {cart: []});
+
         await sendOrderConfirmationEmail(process.env.Your_Email, order.toObject());
 
-        // { order_id : number min-6 numbers,
-        //     order_date:  string 2019-07-24 11:11,
-        //     billing_customer_name: string,
-        //     billling_address: string,
-        //     billing_city: string,
-        //     billing_pincode: integer,
-        //     billing_state:string,
-        //     billing_country:string,
-        //     billing_email:string,
-        //     billing_phone:integer 8368509006,
-        //     shipping_is_billing:boolean,
-        //     shipping_customer_name:(CONDITIONAL string( Required in case billing is not same as shipping.) and a few more if billing is not shipping),
-        //     order_items:array(List of items and their relevant fields in the form of Array.),
-        //     name:string(product name),
-        //     sku : string(product sku),
-        //     selling_price: integer(inclusive of GST),
-        //     payent_method: stirng(cod or prepaid),
-        //     sub_total: integer,
-        //         length: float(in cm),
-        //     bredth: float(in cm),
-        //     height: flaot(in cm),
-        //     weight: float( in kg)
-        // }
+        res.status(200).json({success: true, message: "Order Placed Successfully"});
 
-        //
-        //     "order_id": 818383995,
-        //         "channel_order_id": "224-446",
-        //         "shipment_id": 814768418,
-        //         "status": "NEW",
-        //         "status_code": 1,
-        //         "onboarding_completed_now": 0,
-        //         "awb_code": "",
-        //         "courier_company_id": "",
-        //         "courier_name": "",
-        //         "new_channel": false,
-        //         "packaging_box_error": ""
-        // }
-
-        res.status(200).json({success: true});
-        res.status(200).json({success: true, order});
+        // res.status(200).json({ success: true, order });
 
     } catch (err) {
         console.error("Error placing order:", err);
-        res.status(500).json({success: false, message: err.message});
+        res.status(500).json({ success: false, message: err.message });
     }
 };
 
@@ -224,7 +196,6 @@ const getOrdersById = async (req, res) => {
 
 const getOrders = async (req, res) => {
     const orders = await Order.find({});
-
     res.status(200).json(orders);
 }
 
@@ -238,4 +209,33 @@ const getTotalRevenue = async (req, res) => {
     }
 };
 
-module.exports = {placeOrder, getOrdersById, getOrders, getTotalRevenue};
+const cancelOrderByOrderId = async (req, res) => {
+    // console.log("Cancel Order", req.body);
+    // Cancel Order { orderId: 820076213, documentId: '680e0e79490876cc145fcaef' }
+try {
+    const result = await axios.post("https://apiv2.shiprocket.in/v1/external/orders/cancel", {
+            "ids": [req.body.orderId],
+            "status": "cancelled"
+        }, {
+            headers: {
+                'content-type': 'application/json',
+                Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjY0MDU5ODEsInNvdXJjZSI6InNyLWF1dGgtaW50IiwiZXhwIjoxNzQ2NDI3OTYzLCJqdGkiOiJMSmw3eDJNbUJNNTV4VWpkIiwiaWF0IjoxNzQ1NTYzOTYzLCJpc3MiOiJodHRwczovL3NyLWF1dGguc2hpcHJvY2tldC5pbi9hdXRob3JpemUvdXNlciIsIm5iZiI6MTc0NTU2Mzk2MywiY2lkIjo2MTg2NzAwLCJ0YyI6MzYwLCJ2ZXJib3NlIjpmYWxzZSwidmVuZG9yX2lkIjowLCJ2ZW5kb3JfY29kZSI6IiJ9.uGlIvFc-hFkb3Ikm_7jHXYvbrg2dwzZpbVZTHsYGies'
+            }
+        }
+    )
+
+    // console.log("Response : ", result.data);
+
+    await Order.findByIdAndDelete(req.body.documentId)
+    //Setting Status to cancelled
+    // await Order.findByIdAndUpdate(req.body.documentId, {status: "CANCELLED"})
+
+
+    res.status(200).json({success: true, message: "Order Cancelled Successfully"});
+}catch(err){
+    console.log(err);
+    res.status(500).json({success: false, message: "Error cancelling order"});
+}
+}
+
+module.exports = {placeOrder, getOrdersById, getOrders, getTotalRevenue, cancelOrderByOrderId};

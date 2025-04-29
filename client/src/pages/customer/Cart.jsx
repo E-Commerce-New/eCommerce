@@ -112,7 +112,7 @@ const Cart = () => {
             }
         });
         try {
-            const res = await axios.put(`${import.meta.env.VITE_BASE_URL}/api/cart/decrease`, {
+            const res = await axios.put("http://localhost:3000/api/cart/decrease", {
                 userId: user._id, productId,
             });
             if (res.status === 200) {
@@ -194,6 +194,9 @@ const Cart = () => {
 
         const rzp = new window.Razorpay(options);
         rzp.open();
+        await axios.post('http://localhost:3000/api/order/place', {
+            cartItems, shippingAddress, totalPrice, userId: user._id,userCart
+        });
     };
 
     const handleProduct = (id) => {
