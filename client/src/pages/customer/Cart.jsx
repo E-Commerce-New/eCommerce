@@ -6,7 +6,7 @@ import swal from "sweetalert2";
 import Swal from "sweetalert2";
 import {useNavigate} from "react-router-dom";
 import GoBack from "../../components/reUsable/Goback.jsx";
-import { Link } from "react-router-dom"
+import {Link} from "react-router-dom"
 
 const Cart = () => {
     const {user} = useSelector((state) => state.user)
@@ -30,7 +30,7 @@ const Cart = () => {
                 }
             });
             try {
-                const userRes = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/user/getUser`, {
+                const userRes = await axios.post("http://localhost:3000/api/user/getUser", {
                     id: user._id,
                 });
 
@@ -39,7 +39,7 @@ const Cart = () => {
                     setUserCart(cart);
                     // console.log('Cart: ',cart)
 
-                    const productPromises = cart.map((item) => axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/getProductById`, {
+                    const productPromises = cart.map((item) => axios.post("http://localhost:3000/api/product/getProductById", {
                         id: item.productId,
                     }));
 
@@ -75,7 +75,7 @@ const Cart = () => {
             }
         });
         try {
-            const res = await axios.put(`${import.meta.env.VITE_BASE_URL}/api/cart/increase`, {
+            const res = await axios.put("http://localhost:3000/api/cart/increase", {
                 userId: user._id, productId,
             });
             if (res.status === 200) {
@@ -95,7 +95,7 @@ const Cart = () => {
             }
         });
         try {
-            const res = await axios.delete(`${import.meta.env.VITE_BASE_URL}/api/cart/delete`, {
+            const res = await axios.delete("http://localhost:3000/api/cart/delete", {
                 data: {
                     userId: user._id, productId,
                 }
@@ -191,38 +191,6 @@ const Cart = () => {
                     } else {
                         swal.fire("Failed", "Payment verification failed", "error");
                     }
-        const options = {
-            key: 'rzp_test_YkO4VIe1rAjpOw',
-            amount: res.data.order.amount,
-            currency: 'INR',
-            name: 'Ecommerce',
-            description: 'Store For You!',
-            order_id: res.data.order.id,
-            handler: async function (response) {
-                console.log(response);
-                const verifyRes = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/payment/verify`, {
-                    razorpay_order_id: response.razorpay_order_id,
-                    razorpay_payment_id: response.razorpay_payment_id,
-                    razorpay_signature: response.razorpay_signature,
-                    userId: user._id,
-                    amount: res.data.order.amount / 100,
-                });
-                console.log("2nd Verify Api", verifyRes);
-
-                if (verifyRes.data.success) {
-                    swal.fire({
-                        title: 'Processing Your Order',
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
-                    try {
-                        const placeRes = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/order/place`, {
-                            cartItems, shippingAddress, paymentInfo: response, totalPrice, userId: user._id,
-                        });
-                        console.log("3rd Save data Api", placeRes);
 
                 },
                 prefill: {
@@ -301,7 +269,7 @@ const Cart = () => {
                                  title: "Order Summary",
                                  text: `Delivery Charges ₹
                                  ${
-                                    deliveryCharges.join(', ')
+                                     deliveryCharges.join(', ')
                                  }
                                      and Estimated Days of Delivery 
                                  ${
@@ -334,8 +302,8 @@ const Cart = () => {
                                          } else if(result.isDismissed) {
                                              // console.log('Online!');
                                              handlePayment(address, "Prepaid",  Math.ceil(totalPrice+deliveryCharges.reduce((acc, item) => {
-                                                 return acc + item;
-                                             }, 0)), deliveryCharges, estimatedDays
+                                                     return acc + item;
+                                                 }, 0)), deliveryCharges, estimatedDays
                                              );
                                          }
                                      })
