@@ -24,7 +24,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors(
     {
-    origin: 'https://ecommerce-tau-puce.vercel.app/', // your frontend origin
+    origin: 'https://ecommerce-tau-puce.vercel.app', // your frontend origin
     credentials: true
 }
 ));
