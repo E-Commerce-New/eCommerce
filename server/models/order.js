@@ -52,7 +52,7 @@ const orderSchema = new Schema({
     courier_name:String,
     new_channel:Boolean,
     packing_box_error:String,
-
+    deliveryCharges:Number,
     createdAt: Date,
     updatedAt: Date
 }, {timestamps: true})

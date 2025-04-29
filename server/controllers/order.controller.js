@@ -17,7 +17,7 @@ const getValidDateAndTime = () => {
 }
 
 const placeOrder = async (req, res) => {
-    const {cartItems, shippingAddress, paymentInfo, totalPrice, userId, userCart} = req.body;
+    const {cartItems, shippingAddress, paymentInfo, userId, userCart, paymentMethod, deliveryCharge} = req.body;
     console.log("Place Order", req.body);
 
     try {
@@ -93,12 +93,12 @@ const placeOrder = async (req, res) => {
                         sku: cartItems[i].name
                     }
                 ],
-                payment_method: "Prepaid",
+                payment_method: paymentMethod,
                 shipping_charges: 0,
                 giftwrap_charges: 0,
                 transaction_charges: 0,
                 total_discount: 0,
-                sub_total: cartItems[i].price*cartItems[i].quantity,
+                sub_total: (cartItems[i].price * cartItems[i].quantity) + deliveryCharge[i],
                 length: cartItems[i].length,
                 breadth: cartItems[i].breadth,
                 height: cartItems[i].height,
@@ -114,45 +114,47 @@ const placeOrder = async (req, res) => {
                 }
             )
 
-            // console.log("Response : ", res.data);
-
-            await Order.create({
-                userId: userId,
-                order_id: res.data.order_id,
-                channel_order_id:res.data.channel_order_id,
-                shipment_id: res.data.shipment_id,
-                status: res.data.status,
-                status_code: res.data.status_code,
-                onboarding_completed_Now: res.data.onboarding_completed_now,
-                awb_code: res.data.awb_code,
-                courier_company_id: res.data.courier_company_id,
-                new_channel: res.data.new_channel,
-                packaging_box_error: res.data.packaging_box_error,
-                order_items: [
-                    {
-                        _id:userCart[i].productId,
-                        name: cartItems[i].name,
-                        price: cartItems[i].price,
-                        quantity: cartItems[i].quantity,
-                        selling_price: cartItems[i].price,
-                        sku: cartItems[i].name
-                    }
-                ],
-                paymentMethod: paymentInfo?.method || "Prepaid",
-                paymentStatus: "Paid",
-                transactionId: paymentInfo?.transactionId || "Pending",
-                total: cartItems[i].price*cartItems[i].quantity,
-                shippingAddress,
-                billingAddress: {
-                    addressLine1: "Sonia Vihar",
-                    addressLine2: "1st Pusta",
-                    city: "Delhi",
-                    state: "Delhi",
-                    postalCode: '110094',
-                    country: "India"
-                },
-            });
-            // console.log('shipment_id:,', res.data.shipment_id, "OrderID: ", userCart[0]._id)
+            console.log("Response : ", res.data);
+            if (res.data.order_id) {
+                await Order.create({
+                    userId: userId,
+                    order_id: res.data.order_id,
+                    channel_order_id: res.data.channel_order_id,
+                    shipment_id: res.data.shipment_id,
+                    status: res.data.status,
+                    status_code: res.data.status_code,
+                    onboarding_completed_Now: res.data.onboarding_completed_now,
+                    awb_code: res.data.awb_code,
+                    courier_company_id: res.data.courier_company_id,
+                    new_channel: res.data.new_channel,
+                    packaging_box_error: res.data.packaging_box_error,
+                    order_items: [
+                        {
+                            _id: userCart[i].productId,
+                            name: cartItems[i].name,
+                            price: cartItems[i].price,
+                            quantity: cartItems[i].quantity,
+                            selling_price: cartItems[i].price,
+                            sku: cartItems[i].name
+                        }
+                    ],
+                    paymentMethod: paymentInfo?.method || paymentMethod || "Unknown",
+                    paymentStatus: paymentMethod === "Prepaid" ? "Paid" : "Pending",
+                    transactionId: paymentInfo?.transactionId || "Pending",
+                    total: cartItems[i].price * cartItems[i].quantity,
+                    shippingAddress,
+                    billingAddress: {
+                        addressLine1: "Sonia Vihar",
+                        addressLine2: "1st Pusta",
+                        city: "Delhi",
+                        state: "Delhi",
+                        postalCode: '110094',
+                        country: "India"
+                    },
+                    deliveryCharges:deliveryCharge[i]
+                });
+                // console.log('shipment_id:,', res.data.shipment_id, "OrderID: ", userCart[0]._id)
+            }
         }
 
         await updateProductStock(cartItems);
@@ -169,7 +171,6 @@ const placeOrder = async (req, res) => {
         res.status(500).json({success: false, message: err.message});
     }
 };
-
 
 const getOrdersById = async (req, res) => {
     try {
@@ -210,30 +211,64 @@ const getTotalRevenue = async (req, res) => {
 const cancelOrderByOrderId = async (req, res) => {
     // console.log("Cancel Order", req.body);
     // Cancel Order { orderId: 820076213, documentId: '680e0e79490876cc145fcaef' }
-try {
-    const result = await axios.post("https://apiv2.shiprocket.in/v1/external/orders/cancel", {
-            "ids": [req.body.orderId],
-            "status": "cancelled"
-        }, {
-            headers: {
-                'content-type': 'application/json',
-                Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjY0MDU5ODEsInNvdXJjZSI6InNyLWF1dGgtaW50IiwiZXhwIjoxNzQ2NDI3OTYzLCJqdGkiOiJMSmw3eDJNbUJNNTV4VWpkIiwiaWF0IjoxNzQ1NTYzOTYzLCJpc3MiOiJodHRwczovL3NyLWF1dGguc2hpcHJvY2tldC5pbi9hdXRob3JpemUvdXNlciIsIm5iZiI6MTc0NTU2Mzk2MywiY2lkIjo2MTg2NzAwLCJ0YyI6MzYwLCJ2ZXJib3NlIjpmYWxzZSwidmVuZG9yX2lkIjowLCJ2ZW5kb3JfY29kZSI6IiJ9.uGlIvFc-hFkb3Ikm_7jHXYvbrg2dwzZpbVZTHsYGies'
+    try {
+        const result = await axios.post("https://apiv2.shiprocket.in/v1/external/orders/cancel", {
+                "ids": [req.body.orderId],
+                "status": "cancelled"
+            }, {
+                headers: {
+                    'content-type': 'application/json',
+                    Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjY0MDU5ODEsInNvdXJjZSI6InNyLWF1dGgtaW50IiwiZXhwIjoxNzQ2NDI3OTYzLCJqdGkiOiJMSmw3eDJNbUJNNTV4VWpkIiwiaWF0IjoxNzQ1NTYzOTYzLCJpc3MiOiJodHRwczovL3NyLWF1dGguc2hpcHJvY2tldC5pbi9hdXRob3JpemUvdXNlciIsIm5iZiI6MTc0NTU2Mzk2MywiY2lkIjo2MTg2NzAwLCJ0YyI6MzYwLCJ2ZXJib3NlIjpmYWxzZSwidmVuZG9yX2lkIjowLCJ2ZW5kb3JfY29kZSI6IiJ9.uGlIvFc-hFkb3Ikm_7jHXYvbrg2dwzZpbVZTHsYGies'
+                }
             }
-        }
-    )
+        )
 
-    // console.log("Response : ", result.data);
+        // console.log("Response : ", result.data);
 
-    await Order.findByIdAndDelete(req.body.documentId)
-    //Setting Status to cancelled
-    // await Order.findByIdAndUpdate(req.body.documentId, {status: "CANCELLED"})
+        await Order.findByIdAndDelete(req.body.documentId)
+        //Setting Status to cancelled
+        // await Order.findByIdAndUpdate(req.body.documentId, {status: "CANCELLED"})
 
 
-    res.status(200).json({success: true, message: "Order Cancelled Successfully"});
-}catch(err){
-    console.log(err);
-    res.status(500).json({success: false, message: "Error cancelling order"});
+        res.status(200).json({success: true, message: "Order Cancelled Successfully"});
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({success: false, message: "Error cancelling order"});
+    }
 }
+
+const getDeliveryCharges = async(req, res) => {
+    const {topincode, weight} = req.params;
+    // console.log("Pincode: ", topincode);
+    const data = {
+        pickup_postcode: "110090",
+        delivery_postcode: topincode,
+        "weight": weight,
+        "cod": 0
+    }
+
+    // console.log(data)
+    try {
+        const result = await axios.get("https://apiv2.shiprocket.in/v1/external/courier/serviceability/"
+            ,  {
+                headers: {
+                    'Content-Type' : 'application/json',
+                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjY0MDU5ODEsInNvdXJjZSI6InNyLWF1dGgtaW50IiwiZXhwIjoxNzQ2NDI3OTYzLCJqdGkiOiJMSmw3eDJNbUJNNTV4VWpkIiwiaWF0IjoxNzQ1NTYzOTYzLCJpc3MiOiJodHRwczovL3NyLWF1dGguc2hpcHJvY2tldC5pbi9hdXRob3JpemUvdXNlciIsIm5iZiI6MTc0NTU2Mzk2MywiY2lkIjo2MTg2NzAwLCJ0YyI6MzYwLCJ2ZXJib3NlIjpmYWxzZSwidmVuZG9yX2lkIjowLCJ2ZW5kb3JfY29kZSI6IiJ9.uGlIvFc-hFkb3Ikm_7jHXYvbrg2dwzZpbVZTHsYGies'
+                }, data
+            }
+        )
+        const finalResult = result.data.data.available_courier_companies.filter(item => {if(item.courier_company_id === 217){
+            return item
+        }})
+
+
+        res.status(200).json({finalResult});
+    }catch(err){
+        console.log(err)
+    }
+
+
+
 }
 
-module.exports = {placeOrder, getOrdersById, getOrders, getTotalRevenue, cancelOrderByOrderId};
+module.exports = {placeOrder, getOrdersById, getOrders, getTotalRevenue, cancelOrderByOrderId, getDeliveryCharges};
