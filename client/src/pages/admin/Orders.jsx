@@ -30,7 +30,7 @@ const Orders = () => {
             {orders.length > 0 ? null :
                 <p className="text-2xl text-red-500 font-bold text-center my-32">No Order Found till now!</p>}
             {orders.map((order, index) => {
-                const total = order.items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+                const total = order?.order_items?.reduce((acc, item) => acc + item.price * item.quantity, 0);
                 return (
                     <div key={order._id} className="mb-4 border border-gray-300 rounded-lg overflow-hidden">
                         {/* Overview Row */}
@@ -39,7 +39,7 @@ const Orders = () => {
                             onClick={() => toggleOrder(order._id)}
                         >
                             <p><strong>Order #{index + 1}</strong></p>
-                            <p>{order.items.length} Products</p>
+                            <p>{order?.items?.length} Products</p>
                             <p>{new Date(order.createdAt).toLocaleDateString()}</p>
                             <p>Total: ₹{total}</p>
                             <p className={order.paymentStatus === "Paid" ? "text-green-600" : "text-red-500"}>
@@ -58,20 +58,20 @@ const Orders = () => {
                                     className="overflow-hidden bg-white"
                                 >
                                     <div className="p-4">
-                                        <p className="text-right">Order id - {order._id}</p>
+                                        <p className="text-right">Order id - {order?._id}</p>
                                         {/* Addresses */}
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                                             <div>
                                                 <h3 className="font-semibold">Shipping Address</h3>
-                                                <p>{order.shippingAddress.addressLine1}, {order.shippingAddress.addressLine2}</p>
-                                                <p>{order.shippingAddress.city}, {order.shippingAddress.state}</p>
-                                                <p>{order.shippingAddress.postalCode}, {order.shippingAddress.country}</p>
+                                                <p>{order?.shippingAddress.addressLine1}, {order?.shippingAddress.addressLine2}</p>
+                                                <p>{order?.shippingAddress.city}, {order?.shippingAddress.state}</p>
+                                                <p>{order?.shippingAddress.postalCode}, {order?.shippingAddress.country}</p>
                                             </div>
                                             <div>
                                                 <h3 className="font-semibold">Billing Address</h3>
-                                                <p>{order.billingAddress.addressLine1}, {order.billingAddress.addressLine2}</p>
-                                                <p>{order.billingAddress.city}, {order.billingAddress.state}</p>
-                                                <p>{order.billingAddress.postalCode}, {order.billingAddress.country}</p>
+                                                <p>{order?.billingAddress.addressLine1}, {order?.billingAddress.addressLine2}</p>
+                                                <p>{order?.billingAddress.city}, {order?.billingAddress.state}</p>
+                                                <p>{order?.billingAddress.postalCode}, {order?.billingAddress.country}</p>
                                             </div>
                                         </div>
 
@@ -87,7 +87,7 @@ const Orders = () => {
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            {order.items.map((item, idx) => (
+                                            {order?.order_items?.map((item, idx) => (
                                                 <tr key={item._id}
                                                     onClick={() => navigate(`/product-info/${item._id}`)}
                                                 >
