@@ -10,7 +10,7 @@ import {Link} from "react-router-dom"
 
 const Cart = () => {
     const {user} = useSelector((state) => state.user)
-    // console.log(user.addresses?.[0])
+    console.log(user.addresses?.[0])
     const navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
     // const [shippingAddress, setShippingAddress] = useState({})
@@ -21,7 +21,12 @@ const Cart = () => {
     useEffect(() => {
         if (!user) {
             navigate('/login');
+        } else if (user?.isAdmin) {
+            navigate('/admin/panel');
         }
+    }, []);
+
+    useEffect(() => {
 
         const fetchCartProducts = async () => {
             Swal.fire({
@@ -39,7 +44,7 @@ const Cart = () => {
                     setUserCart(cart);
 
                     const productPromises = cart.map((item) => axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/getProductById`, {
-                        id: item.productId,
+                        id: item?.productId,
                     }));
 
                     const productResponses = await Promise.all(productPromises);
@@ -65,7 +70,7 @@ const Cart = () => {
         return acc + item.price * item.quantity;
     }, 0);
 
-    console.log("total Price", totalPrice)
+    // console.log("total Price", totalPrice)
     const increaseQuantity = async (productId) => {
         Swal.fire({
             title: 'Increasing Product Quantity...', allowOutsideClick: false, allowEscapeKey: false, didOpen: () => {
@@ -166,7 +171,14 @@ const Cart = () => {
                         try {
                             const placeRes = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/order/place`, {
                                 // cartItems, shippingAddress, paymentInfo: response, totalPrice, userId: user._id,
-                                cartItems, shippingAddress, totalPrice, userId: user._id, userCart, paymentMethod, deliveryCharge, estimateDays
+                                cartItems,
+                                shippingAddress,
+                                totalPrice,
+                                userId: user._id,
+                                userCart,
+                                paymentMethod,
+                                deliveryCharge,
+                                estimateDays
                             });
                             console.log("3rd Save data Api", placeRes);
 
@@ -202,9 +214,18 @@ const Cart = () => {
             const rzp = new window.Razorpay(options);
             rzp.open();
         } else {
-            await axios.post(`${import.meta.env.VITE_BASE_URL}/api/order/place`, {
-                cartItems, shippingAddress, totalPrice, userId: user._id, userCart, paymentMethod, deliveryCharge, estimateDays
-            });
+            await axios.post(`${import.meta.env.VITE_BASE_URL}/api/order/place`,
+                {
+                    cartItems,
+                    shippingAddress,
+                    totalPrice,
+                    userId: user._id,
+                    userCart,
+                    paymentMethod,
+                    deliveryCharge,
+                    estimateDays
+                }
+            );
         }
 
     };
@@ -242,24 +263,14 @@ const Cart = () => {
                     <div key={address._id}
                          className="flex gap-2 p-4 border-b-2 border-black flex-col bg-indigo-200 hover:bg-indigo-400"
                          onClick={async () => {
-                             // console.log(address.postalCode)
                              const weight = cartItems.map((item) => item.weight * item.quantity);
-                             // const pinCodeCharges = async (weight) => { return }
-                             // const pinCodeCharge = await weight.map(async (weight)=> await axios.get(`http://localhost:3000/api/order/getCharges/${address.postalCode}/${weight}`))
                              const pinCodeCharge = await Promise.all(
                                  weight.map(weight =>
                                      axios.get(`${import.meta.env.VITE_BASE_URL}/api/order/getCharges/${address.postalCode}/${weight}`)
                                  )
-                             )
-
-                             const deliveryCharges = pinCodeCharge
-                                 .map(item => item?.data?.finalResult[0]?.freight_charge)
-
-
-                             const estimatedDays = pinCodeCharge
-                                 .map(item => item?.data?.finalResult[0]?.estimated_delivery_days)
-
-
+                             );
+                             const deliveryCharges = pinCodeCharge.map(item => item?.data?.finalResult[0]?.freight_charge);
+                             const estimatedDays = pinCodeCharge.map(item => item?.data?.finalResult[0]?.estimated_delivery_days);
                              Swal.fire({
                                  title: "Order Summary",
                                  text: `Delivery Charges ₹
@@ -278,11 +289,13 @@ const Cart = () => {
                                  confirmButtonText: 'Proceed',
                                  cancelButtonText: 'Cancel',
                              }).then((result1) => {
-                                 if(result1.isConfirmed) {
+                                 if (result1.isConfirmed) {
                                      Swal.fire({
                                          title: 'Choose a Payment Method',
                                          // text: "Want to cancel this order?",
                                          icon: 'info',
+                                         allowOutsideClick: true,
+                                         allowEscapeKey: true,
                                          showCancelButton: true,
                                          confirmButtonColor: 'green',
                                          cancelButtonColor: '#3085d6',
@@ -291,12 +304,12 @@ const Cart = () => {
                                      }).then((result) => {
                                          if (result.isConfirmed) {
                                              // console.log('Cash On Delivery!');
-                                             handlePayment(address, "COD", Math.ceil(totalPrice+deliveryCharges.reduce((acc, item) => {
+                                             handlePayment(address, "COD", Math.ceil(totalPrice + deliveryCharges.reduce((acc, item) => {
                                                  return acc + item;
-                                             }, 0)), deliveryCharges, estimatedDays );
-                                         } else if(result.isDismissed) {
+                                             }, 0)), deliveryCharges, estimatedDays);
+                                         } else if (result.isDismissed) {
                                              // console.log('Online!');
-                                             handlePayment(address, "Prepaid",  Math.ceil(totalPrice+deliveryCharges.reduce((acc, item) => {
+                                             handlePayment(address, "Prepaid", Math.ceil(totalPrice + deliveryCharges.reduce((acc, item) => {
                                                      return acc + item;
                                                  }, 0)), deliveryCharges, estimatedDays
                                              );
@@ -304,9 +317,7 @@ const Cart = () => {
                                      })
                                  }
                              })
-
                          }}
-
                     >
                         <p>Address Line 1: {address.addressLine1}</p>
                         <p>Address Line 2: {address.addressLine2}</p>
@@ -315,7 +326,6 @@ const Cart = () => {
                         <p>Country: {address.country}</p>
                     </div>
                 ))}
-
             </div>
             <h1 className="text-xl font-bold sticky -top-5 bg-white p-2 flex gap-2 items-center"><GoBack/> Your Cart
             </h1>
@@ -388,8 +398,6 @@ const Cart = () => {
                     </div>
                 </div>)
             }
-
-
         </div>)
         ;
 };

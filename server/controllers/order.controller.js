@@ -1,15 +1,15 @@
 const mongoose = require("mongoose");
 const Order = require("../models/order");
 const User = require("../models/user");
-const { sendOrderConfirmationEmail } = require("../utils/sendMail");
-const { updateProductStock } = require("./product.controller");
+const {sendOrderConfirmationEmail} = require("../utils/sendMail");
+const {updateProductStock} = require("./product.controller");
 
 const axios = require("axios");
 
 const getValidDateAndTime = () => {
     const now = new Date();
     const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // months are 0-indexed
     const day = String(now.getDate()).padStart(2, '0');
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
@@ -21,55 +21,9 @@ const placeOrder = async (req, res) => {
     console.log("Place Order", req.body);
 
     try {
-        await updateProductStock(cartItems);
-
-
-        const order = await Order.create({
-            userId,
-            status: "Processing",
-            items: cartItems,
-            shippingAddress,
-            paymentMethod: "Razorpay",
-            paymentStatus: "Paid",
-            transactionId: paymentInfo?.razorpay_payment_id || "Pending",
-            total: totalPrice,
-            billingAddress: {
-                addressLine1: "Sonia Vihar",
-                addressLine2: "1st Pusta",
-                city: "Delhi",
-                state: "Delhi",
-                postalCode: '110094',
-                country: "India"
-            },
-        });
-
-        // console.log("Order Saved", order);
-        // console.log(req.body.cartItems);
         const user = await User.findOne({_id: userId});
 
         for (let i = 0; i < cartItems.length; i++) {
-            //     const dataAndTime = getValidDateAndTime();
-            //     const data = await Order.create({
-            //         userId: userId,
-            //         status: "Processing",
-            //         items: cartItems[i],
-            //         shippingAddress,
-            //         paymentMethod: paymentInfo?.method || "Unknown",
-            //         paymentStatus: "Paid",
-            //         transactionId: paymentInfo?.transactionId || "Pending",
-            //         total: totalPrice,
-            //         billingAddress: {
-            //             addressLine1 : "Sonia Vihar",
-            //             addressLine2 : "1st Pusta",
-            //             city : "Delhi",
-            //             state : "Delhi",
-            //             postalCode : '110094',
-            //             country: "India",
-            //             userCart
-            //         },
-            //     })
-
-            // console.log("Data " , data);
 
             const data = {
                 order_id: userCart[0]._id,
@@ -106,17 +60,14 @@ const placeOrder = async (req, res) => {
             // console.log("Data", data);
 
             const res = await axios.post("https://apiv2.shiprocket.in/v1/external/orders/create/adhoc", data, {
-                headers: {
-                    'content-type': 'application/json',
-                    Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjY0MDU5ODEsInNvdXJjZSI6InNyLWF1dGgtaW50IiwiZXhwIjoxNzQ2NDI3OTYzLCJqdGkiOiJMSmw3eDJNbUJNNTV4VWpkIiwiaWF0IjoxNzQ1NTYzOTYzLCJpc3MiOiJodHRwczovL3NyLWF1dGguc2hpcHJvY2tldC5pbi9hdXRob3JpemUvdXNlciIsIm5iZiI6MTc0NTU2Mzk2MywiY2lkIjo2MTg2NzAwLCJ0YyI6MzYwLCJ2ZXJib3NlIjpmYWxzZSwidmVuZG9yX2lkIjowLCJ2ZW5kb3JfY29kZSI6IiJ9.uGlIvFc-hFkb3Ikm_7jHXYvbrg2dwzZpbVZTHsYGies',
                     headers: {
                         'content-type': 'application/json',
                         Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjY0MDU5ODEsInNvdXJjZSI6InNyLWF1dGgtaW50IiwiZXhwIjoxNzQ2NDI3OTYzLCJqdGkiOiJMSmw3eDJNbUJNNTV4VWpkIiwiaWF0IjoxNzQ1NTYzOTYzLCJpc3MiOiJodHRwczovL3NyLWF1dGguc2hpcHJvY2tldC5pbi9hdXRob3JpemUvdXNlciIsIm5iZiI6MTc0NTU2Mzk2MywiY2lkIjo2MTg2NzAwLCJ0YyI6MzYwLCJ2ZXJib3NlIjpmYWxzZSwidmVuZG9yX2lkIjowLCJ2ZW5kb3JfY29kZSI6IiJ9.uGlIvFc-hFkb3Ikm_7jHXYvbrg2dwzZpbVZTHsYGies'
                     }
                 }
-            } )
+            )
 
-            console.log("Response : ", res.data);
+            // console.log("Response : ", res.status);
             if (res.data.order_id) {
                 await Order.create({
                     userId: userId,
@@ -162,7 +113,7 @@ const placeOrder = async (req, res) => {
         await updateProductStock(cartItems);
         await User.findByIdAndUpdate(userId, {cart: []});
 
-        await sendOrderConfirmationEmail(process.env.Your_Email, order.toObject());
+        // await sendOrderConfirmationEmail(process.env.Your_Email, order.toObject());
 
         res.status(200).json({success: true, message: "Order Placed Successfully"});
 
@@ -170,7 +121,7 @@ const placeOrder = async (req, res) => {
 
     } catch (err) {
         console.error("Error placing order:", err);
-        res.status(500).json({ success: false, message: err.message });
+        res.status(500).json({success: false, message: err.message});
     }
 };
 

@@ -83,7 +83,7 @@ const createProducts = async (req, res) => {
 
             });
             await product.save();
-            return res.status(200).json({message: 'Product Created Successfully'});
+            return res.status(200).json({message: 'Product Created Successfully', product});
         } else {
             return res.status(401).json({message: 'Unauthorized'});
         }

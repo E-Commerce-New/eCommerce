@@ -131,6 +131,9 @@ const Products = () => {
                 withCredentials: true
             });
 
+            console.log(res.data.product)
+            setProducts(prev => [...prev, res.data.product]);
+
             swal.close()
 
             Swal.fire({
