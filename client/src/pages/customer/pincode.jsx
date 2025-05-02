@@ -6,7 +6,7 @@ const PincodeInput = () => {
     const socketRef = useRef(null);
 
     useEffect(() => {
-        // Create WebSocket connection when component mounts
+        // CreateProducts WebSocket connection when component mounts
         socketRef.current = new WebSocket('ws://localhost:8080');
 
         socketRef.current.onopen = () => {

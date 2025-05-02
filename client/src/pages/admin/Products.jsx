@@ -9,8 +9,8 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import RightTopNav from "../../components/reUsable/RightTopNav";
 import Categories from "../../components/Categories";
 import {useSelector} from "react-redux";
-import AddProduct from "./ProductModule/AddProduct.jsx";
-import ShowProducts from "./ProductModule/ShowProducts.jsx";
+import CreateProducts from "./ProductModule/CreateProducts.jsx";
+import ReadProducts from "./ProductModule/ReadProducts.jsx";
 
 dayjs.extend(relativeTime);
 
@@ -133,11 +133,13 @@ const Products = () => {
 
             swal.close()
 
+            if(res.status === 200) {
             Swal.fire({
                 icon: 'success',
                 title: 'Product Added',
                 text: res.data.message || 'Product has been successfully added!',
             });
+            }
 
             setForm({
                 name: "",
@@ -249,7 +251,7 @@ const Products = () => {
                             onClick={() => setShowCate(!showCate)}>Show Category Section
                     </button>
                 </div>
-                {showAddProduct ? <AddProduct
+                {showAddProduct ? <CreateProducts
                     onSubmit={onSubmit}
                     addAttribute={addAttribute}
                     handleAttributeChange={handleAttributeChange}
@@ -271,7 +273,7 @@ const Products = () => {
             }
 
             {/*Show Products*/}
-            <ShowProducts
+            <ReadProducts
                 filteredProducts={filteredProducts}
                 products={products}
                 searchTerm={searchTerm}
