@@ -10,7 +10,16 @@ const Orders = () => {
     const {user} = useSelector((state) => state.user);
     const [orders, setOrders] = useState([]);
     const [expandedOrderId, setExpandedOrderId] = useState(null);
+    const navigate = useNavigate();
     // const [orderCancelForm, setOrderCancelForm] = useState(false);
+    useEffect(() => {
+        if (!user) {
+            navigate('/login');
+        }else if(user?.isAdmin){
+            navigate('/admin/panel');
+        }
+    }, []);
+
     useEffect(() => {
         const fetchOrders = async () => {
             Swal.fire({
@@ -39,7 +48,6 @@ const Orders = () => {
         if (orders) orders.reverse()
     }, [user]);
 
-    const navigate = useNavigate();
 
     const toggleOrderDetails = (orderId) => {
         if (expandedOrderId === orderId) {

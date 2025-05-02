@@ -40,7 +40,7 @@ const AdminDashboard = () => {
             try {
                 const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/user/getUser`);
                 setTotalUsers(res.data);
-                console.log(res.data);
+                // console.log(res.data);
             } catch (error) {
                 console.log(error);
             }

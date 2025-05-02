@@ -1,7 +1,7 @@
 import {Link, useNavigate} from "react-router-dom";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {setUser} from '../store/User.js';
 import Swal from "sweetalert2";
 import swal from "sweetalert2";
@@ -10,6 +10,12 @@ import {Eye, EyeClosed} from "lucide-react"
 
 const Signup = () => {
     const navigate = useNavigate();
+    const user = useSelector((state) => state.user.user);
+    useEffect(() => {
+        if(user){
+            navigate('/');
+        }
+    })
     const [form, setForm] = useState({
         username: "",
         email: "",

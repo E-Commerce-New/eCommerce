@@ -1,4 +1,4 @@
-import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
+import {BrowserRouter as Router, Navigate, Route, Routes} from "react-router-dom";
 
 // Hybrid Imports
 import LogIn from "./pages/Login";
@@ -14,7 +14,7 @@ import DeleteProduct from "./pages/admin/ProductModule/DeleteProduct.jsx";
 import AdminOrders from "./pages/admin/Orders.jsx";
 import AdminSettings from "./pages/admin/AdminSetting"
 import Products from "./pages/admin/Products.jsx";
-
+import ProtectedRoute from "./utils/AdminProtectedRoutes.jsx";
 // Users Imports
 import UserLayout from "./layouts/UserLayout"
 import AddToCart from "./components/reUsable/AddToCart.js";
@@ -50,7 +50,8 @@ export default function App() {
                     <Route path="search" element={<SearchPage/>}/>
                 </Route>
 
-                <Route path="/admin" element={<AdminLayout/>}>
+                {/*<Route path="/admin" element={<AdminAuth><AdminLayout/></AdminAuth>}>*/}
+                <Route path="/admin" element={<ProtectedRoute><AdminLayout/></ProtectedRoute>}>
                     <Route path="panel" element={<AdminPanel/>}/>
                     <Route path="products" element={<Products/>}/>
                     <Route path="update-product/:id" element={<UpdateProduct/>}/>

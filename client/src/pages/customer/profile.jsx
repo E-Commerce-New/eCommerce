@@ -9,6 +9,13 @@ import {z} from "zod";
 const Profile = () => {
     const {user} = useSelector((state) => state.user);
     const navigate = useNavigate();
+    useEffect(() => {
+        if (!user) {
+            navigate('/login');
+        }else if(user?.isAdmin){
+            navigate('/admin/panel');
+        }
+    }, []);
     const [formData, setFormData] = useState({
         username: "",
         email: "",
@@ -46,9 +53,6 @@ const Profile = () => {
     });
 
     useEffect(() => {
-        if (!user) {
-            navigate('/login');
-        }
 
         const fetchUser = async () => {
             Swal.fire({

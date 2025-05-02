@@ -1,13 +1,29 @@
 import {Link, useNavigate} from "react-router-dom";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import swal from "sweetalert2"
 import Swal from "sweetalert2"
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {setUser} from "../store/User";
 import axios from "axios";
 import {z} from "zod"
 
 const Login = () => {
+
+    const {user} = useSelector((state) => state.user)
+    // console.log(user)
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if(!user){
+            // navigate('/');
+        }
+        else if (user?.isAdmin) {
+            console.log(user)
+            navigate('/admin/panel');
+        }else if(!user?.isAdmin){
+            navigate('/');
+        }
+    })
     const [form, setForm] = useState({
         username: "", password: "",
     })
@@ -20,7 +36,6 @@ const Login = () => {
 
 
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const onSubmit = async (e) => {
         Swal.fire({
             title: 'Finding You!', allowOutsideClick: false, allowEscapeKey: false, didOpen: () => {
@@ -40,7 +55,7 @@ const Login = () => {
             const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/user/login`, form, {
                 withCredentials: true
             })
-            // console.log(res.data)
+            console.log(res.data)
             dispatch(setUser(res.data.user))
             swal.close()
             if (res.status === 200) {
