@@ -27,3 +27,7 @@ dist-ssr
 *.deb
 *.rpm
 
+.env
+.env.local
+.env.production
+*.env
