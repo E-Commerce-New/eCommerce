@@ -24,7 +24,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors(
     {
-    origin: 'https://new-ecommerce-mauve.vercel.app/', // your frontend origin
+    origin: 'https://new-ecommerce-mauve.vercel.app', // your frontend origin
     credentials: true
 }
 ));
