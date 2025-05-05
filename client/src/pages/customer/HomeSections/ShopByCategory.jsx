@@ -23,7 +23,7 @@ const ShopByCategory = () => {
         <div>
             <h1 className="text-center text-3xl font-bold mb-6">Shop by Category</h1>
             <div className="grid grid-cols-5 text-nowrap gap-4">
-                {categories.map((category) => (
+                {categories?.map((category) => (
                     <div
                         key={category._id}
                         className="category-item bg-gray-200 py-2 px-4 rounded-lg text-center cursor-pointer hover:bg-gray-300"
