@@ -16,25 +16,29 @@ const MainProducts = () => {
         const fetchMainProducts = async () => {
             try {
                 const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/ui/get`);
-                console.log(res.data.data.mainProducts);
-                if (res.status === 200) {
-                    const productIds = res.data.data.mainProducts;
+                console.log(res.data); // Debug log
+
+                const productIds = res?.data?.data?.mainProducts;
+                if (res.status === 200 && Array.isArray(productIds)) {
                     const productRequests = productIds.map((id) =>
-                        axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/getProductById`, {id})
+                        axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/getProductById`, { id })
                     );
 
                     const productResponses = await Promise.all(productRequests);
                     const products = productResponses.map(response => response.data.data);
 
                     setMainProducts(products);
+                } else {
+                    console.warn("mainProducts not found or invalid:", res?.data?.data);
                 }
             } catch (err) {
-                console.error(err);
+                console.error("Error fetching main products:", err);
             }
         };
 
         fetchMainProducts();
     }, []);
+
 
 
     return (<>
