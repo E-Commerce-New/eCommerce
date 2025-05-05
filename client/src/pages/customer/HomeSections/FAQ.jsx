@@ -26,7 +26,7 @@ const FAQPage = () => {
         <div className="max-w-3xl mx-auto p-6">
             <h1 className="text-3xl font-bold mb-8 text-center">Frequently Asked Questions</h1>
             <div className="space-y-4">
-                {faqs.map((faq, index) => (
+                {faqs?.map((faq, index) => (
                     <div key={index} className="border-b pb-4">
                         <button
                             className="w-full flex justify-between items-center text-left font-medium text-xl"
