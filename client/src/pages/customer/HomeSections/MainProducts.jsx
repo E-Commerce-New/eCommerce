@@ -51,7 +51,7 @@ const MainProducts = () => {
                 autoplay={{delay: 3000, disableOnInteraction: false}}
                 className="rounded-lg overflow-hidden"
             >
-                {mainProducts.map((product) => (<SwiperSlide key={product._id}>
+                {mainProducts?.map((product) => (<SwiperSlide key={product._id}>
                     <div className="flex justify-center flex-col items-center overflow-hidden relative"
                          onClick={() => navigate(`/product-info/${product._id}`)}
                     >
