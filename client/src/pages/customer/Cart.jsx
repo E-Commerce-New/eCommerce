@@ -138,7 +138,7 @@ const Cart = () => {
         if (paymentMethod === "Prepaid") {
             console.log("Online Payment")
             const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/payment/create-order`, {amount: totalPrice});
-            //console.log("1st Api of Create Order" , res)
+            //console.log("1st Api of CreateProducts Order" , res)
             console.log(res.data)
 
             const options = {

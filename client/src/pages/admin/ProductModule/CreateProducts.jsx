@@ -1,6 +1,6 @@
 import {CirclePlus, CircleX} from "lucide-react";
 
-const AddProduct = ({
+const CreateProducts = ({
                         onSubmit,
                         addAttribute,
                         handleAttributeChange,
@@ -237,4 +237,4 @@ const AddProduct = ({
     </>)
 }
 
-export default AddProduct;
+export default CreateProducts;

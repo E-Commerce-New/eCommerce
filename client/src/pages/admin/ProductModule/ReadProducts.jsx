@@ -3,7 +3,7 @@ import {useNavigate} from "react-router-dom";
 import swal from "sweetalert2";
 import axios from "axios";
 
-const ShowProducts = ({
+const ReadProducts = ({
                           filteredProducts, products, searchTerm, setSearchTerm,
                       }) => {
 
@@ -117,4 +117,4 @@ const ShowProducts = ({
     </>)
 }
 
-export default ShowProducts;
+export default ReadProducts;

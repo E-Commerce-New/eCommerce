@@ -24,12 +24,12 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors(
     {
-    origin: process.env.ORIGIN, // your frontend origin
+    origin: 'http://localhost:5173', // your frontend origin
     credentials: true
 }
 ));
 
-
+// Connect to MongoDB Atlas
 mongoose
     .connect(process.env.MONGO_URI, {})
     .then(() => console.log("MongoDB Connected"))
