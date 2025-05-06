@@ -12,9 +12,10 @@ const Profile = () => {
     useEffect(() => {
         if (!user) {
             navigate('/login');
-        }else if(user?.isAdmin){
-            navigate('/admin/panel');
         }
+        // else if(user?.isAdmin){
+        //     navigate('/admin/panel');
+        // }
     }, []);
     const [formData, setFormData] = useState({
         username: "",

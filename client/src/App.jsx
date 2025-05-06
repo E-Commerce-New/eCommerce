@@ -28,6 +28,7 @@ import ResetPassword from "./pages/customer/ResetPassword.jsx";
 import ProductInfo from "./pages/customer/Product-info.jsx";
 import CategoryProducts from './pages/customer/HomeSections/ShowCategoryProducts.jsx'
 import SearchPage from "./pages/customer/SearchPage.jsx"
+import LandingPage from "./pages/LandingPage.jsx"
 
 export default function App() {
     return (
@@ -60,6 +61,7 @@ export default function App() {
                     <Route path="orders" element={<AdminOrders/>}/>
                 </Route>
 
+                <Route path="Home" element={<LandingPage/>} />
                 <Route path="*" element={<NoPage/>}/>
             </Routes>
         </Router>

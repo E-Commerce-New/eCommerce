@@ -23,10 +23,14 @@ const addToCart = async (productId, userId) => {
         Swal.close();
 
         if (res.status === 200) {
-            await Swal.fire({
-                icon: "success",
-                title: "Added to cart",
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'Added to cart',
+                showConfirmButton: false,
                 timer: 1500,
+                timerProgressBar: true,
             });
         }
 
