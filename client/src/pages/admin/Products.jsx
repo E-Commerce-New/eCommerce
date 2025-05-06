@@ -1,5 +1,5 @@
 import {RefreshCcw} from "lucide-react";
-import {useEffect, useState} from "react";
+import {useEffect, useState, useRef} from "react";
 import Swal from "sweetalert2";
 import swal from "sweetalert2";
 import axios from "axios";
@@ -11,26 +11,12 @@ import Categories from "../../components/Categories";
 import {useSelector} from "react-redux";
 import CreateProducts from "./ProductModule/CreateProducts.jsx";
 import ReadProducts from "./ProductModule/ReadProducts.jsx";
+// import {z} from "zod";
 
 dayjs.extend(relativeTime);
 
 const Products = () => {
     const [showAddProduct, setShowAddProduct] = useState(false);
-    const [form, setForm] = useState({
-        name: "",
-        description: "",
-        category: "",
-        price: "",
-        quantity: "",
-        image: null,
-        about: "",
-        length: "",
-        height: "",
-        breadth: "",
-        weight: "",
-        active: false,
-        attributes: [{key: "", value: ""}],
-    });
     const [products, setProducts] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const navigate = useNavigate();
@@ -38,137 +24,6 @@ const Products = () => {
     const [lastUpdated, setLastUpdated] = useState(null);
     const [categories, setCategories] = useState([]);
     const [showCate, setShowCate] = useState(false);
-    const [images, setImages] = useState([])
-    const [singleFile, setSingleFile] = useState([]);
-
-    const uploadSingleFiles = (e) => {
-        // console.log('e.target.files ', e.target.files)
-        if (e.target?.files?.length > 0) {
-            for (let i = 0; i < e.target.files.length; i++) {
-                //For Frontend
-                const url = URL.createObjectURL(e.target.files[i])
-                setSingleFile(prev => [...prev, url])
-
-                //For Backend
-                setImages(prev => [...prev, e.target.files[i]])
-                console.log("SingleFileURLs 0", singleFile)
-                console.log("Images 0", images)
-            }
-        }
-    };
-
-    const removeImage = (index) => {
-        // console.log("remove");
-        setSingleFile([
-            ...singleFile.slice(0, index),
-            ...singleFile.slice(index + 1, singleFile.length)
-        ]);
-        setImages(images.filter((image, ind) => index !== ind));
-        // console.log("Images after removing image: ", images[0]);
-    };
-
-    const handleChange = (e) => {
-        const {name, value, type, checked, files} = e.target;
-        console.log("handleChange ", e.target)
-        setForm((prev) => ({
-            ...prev,
-            [name]: type === "checkbox" ? checked : type === "file" ? files : value,
-        }));
-    };
-
-    const handleAttributeChange = (index, field, value) => {
-        const updated = [...form.attributes];
-        updated[index][field] = value;
-        setForm((prev) => ({...prev, attributes: updated}));
-    };
-
-    const addAttribute = (e) => {
-        e.preventDefault();
-        setForm((prev) => ({
-            ...prev,
-            attributes: [...prev.attributes, {key: "", value: ""}],
-        }));
-    };
-
-    const onSubmit = async (e) => {
-        e.preventDefault();
-        Swal.fire({
-            title: 'Adding this Product in your Inventory',
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
-
-        try {
-            const formData = new FormData();
-            formData.append("name", form.name);
-            formData.append("description", form.description);
-            formData.append("category", form.category);
-            formData.append("price", form.price);
-            formData.append("quantity", form.quantity);
-            formData.append("active", form.active);
-            formData.append("attributes", JSON.stringify(form.attributes));
-            formData.append("about", form.about);
-            formData.append("length", form.length);
-            formData.append("height", form.height);
-            formData.append("breadth", form.breadth);
-            formData.append("weight", form.weight);
-            if (images?.length > 0) {
-                for (let i = 0; i < images.length; i++) {
-                    formData.append('image', images[i])
-                    // console.log('From image ' ,form.image[i])
-                    // console.log('Image ', images[i])
-                }
-            }
-            // console.log('console form data after setting ', formData)
-
-            const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/createProduct`, formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-                withCredentials: true
-            });
-
-            console.log(res.data.product)
-            setProducts(prev => [...prev, res.data.product]);
-
-            swal.close()
-
-            if(res.status === 200) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Product Added',
-                text: res.data.message || 'Product has been successfully added!',
-            });
-            }
-
-            setForm({
-                name: "",
-                description: "",
-                category: "",
-                price: "",
-                quantity: "",
-                image: null,
-                active: false,
-                attributes: [{key: "", value: ""}],
-            });
-
-            document.querySelector('#image').value = "";
-        } catch (error) {
-            swal.close();
-            console.log("error: ", error)
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: error.response?.data?.message || 'Something went wrong!',
-            });
-        } finally {
-            setShowAddProduct(!showAddProduct);
-            swal.close()
-        }
-    };
 
     useEffect(() => {
         if (!user) {
@@ -206,7 +61,7 @@ const Products = () => {
                     withCredentials: true
                 });
                 setCategories(res.data.categories);
-                console.log("Fetched categories:", res.data.categories);
+                // console.log("Fetched categories:", res.data.categories);
             } catch (e) {
                 swal.fire({
                     icon: 'error',
@@ -219,7 +74,6 @@ const Products = () => {
         getAllCategories();
         getAllProducts();
     }, []);
-
 
     const filteredProducts = products.filter(product =>
         product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -255,17 +109,10 @@ const Products = () => {
                     </button>
                 </div>
                 {showAddProduct ? <CreateProducts
-                    onSubmit={onSubmit}
-                    addAttribute={addAttribute}
-                    handleAttributeChange={handleAttributeChange}
-                    handleChange={handleChange}
-                    removeImage={removeImage}
-                    uploadSingleFiles={uploadSingleFiles}
-                    singleFile={singleFile}
                     categories={categories}
-                    form={form}
                     setShowAddProduct={setShowAddProduct}
                     showAddProduct={showAddProduct}
+                    setProducts={setProducts}
                 /> : null}
             </div>
 

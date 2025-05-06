@@ -1,18 +1,218 @@
 import {CirclePlus, CircleX} from "lucide-react";
+import {useEffect, useState, useRef} from "react";
+import {z} from "zod";
+import Swal from "sweetalert2";
+import swal from "sweetalert2";
+import axios from 'axios';
 
 const CreateProducts = ({
-                        onSubmit,
-                        addAttribute,
-                        handleAttributeChange,
-                        handleChange,
-                        removeImage,
-                        uploadSingleFiles,
-                        categories,
-                        form,
-                        singleFile,
-                        showAddProduct,
-                        setShowAddProduct,
-                    }) => {
+                            categories,
+                            showAddProduct,
+                            setShowAddProduct,
+                            setProducts
+                        }) => {
+
+    const [form, setForm] = useState({
+        name: "",
+        description: "",
+        category: "",
+        price: "",
+        quantity: "",
+        image: null,
+        about: "",
+        length: "",
+        height: "",
+        breadth: "",
+        weight: "",
+        active: false,
+        attributes: [{key: "", value: ""}],
+    });
+
+    const [images, setImages] = useState([])
+    const [singleFile, setSingleFile] = useState([]);
+    const fileInputRef = useRef(null)
+
+    const [errors, setErrors] = useState({})
+
+    const uploadSingleFiles = (e) => {
+        // console.log('e.target.files ', e.target.files)
+        if (e.target?.files?.length > 0) {
+            for (let i = 0; i < e.target.files.length; i++) {
+                //For Frontend
+                const url = URL.createObjectURL(e.target.files[i])
+                setSingleFile(prev => [...prev, url])
+
+                //For Backend
+                setImages(prev => [...prev, e.target.files[i]])
+                // console.log("SingleFileURLs 0", singleFile)
+                // console.log("Images 0", images)
+            }
+        }
+    };
+
+    const removeImage = (index) => {
+        // console.log("remove");
+        setSingleFile([
+            ...singleFile.slice(0, index),
+            ...singleFile.slice(index + 1, singleFile.length)
+        ]);
+        setImages(images.filter((image, ind) => index !== ind));
+        // console.log("Images after removing image: ", images[0]);
+    };
+
+    const handleChange = (e) => {
+        const {name, value, type, checked, files} = e.target;
+        // console.log("handleChange ", e.target)
+        setForm((prev) => ({
+            ...prev,
+            [name]: type === "checkbox" ? checked : type === "file" ? files : value,
+        }));
+    };
+
+    const handleAttributeChange = (index, field, value) => {
+        const updated = [...form.attributes];
+        updated[index][field] = value;
+        setForm((prev) => ({...prev, attributes: updated}));
+    };
+
+    const addAttribute = (e) => {
+        e.preventDefault();
+        setForm((prev) => ({
+            ...prev,
+            attributes: [...prev.attributes, {key: "", value: ""}],
+        }));
+    };
+
+    const numberField = (label, opts = {}) =>
+        z.preprocess(
+            (val) => (val === "" || val === null || val === undefined ? NaN : Number(val)),
+            opts.positive
+                ? z.number({ invalid_type_error: `${label} must be a number` }).positive(`${label} must be greater than 0`)
+                : z.number({ invalid_type_error: `${label} must be a number` }).nonnegative(`${label} cannot be negative`)
+        ).refine((val) => !isNaN(val), { message: `${label} is required` });
+
+    const schema = z.object({
+        name: z.string().min(1, "Name is required"),
+        description: z.string().min(1, "Description is required"),
+        category: z.string().min(1, "Category is required"),
+        price: numberField("Price", { positive: true }),
+        quantity: numberField("Quantity"),
+        about: z.string().min(1, "About field is required"),
+        length: numberField("Length"),
+        height: numberField("Height"),
+        breadth: numberField("Breadth"),
+        weight: numberField("Weight", { positive: true }),
+        active: z.boolean(),
+        // attributes: z
+        //     .array(
+        //         z.object({
+        //             key: z.string().min(1, "Key is required"),
+        //             value: z.string().min(1, "Value is required"),
+        //         })
+        //     )
+        //     .nonempty("At least one attribute is required"),
+    });
+
+    const onSubmit = async (e) => {
+        e.preventDefault();
+        const result = schema.safeParse(form)
+        // console.log(errors)
+        if (!result.success) {
+            setErrors(result.error.flatten().fieldErrors);
+            swal.close()
+            return
+        } else {
+            setErrors({});
+        }
+        Swal.fire({
+            title: 'Adding this Product in your Inventory',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        try {
+            const formData = new FormData();
+            formData.append("name", form.name);
+            formData.append("description", form.description);
+            formData.append("category", form.category);
+            formData.append("price", form.price);
+            formData.append("quantity", form.quantity);
+            formData.append("active", form.active);
+            formData.append("attributes", JSON.stringify(form.attributes));
+            formData.append("about", form.about);
+            formData.append("length", form.length);
+            formData.append("height", form.height);
+            formData.append("breadth", form.breadth);
+            formData.append("weight", form.weight);
+            if (images?.length > 0) {
+                for (let i = 0; i < images.length; i++) {
+                    formData.append('image', images[i])
+                }
+            }
+
+            const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/createProduct`, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                withCredentials: true
+            });
+
+            // console.log(res.data.product)
+            setProducts(prev => [...prev, res.data.product]);
+
+            swal.close()
+
+            if(res.status === 200) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Product Added',
+                text: res.data.message || 'Product has been successfully added!',
+            });
+            }
+
+            setForm({
+                name: "",
+                description: "",
+                category: "",
+                price: "",
+                quantity: "",
+                image: null,
+                active: false,
+                attributes: [{key: "", value: ""}],
+            });
+            fileInputRef.current.value = "";
+        } catch (error) {
+            swal.close();
+            console.log("error: ", error)
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error.response?.data?.message || 'Something went wrong!',
+            });
+        } finally {
+            setShowAddProduct(!showAddProduct);
+        }
+    };
+
+
+    const handleEscapeKey = (event) => {
+        if (event.key === 'Escape' || event.keyCode === 27) {
+            setShowAddProduct(false); // Update the state when Escape is pressed
+        }
+    }
+
+    // console.log(errors)
+    useEffect(() => {
+        document.addEventListener('keydown', handleEscapeKey);
+
+        // Clean up the event listener when the component unmounts
+        return () => {
+            document.removeEventListener('keydown', handleEscapeKey);
+        };
+    }, []);
     return (<>
         <div className={`
     fixed top-1/2 left-1/2 z-50
@@ -37,11 +237,12 @@ const CreateProducts = ({
                     <input
                         type="text"
                         name="name"
-                        value={form.name}
+                        value={form?.name}
                         onChange={handleChange}
                         placeholder="Enter Product Name here..."
                         className="border-b-2 border-black p-2 focus:outline-0"
                     />
+                    {errors.name && <p className="text-red-500 text-sm">{errors?.name[0]}</p>}
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -49,11 +250,12 @@ const CreateProducts = ({
                     <input
                         type="text"
                         name="description"
-                        value={form.description}
+                        value={form?.description}
                         onChange={handleChange}
                         placeholder="Enter About Product here..."
                         className="border-b-2 border-black p-2 focus:outline-0"
                     />
+                    {errors.description && <p className="text-red-500 text-sm">{errors?.description[0]}</p>}
                 </div>
 
                 <div>
@@ -69,6 +271,7 @@ const CreateProducts = ({
                         </option>))}
 
                     </select>
+                    {errors.category && <p className="text-red-500 text-sm">{errors?.category[0]}</p>}
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -81,6 +284,7 @@ const CreateProducts = ({
                         placeholder="Enter Product Price here..."
                         className="border-b-2 border-black p-2 focus:outline-0"
                     />
+                    {errors.price && <p className="text-red-500 text-sm">{errors?.price[0]}</p>}
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -93,6 +297,7 @@ const CreateProducts = ({
                         placeholder="Enter Product Quantity here..."
                         className="border-b-2 border-black p-2 focus:outline-0"
                     />
+                    {errors.quantity && <p className="text-red-500 text-sm">{errors?.quantity[0]}</p>}
                 </div>
 
                 <div className='bg-indigo-100 p-4'>
@@ -130,6 +335,7 @@ const CreateProducts = ({
                             accept="image/*"
                             onChange={uploadSingleFiles}
                             className='hidden'
+                            ref={fileInputRef}
                         />
                     </div>
                 </div>
@@ -172,6 +378,7 @@ const CreateProducts = ({
                             onChange={handleChange}
                             value={form.about}
                         ></textarea>
+                        {errors.about && <p className="text-red-500 text-sm">{errors?.about[0]}</p>}
                     </div>
                 </div>
 
@@ -212,6 +419,10 @@ const CreateProducts = ({
                                 value={form.weight}
                             />
                         </div>
+                        {errors.length && <p className="text-red-500 text-sm">{errors?.length[0]}</p>}
+                        {errors.breadth && <p className="text-red-500 text-sm">{errors?.breadth[0]}</p>}
+                        {errors.height && <p className="text-red-500 text-sm">{errors?.height[0]}</p>}
+                        {errors.weight && <p className="text-red-500 text-sm">{errors?.weight[0]}</p>}
                     </div>
                 </div>
 

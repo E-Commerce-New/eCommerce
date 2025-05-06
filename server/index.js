@@ -39,7 +39,8 @@ app.use(cors({
         }
     },
     credentials: true
-}));
+}
+));
 
 
 mongoose
