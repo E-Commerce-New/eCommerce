@@ -3,7 +3,6 @@ const Order = require("../models/order");
 const User = require("../models/user");
 const {sendOrderConfirmationEmail} = require("../utils/sendMail");
 const {updateProductStock} = require("./product.controller");
-
 const axios = require("axios");
 
 const getValidDateAndTime = () => {
@@ -16,9 +15,90 @@ const getValidDateAndTime = () => {
     return (`${year}-${month}-${day} ${hours}:${minutes}`);
 }
 
+let token = process.env.SHIPROCKET_TOKEN || "token";
+
+const getNewShipRocketToken = async () => {
+    try {
+        // console.log("Inside Get New ShipRocket Token")
+        const data = {
+            "email": process.env.SR_APIUSER_EMAIL,
+            "password": process.env.SR_APIUSER_PASSWORD,
+        }
+        const res = await axios.post("https://apiv2.shiprocket.in/v1/external/auth/login", data, {
+                headers: {
+                    'content-type': 'application/json'
+                }
+            }
+        )
+        // console.log("Response token : ", res.data);
+        token = res.data.token;
+        return token
+    } catch (err) {
+        console.log("GetNewShiprocketToken Error:")
+        console.log(err);
+    }
+}
+
+const getCourierServiceAbility = async (data) => {
+    try {
+        // console.log("Inside Get Courier Service Ability and Data is ", data)
+        const result = await axios.get("https://apiv2.shiprocket.in/v1/external/courier/serviceability/",
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }, data
+            }
+        );
+        // console.log("Result : ", result.data);
+        return result;
+
+    } catch (err) {
+        console.log("GetCourierServiceAbility Error:")
+        console.log(err)
+        await getNewShipRocketToken();
+        return await getCourierServiceAbility(data);
+    }
+}
+
+const placeOrderOnShipRocket = async (data) => {
+    try {
+        const result = await axios.post("https://apiv2.shiprocket.in/v1/external/orders/create/adhoc", data, {
+                headers: {
+                    'content-type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        )
+        return result;
+    } catch (err) {
+        console.log("PlaceOrderOnShipRocket Error:")
+        console.log(err);
+        await getNewShipRocketToken();
+        return await placeOrderOnShipRocket(data);
+    }
+}
+
+const cancelOrderOnShipRocket = async (data) => {
+    try {
+        const result = await axios.post("https://apiv2.shiprocket.in/v1/external/orders/cancel", data, {
+                headers: {
+                    'content-type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        )
+        return result;
+    } catch (err) {
+        console.log("CancelOrderOnShipRocket Error:");
+        console.log(err);
+    }
+}
+
+
 const placeOrder = async (req, res) => {
     const {cartItems, shippingAddress, paymentInfo, userId, userCart, paymentMethod, deliveryCharge} = req.body;
-    console.log("Place Order", req.body);
+    // console.log("Place Order", req.body);
 
     try {
         const user = await User.findOne({_id: userId});
@@ -59,13 +139,7 @@ const placeOrder = async (req, res) => {
             }
             // console.log("Data", data);
 
-            const res = await axios.post("https://apiv2.shiprocket.in/v1/external/orders/create/adhoc", data, {
-                    headers: {
-                        'content-type': 'application/json',
-                        Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjY0MDU5ODEsInNvdXJjZSI6InNyLWF1dGgtaW50IiwiZXhwIjoxNzQ2NDI3OTYzLCJqdGkiOiJMSmw3eDJNbUJNNTV4VWpkIiwiaWF0IjoxNzQ1NTYzOTYzLCJpc3MiOiJodHRwczovL3NyLWF1dGguc2hpcHJvY2tldC5pbi9hdXRob3JpemUvdXNlciIsIm5iZiI6MTc0NTU2Mzk2MywiY2lkIjo2MTg2NzAwLCJ0YyI6MzYwLCJ2ZXJib3NlIjpmYWxzZSwidmVuZG9yX2lkIjowLCJ2ZW5kb3JfY29kZSI6IiJ9.uGlIvFc-hFkb3Ikm_7jHXYvbrg2dwzZpbVZTHsYGies'
-                    }
-                }
-            )
+            let res = await placeOrderOnShipRocket(data);
 
             // console.log("Response : ", res.status);
             if (res.data.order_id) {
@@ -104,10 +178,11 @@ const placeOrder = async (req, res) => {
                         postalCode: '110094',
                         country: "India"
                     },
-                    deliveryCharges:deliveryCharge[i]
+                    deliveryCharges: deliveryCharge[i]
                 });
                 // console.log('shipment_id:,', res.data.shipment_id, "OrderID: ", userCart[0]._id)
             }
+
         }
 
         await updateProductStock(cartItems);
@@ -165,32 +240,28 @@ const cancelOrderByOrderId = async (req, res) => {
     // console.log("Cancel Order", req.body);
     // Cancel Order { orderId: 820076213, documentId: '680e0e79490876cc145fcaef' }
     try {
-        const result = await axios.post("https://apiv2.shiprocket.in/v1/external/orders/cancel", {
-                "ids": [req.body.orderId],
-                "status": "cancelled"
-            }, {
-                headers: {
-                    'content-type': 'application/json',
-                    Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjY0MDU5ODEsInNvdXJjZSI6InNyLWF1dGgtaW50IiwiZXhwIjoxNzQ2NDI3OTYzLCJqdGkiOiJMSmw3eDJNbUJNNTV4VWpkIiwiaWF0IjoxNzQ1NTYzOTYzLCJpc3MiOiJodHRwczovL3NyLWF1dGguc2hpcHJvY2tldC5pbi9hdXRob3JpemUvdXNlciIsIm5iZiI6MTc0NTU2Mzk2MywiY2lkIjo2MTg2NzAwLCJ0YyI6MzYwLCJ2ZXJib3NlIjpmYWxzZSwidmVuZG9yX2lkIjowLCJ2ZW5kb3JfY29kZSI6IiJ9.uGlIvFc-hFkb3Ikm_7jHXYvbrg2dwzZpbVZTHsYGies'
-                }
-            }
-        )
-
         // console.log("Response : ", result.data);
+        const data = {
+            "ids": [req.body.orderId],
+            "status": "cancelled"
+        }
+        const result = await cancelOrderOnShipRocket(data)
+        // console.log("Result : ", result);
+        if(result.status === 200) {
+            await Order.findByIdAndDelete(req.body.documentId)
 
-        await Order.findByIdAndDelete(req.body.documentId)
-        //Setting Status to cancelled
-        // await Order.findByIdAndUpdate(req.body.documentId, {status: "CANCELLED"})
-
-
+            //Setting Status to cancelled
+            // await Order.findByIdAndUpdate(req.body.documentId, {status: "CANCELLED"})
+        }
         res.status(200).json({success: true, message: "Order Cancelled Successfully"});
     } catch (err) {
+        console.log("Error cancelling order: ");
         console.log(err);
         res.status(500).json({success: false, message: "Error cancelling order"});
     }
 }
 
-const getDeliveryCharges = async(req, res) => {
+const getDeliveryCharges = async (req, res) => {
     const {topincode, weight} = req.params;
     // console.log("Pincode: ", topincode);
     const data = {
@@ -199,28 +270,21 @@ const getDeliveryCharges = async(req, res) => {
         "weight": weight,
         "cod": 0
     }
-
     // console.log(data)
     try {
-        const result = await axios.get("https://apiv2.shiprocket.in/v1/external/courier/serviceability/"
-            ,  {
-                headers: {
-                    'Content-Type' : 'application/json',
-                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjY0MDU5ODEsInNvdXJjZSI6InNyLWF1dGgtaW50IiwiZXhwIjoxNzQ2NDI3OTYzLCJqdGkiOiJMSmw3eDJNbUJNNTV4VWpkIiwiaWF0IjoxNzQ1NTYzOTYzLCJpc3MiOiJodHRwczovL3NyLWF1dGguc2hpcHJvY2tldC5pbi9hdXRob3JpemUvdXNlciIsIm5iZiI6MTc0NTU2Mzk2MywiY2lkIjo2MTg2NzAwLCJ0YyI6MzYwLCJ2ZXJib3NlIjpmYWxzZSwidmVuZG9yX2lkIjowLCJ2ZW5kb3JfY29kZSI6IiJ9.uGlIvFc-hFkb3Ikm_7jHXYvbrg2dwzZpbVZTHsYGies'
-                }, data
+        let result = await getCourierServiceAbility(data);
+        // console.log("GetDDeliveryCharges: ", result)
+        const finalResult = result.data.data.available_courier_companies.filter(item => {
+            if (item.courier_company_id === 217) {
+                return item
             }
-        )
-        const finalResult = result.data.data.available_courier_companies.filter(item => {if(item.courier_company_id === 217){
-            return item
-        }})
-
-
+        })
         res.status(200).json({finalResult});
-    }catch(err){
+    } catch (err) {
+        console.log("GetDDeliveryCharges Error: ")
         console.log(err)
+        res.status(500).json({success: false, message: "Error Getting Delivery Charges"});
     }
-
-
 
 }
 
