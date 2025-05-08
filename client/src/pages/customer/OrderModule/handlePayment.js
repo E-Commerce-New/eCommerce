@@ -9,7 +9,6 @@ export const handlePayment = async (shippingAddress, paymentMethod, totalPrice, 
         const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/payment/create-order`, {amount: totalPrice});
         //console.log("1st Api of CreateProducts Order" , res)
         console.log(res.data)
-
         const options = {
             key: 'rzp_test_YkO4VIe1rAjpOw',
             amount: res.data.order.amount,
@@ -71,7 +70,7 @@ export const handlePayment = async (shippingAddress, paymentMethod, totalPrice, 
 
             },
             prefill: {
-                name: user?.firstname + ' ' + user?.lastname, email: user?.email, contact: user.phone,
+                name: user?.firstname + ' ' + user?.lastname, email: user?.email, contact: user?.phone,
             },
             theme: {
                 color: '#3399cc',

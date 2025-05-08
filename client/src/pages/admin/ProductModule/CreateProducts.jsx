@@ -24,7 +24,7 @@ const CreateProducts = ({
         height: "",
         breadth: "",
         weight: "",
-        active: false,
+        active: true,
         attributes: [{key: "", value: ""}],
     });
 

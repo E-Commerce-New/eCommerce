@@ -13,7 +13,7 @@ const ShowCartItems = ({
                            totalPrice,
                            setAfterAddCartClick
                        }) => {
-    console.log(cartItems);
+    // console.log(cartItems);
     return (<>
             <div>
                 <h1 className="text-xl font-bold sticky -top-5 bg-white p-2 flex gap-2 items-center"><GoBack/> Your Cart
@@ -28,7 +28,8 @@ const ShowCartItems = ({
                         const discountPercent = Math.floor(Math.random() * (80 - 50 + 1)) + 50;
                         const inflatedPrice = Math.round(originalPrice * (100 / (100 - discountPercent)));
                         // console.log(item)
-                        return (<div key={item._id} className="border-b-2 p-4 border-black flex gap-2 justify-between">
+                        return (
+                            <div key={item._id} className="border-b-2 p-4 border-black flex gap-2 justify-between">
                             <div className="flex gap-2">
                                 <p>{index + 1}</p>
                                 <img
