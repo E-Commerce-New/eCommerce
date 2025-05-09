@@ -47,7 +47,7 @@ const getUserByUsernameAndPassword = async (req, res) => {
     }
 }
 
-const getUser = async (req, res) => {
+const getUserById = async (req, res) => {
     if (!req.body) {
         const user = await User.find({})
         res.status(200).json(user);
@@ -108,35 +108,6 @@ const register = async (req, res) => {
     }
 }
 
-const addToCart = async (req, res) => {
-    const {userId, productId} = req.body;
-    // console.log(req.body)
-    if (!userId || !productId) {
-        return res.status(400).json({error: "Missing userId or productId"});
-    }
-
-    try {
-        const user = await User.findById(userId);
-
-        if (!user) return res.status(404).json({error: 'User not found'});
-
-        const existingProduct = user.cart.find(item => item.productId.toString() === productId);
-
-        if (existingProduct) {
-            existingProduct.quantity += 1;
-        } else {
-            user.cart.push({productId});
-        }
-
-        await user.save();
-
-        return res.status(200).json({message: 'Product added to cart', cart: user.cart});
-    } catch (err) {
-        console.error("ERROR ", err);
-        return res.status(500).json({message: 'Internal server error'});
-    }
-}
-
 const updateUserProfile = async (req, res) => {
     const {id, addresses, currentPassword, email, firstname, lastname, phone, username} = req.body;
     try {
@@ -179,5 +150,5 @@ const updateUserProfile = async (req, res) => {
 }
 
 module.exports = {
-    getUserByUsernameAndPassword, register, addToCart, getUser, updateUserProfile
+    getUserByUsernameAndPassword, register, getUserById, updateUserProfile
 }
