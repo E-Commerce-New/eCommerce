@@ -1,4 +1,5 @@
-import {useState} from "react";
+import React, {useRef, useState} from "react";
+import emailjs from "@emailjs/browser";
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -7,8 +8,35 @@ const Contact = () => {
         subject: "",
         message: "",
     });
+    const formRef = useRef();
+    const [success, setSuccess] = useState(false);
+    const [error, setError] = useState(false);
 
-    const [errors, setErrors] = useState({});
+    const sendMail = (e) => {
+        e.preventDefault();
+        setSuccess(false);
+        setError(false);
+
+        emailjs
+            .sendForm(
+                "service_h5t3yre",
+                "template_qo87sfc",
+                formRef.current, // correct usage
+                "fMSF5z3lM93bEf6HJ"
+            )
+            .then(
+                (result) => {
+                    console.log(result.text);
+                    setSuccess(true);
+                    setFormData({ name: "", email: "", subject: "", message: "" }); // reset form data
+                },
+                (error) => {
+                    console.log(error);
+                    setError(true);
+                }
+            );
+    };
+
 
     const handleChange = (e) => {
         setFormData({...formData, [e.target.name]: e.target.value});
@@ -23,25 +51,12 @@ const Contact = () => {
         return newErrors;
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const validationErrors = validate();
-        if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
-            return;
-        }
-        console.log("Form submitted:", formData);
-
-        setFormData({name: "", email: "", subject: "", message: ""});
-        setErrors({});
-        alert("Message sent!");
-    };
 
     return (
         <div className="max-w-2xl mx-auto mt-10 bg-white p-8 rounded-xl shadow-lg">
             <h1 className="text-3xl font-bold text-center mb-6">Contact Us</h1>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
+            <form ref={formRef} onSubmit={sendMail} className="space-y-4">
+            <div>
                     <label className="block text-gray-700">Your Name</label>
                     <input
                         type="text"
@@ -50,7 +65,6 @@ const Contact = () => {
                         value={formData.name}
                         onChange={handleChange}
                     />
-                    {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
                 </div>
                 <div>
                     <label className="block text-gray-700">Your Email</label>
@@ -61,7 +75,6 @@ const Contact = () => {
                         value={formData.email}
                         onChange={handleChange}
                     />
-                    {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
                 </div>
                 <div>
                     <label className="block text-gray-700">Subject</label>
@@ -72,7 +85,6 @@ const Contact = () => {
                         value={formData.subject}
                         onChange={handleChange}
                     />
-                    {errors.subject && <p className="text-red-500 text-sm">{errors.subject}</p>}
                 </div>
                 <div>
                     <label className="block text-gray-700">Message</label>
@@ -83,7 +95,6 @@ const Contact = () => {
                         value={formData.message}
                         onChange={handleChange}
                     ></textarea>
-                    {errors.message && <p className="text-red-500 text-sm">{errors.message}</p>}
                 </div>
                 <button
                     type="submit"
@@ -91,6 +102,12 @@ const Contact = () => {
                 >
                     Send Message
                 </button>
+                {success && (
+                    <p className="text-green-400 mt-4 text-center">Message sent successfully!</p>
+                )}
+                {error && (
+                    <p className="text-red-500 mt-4 text-center">Oops! Something went wrong.</p>
+                )}
             </form>
         </div>
     );

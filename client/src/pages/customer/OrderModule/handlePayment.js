@@ -1,95 +1,155 @@
 import axios from "axios";
-import swal from "sweetalert2";
 import Swal from "sweetalert2";
 
-export const handlePayment = async (shippingAddress, paymentMethod, totalPrice, deliveryCharge, estimateDays, user, cartItems, userCart) => {
-    // console.log("Payment Method", totalPrice, paymentMethod, shippingAddress, deliveryCharge, estimateDays)
+export const handlePayment = async (
+    shippingAddress,
+    paymentMethod,
+    totalPrice,
+    deliveryCharge,
+    estimateDays,
+    user,
+    cartItems,
+    userCart
+) => {
     if (paymentMethod === "Prepaid") {
-        console.log("Online Payment")
-        const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/payment/create-order`, {amount: totalPrice});
-        //console.log("1st Api of CreateProducts Order" , res)
-        console.log(res.data)
-        const options = {
-            key: 'rzp_test_YkO4VIe1rAjpOw',
-            amount: res.data.order.amount,
-            currency: 'INR',
-            name: 'Ecommerce',
-            description: 'Store For You!',
-            order_id: res.data.order.id,
-            handler: async function (response) {
-                console.log(response);
-                const verifyRes = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/payment/verify`, {
-                    razorpay_order_id: response.razorpay_order_id,
-                    razorpay_payment_id: response.razorpay_payment_id,
-                    razorpay_signature: response.razorpay_signature,
-                    userId: user._id,
-                    amount: res.data.order.amount / 100,
-                });
-                console.log("2nd Verify Api", verifyRes);
+        console.log("Initiating Online Payment");
 
-                if (verifyRes.data.success) {
-                    swal.fire({
-                        title: 'Processing Your Order',
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
+        try {
+            const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/payment/create-order`, {
+                amount: totalPrice,
+            });
+
+            const options = {
+                key: 'rzp_test_YkO4VIe1rAjpOw',
+                amount: res.data.order.amount,
+                currency: 'INR',
+                name: 'Ecommerce',
+                description: 'Store For You!',
+                order_id: res.data.order.id,
+                handler: async function (response) {
                     try {
-                        const placeRes = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/order/place`, {
-                            // cartItems, shippingAddress, paymentInfo: response, totalPrice, userId: user._id,
-                            cartItems,
-                            shippingAddress,
-                            totalPrice,
+                        const verifyRes = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/payment/verify`, {
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
                             userId: user._id,
-                            userCart,
-                            paymentMethod,
-                            deliveryCharge,
-                            estimateDays
+                            amount: res.data.order.amount / 100,
                         });
-                        console.log("3rd Save data Api", placeRes);
 
-                        if (placeRes.data.success) {
-                            swal.close()
-                            swal.fire("Success!", "Your order has been placed", "success").then((result) => {
-                                if (result.isConfirmed) {
-                                    location.reload();
-                                }
-                            })
+                        if (verifyRes.data.success) {
+                            await Swal.fire({
+                                title: 'Processing Your Order...',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                },
+                            });
+
+                            const placeRes = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/order/place`, {
+                                cartItems,
+                                shippingAddress,
+                                totalPrice,
+                                userId: user._id,
+                                userCart,
+                                paymentMethod,
+                                deliveryCharge,
+                                estimateDays,
+                            });
+
+                            if (placeRes.data.success) {
+                                await Swal.fire("Success!", "Your order has been placed", "success");
+                                window.location.reload(); // reload after confirmation
+                            } else {
+                                throw new Error("Order placement failed");
+                            }
+                        } else {
+                            await Swal.fire("Failed", "Payment verification failed", "error");
                         }
                     } catch (e) {
-                        swal.close()
-                        swal.fire({
-                            title: 'Error!', icon: 'error', text: e.response?.data?.message || "Something went wrong",
-                        })
+                        await Swal.fire({
+                            title: 'Error!',
+                            icon: 'error',
+                            text: e.response?.data?.message || "Something went wrong during payment verification or order placement.",
+                        });
                     }
-                } else {
-                    swal.fire("Failed", "Payment verification failed", "error");
-                }
+                },
+                prefill: {
+                    name: `${user?.firstname} ${user?.lastname}`,
+                    email: user?.email,
+                    contact: user?.phone,
+                },
+                theme: {
+                    color: '#3399cc',
+                },
+            };
 
-            },
-            prefill: {
-                name: user?.firstname + ' ' + user?.lastname, email: user?.email, contact: user?.phone,
-            },
-            theme: {
-                color: '#3399cc',
-            },
-        };
+            const rzp = new window.Razorpay(options);
 
-        const rzp = new window.Razorpay(options);
-        rzp.open();
+            rzp.on('payment.failed', async (response) => {
+                await Swal.fire({
+                    title: 'Payment Failed',
+                    icon: 'error',
+                    text: response.error.description || 'Something went wrong during payment.',
+                });
+            });
+
+            rzp.open();
+        } catch (error) {
+            await Swal.fire({
+                title: 'Error!',
+                icon: 'error',
+                text: error.response?.data?.message || "Failed to initiate payment.",
+            });
+        }
+
     } else {
-        await axios.post(`${import.meta.env.VITE_BASE_URL}/api/order/place`, {
-            cartItems,
-            shippingAddress,
-            totalPrice,
-            userId: user._id,
-            userCart,
-            paymentMethod,
-            deliveryCharge,
-            estimateDays
-        });
-    }
+        // COD / Cash on Delivery
+        try {
+            Swal.fire({
+                title: 'Placing Your COD Order...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
 
+            console.log("Sending Order Payload", {
+                cartItems,
+                shippingAddress,
+                totalPrice,
+                userId: user._id,
+                userCart,
+                paymentMethod,
+                deliveryCharge,
+                estimateDays
+            });
+
+
+            const placeRes = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/order/place`, {
+                cartItems,
+                shippingAddress,
+                totalPrice,
+                userId: user._id,
+                userCart,
+                paymentMethod,
+                deliveryCharge,
+                estimateDays,
+            });
+
+
+            if (placeRes.data.success) {
+                Swal.close()
+                await Swal.fire("Success!", "Your COD order has been placed", "success");
+                window.location.reload();
+            }
+        } catch (e) {
+            await Swal.fire({
+                title: 'Error!',
+                icon: 'error',
+                text: e.response?.data?.message || "Something went wrong with COD order.",
+            });
+        }
+    }
 };

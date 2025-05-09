@@ -123,7 +123,6 @@ const Orders = () => {
                                                className="cursor-pointer inline bg-red-500 text-white rounded-full p-1"
                                                onClick={
                                                    () => {
-
                                                        Swal.fire({
                                                            title: 'Are you sure?',
                                                            text: "Want to cancel this order?",
@@ -135,13 +134,11 @@ const Orders = () => {
                                                            cancelButtonText: 'Cancel'
                                                        }).then((result) => {
                                                            if (result.isConfirmed) {
-                                                               // User clicked "Yes"
                                                                console.log('Confirmed!');
                                                                axios.post(`${import.meta.env.VITE_BASE_URL}/api/order/cancelOrder`, {
                                                                    orderId: order.order_id,
                                                                    documentId: order._id
                                                                }, {withCredentials: true})
-                                                               // You can call your delete function here
                                                            } else {
                                                                console.log('Cancelled!');
                                                            }
@@ -157,7 +154,7 @@ const Orders = () => {
 
                                     <div key={order.order_items[0]._id}
                                                className="flex gap-2 cursor-pointer p-2 border-b-2 border-gray-200 hover:bg-gray-200 hover:rounded-2xl my-2 transition-all"
-                                               onClick={() => navigate(`/product-info/${order._id}`)}
+                                               onClick={() => navigate(`/product-info/${order.order_items[0]._id}`)}
                                            >
                                         {/*<p>{index + 1}</p>*/}
                                                <p>{order.order_items[0].name}</p>

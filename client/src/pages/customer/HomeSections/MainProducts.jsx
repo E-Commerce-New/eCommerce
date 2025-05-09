@@ -16,7 +16,7 @@ const MainProducts = () => {
         const fetchMainProducts = async () => {
             try {
                 const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/ui/get`);
-                console.log(res.data); // Debug log
+                console.log(res.data);
 
                 const productIds = res?.data?.mainProducts;
                 if (res.status === 200 && Array.isArray(productIds)) {
