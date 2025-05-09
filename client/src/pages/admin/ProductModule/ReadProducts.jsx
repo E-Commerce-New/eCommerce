@@ -76,7 +76,7 @@ const ReadProducts = ({
                         <td className="border px-4 py-2">{product.description}</td>
                         <td className="border px-4 py-2">₹{product?.price?.toLocaleString()}</td>
                         <td className="border px-4 py-2">{product.quantity}</td>
-                        <td className="border px-4 py-2">{product.category}</td>
+                        <td className="border px-4 py-2">{product?.category?.category}</td>
                         <td className="border px-4 py-2"
                             onClick={() => changeActive(product._id)}>
                             <input type="checkbox" checked={product.active}/>

@@ -3,19 +3,16 @@ const router = express.Router();
 const {
     getUserByUsernameAndPassword,
     register,
-    addToCart,
-    getUser,
+    getUserById,
     updateUserProfile
 } = require('../controllers/user.controllers');
 
 router.post('/login', getUserByUsernameAndPassword);
 
-router.post('/register', register)
+router.post('/register', register);
 
-router.post('/addToCart', addToCart);
+router.post('/getUser', getUserById);
 
-router.post('/getUser', getUser);
+router.put('/profileupdate', updateUserProfile);
 
-router.put('/profileupdate', updateUserProfile)
-
-module.exports = router
+module.exports = router;

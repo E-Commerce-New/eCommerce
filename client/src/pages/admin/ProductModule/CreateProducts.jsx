@@ -161,7 +161,7 @@ const CreateProducts = ({
             });
 
             // console.log(res.data.product)
-            setProducts(prev => [...prev, res.data.product]);
+            setProducts(prev => [...prev, res.data.savedProduct]);
 
             swal.close()
 
@@ -266,9 +266,9 @@ const CreateProducts = ({
                         className="p-2 border-b-2 border-black bg-transparent focus:outline-0"
                     >
                         <option value="">Select Category</option>
-                        {categories.map((cate) => (<option key={cate._id} value={cate.category}>
+                        {categories.map((cate) => (<option key={cate._id} value={cate._id} placeholder={cate.category}>
                             {cate.category}
-                        </option>))}
+                        </option>))}z
 
                     </select>
                     {errors.category && <p className="text-red-500 text-sm">{errors?.category[0]}</p>}

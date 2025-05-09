@@ -82,8 +82,9 @@ const createProducts = async (req, res) => {
                 about
 
             });
-            await product.save();
-            return res.status(200).json({message: 'Product Created Successfully', product});
+            const newProduct = await product.save();
+            const savedProduct = await Product.findById(newProduct._id).populate('category', 'category');
+            return res.status(200).json({message: 'Product Created Successfully', savedProduct});
         } else {
             return res.status(401).json({message: 'Unauthorized'});
         }
@@ -95,7 +96,7 @@ const createProducts = async (req, res) => {
 
 const getProducts = async (req, res) => {
     try {
-        const data = await Product.find({});
+        const data = await Product.find({}).populate('category', 'category');
         res.status(200).json({data, message: 'Products fetched successfully'});
     } catch (error) {
         console.log(error);
@@ -105,7 +106,7 @@ const getProducts = async (req, res) => {
 
 const getActiveProducts = async (req, res) => {
     try {
-        const data = await Product.find({active: true});
+        const data = await Product.find({active: true}).populate('category', 'category');
         res.status(200).json({data, message: 'Products fetched successfully'});
     } catch (error) {
         console.log(error);
@@ -208,7 +209,7 @@ const getProductById = async (req, res) => {
     }
 
     try {
-        const product = await Product.findById(id);
+        const product = await Product.findById(id).populate('category', 'category');
         if (!product) return res.status(404).json({error: "Product not found"});
 
         return res.status(200).json({data: product});
@@ -248,11 +249,11 @@ const getCategories = async (req, res) => {
 const getProductsByCategory = async (req, res) => {
     try {
         const { categoryId } = req.params;
-        const thisCategory = await Category.findById(categoryId);
-        const { category } = thisCategory;
-        console.log(category)
+        // const thisCategory = await Category.findById(categoryId);
+        // const { category } = thisCategory;
+        // console.log(category)
 
-        const products = await Product.find({ category: category });
+        const products = await Product.find({ category: categoryId }).populate('category', 'category');
         res.status(200).json({ products });
     } catch (err) {
         console.error("Error fetching products:", err);
@@ -344,7 +345,7 @@ const searchProducts = async (req, res) => {
             sortOptions.createdAt = 1;
         }
 
-        const products = await Product.find(query).sort(sortOptions);
+        const products = await Product.find(query).sort(sortOptions).populate('category', 'category');
 
         res.status(200).json({ products });
 

@@ -4,14 +4,16 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import GoBack from "../../../components/reUsable/Goback.jsx";
 import {CirclePlus, CircleX} from "lucide-react";
+import swal from "sweetalert2";
 
 const UpdateProduct = () => {
     const {id} = useParams();
     const [product, setProduct] = useState(null);
+    const [categories, setCategories] = useState([]);
     const [form, setForm] = useState({
         name: "",
         description: "",
-        category: "",
+        category: {},
         price: "",
         quantity: "",
         active: false,
@@ -180,6 +182,31 @@ const UpdateProduct = () => {
         }
     };
 
+    useEffect(() => {
+        // if (!user) {
+        //     navigate('/login');
+        // }
+
+
+        const getAllCategories = async () => {
+            try {
+                const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/product/getCategories`, {
+                    withCredentials: true
+                });
+                setCategories(res.data.categories);
+                // console.log("Fetched categories:", res.data.categories);
+            } catch (e) {
+                swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: e.response?.data?.message || 'Error ferching categories!',
+                })
+            }
+        };
+
+        getAllCategories();
+    }, []);
+
     return (<>
         {product ? (<>
             <div className="flex gap-2 items-center">
@@ -220,19 +247,34 @@ const UpdateProduct = () => {
                         />
                     </div>
 
+
                     <div>
                         <select
                             name="category"
-                            value={form.category}
                             onChange={handleChange}
-                            className="p-2 border-b-2 border-black bg-transparent"
+                            className="p-2 border-b-2 border-black bg-transparent focus:outline-0"
                         >
-                            <option value="">Select Category</option>
-                            <option value="Computer">Computer</option>
-                            <option value="Electronics">Electronics</option>
-                            <option value="Clothing">Clothing</option>
+                            <option value={form.category._id}>{form.category.category}</option>
+                            {categories.map((cate) => (<option key={cate._id} value={cate._id} placeholder={cate.category}>
+                                {cate.category}
+                            </option>))}z
+
                         </select>
                     </div>
+                    {console.log("Form Category : ", form.category)}
+                    {/*<div>*/}
+                    {/*    <select*/}
+                    {/*        name="category"*/}
+                    {/*        value={form.category}*/}
+                    {/*        onChange={handleChange}*/}
+                    {/*        className="p-2 border-b-2 border-black bg-transparent"*/}
+                    {/*    >*/}
+                    {/*        <option value="">Select Category</option>*/}
+                    {/*        <option value="Computer">Computer</option>*/}
+                    {/*        <option value="Electronics">Electronics</option>*/}
+                    {/*        <option value="Clothing">Clothing</option>*/}
+                    {/*    </select>*/}
+                    {/*</div>*/}
 
                     <div className="flex flex-col gap-2">
                         <label>Price</label>

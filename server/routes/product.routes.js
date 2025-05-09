@@ -33,7 +33,7 @@ router.patch("/update/:id", getUserAuthentication, upload.array("imagesFile"), u
 router.delete('/delete/:id', getUserAuthentication, deleteProduct)
 
 router.post('/getProductById', getProductById)
-
+//Categories Routes
 router.post('/addCategory', getUserAuthentication, addCategory)
 
 router.get('/getCategories', getCategories)

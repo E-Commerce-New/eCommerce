@@ -1,5 +1,36 @@
 const User = require("../models/user");
 
+
+const addToCart = async (req, res) => {
+    const {userId, productId} = req.body;
+    // console.log(req.body)
+    if (!userId || !productId) {
+        return res.status(400).json({error: "Missing userId or productId"});
+    }
+
+    try {
+        const user = await User.findById(userId);
+
+        if (!user) return res.status(404).json({error: 'User not found'});
+
+        const existingProduct = user.cart.find(item => item.productId.toString() === productId);
+
+        if (existingProduct) {
+            existingProduct.quantity += 1;
+        } else {
+            user.cart.push({productId});
+        }
+
+        await user.save();
+
+        return res.status(200).json({message: 'Product added to cart', cart: user.cart});
+    } catch (err) {
+        console.error("ERROR ", err);
+        return res.status(500).json({message: 'Internal server error'});
+    }
+}
+
+
 const increaseCartQuantity = async (req, res) => {
     const {userId, productId} = req.body;
     console.log("Incoming Data:", req.body);
@@ -66,4 +97,4 @@ const decreaseCartQuantity = async (req, res) => {
 };
 
 
-module.exports = {increaseCartQuantity, removeFromCart, decreaseCartQuantity};
+module.exports = {increaseCartQuantity, removeFromCart, decreaseCartQuantity, addToCart};
