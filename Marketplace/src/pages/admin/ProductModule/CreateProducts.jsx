@@ -268,7 +268,7 @@ const CreateProducts = ({
                         <option value="">Select Category</option>
                         {categories.map((cate) => (<option key={cate._id} value={cate._id} placeholder={cate.category}>
                             {cate.category}
-                        </option>))}z
+                        </option>))}
 
                     </select>
                     {errors.category && <p className="text-red-500 text-sm">{errors?.category[0]}</p>}

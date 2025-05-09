@@ -22,18 +22,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-# .gitignore
-*.deb
-*.rpm
-
-.env
-.env.local
-.env.production
-*.env
-
-
-Marketplace/.env
-Admin/.env
-Vendor/.env
-server/.env

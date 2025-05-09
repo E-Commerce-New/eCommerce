@@ -31,7 +31,7 @@ const getUserByUsernameAndPassword = async (req, res) => {
                 cart: userData.cart,
                 _id: userData._id
             }
-            //Sending Token to client as cookie
+            //Sending Token to Marketplace as cookie
             res.cookie('access_token', token, {
                 httpOnly: true,
                 secure: true,
