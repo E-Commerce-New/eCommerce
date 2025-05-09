@@ -124,6 +124,7 @@ const Products = () => {
 
             {/*Show Products*/}
             <ReadProducts
+                categories={categories}
                 filteredProducts={filteredProducts}
                 products={products}
                 searchTerm={searchTerm}

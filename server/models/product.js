@@ -15,7 +15,7 @@ const productSchema = new Schema({
     sku: String,
     images: [String],
     imagesId: [String],
-    category: String,
+    category: {type: Schema.Types.ObjectId, ref: 'Category'},
     active: Boolean,
     isFeatured: Boolean,
     meta: {
