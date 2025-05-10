@@ -12,6 +12,7 @@
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
     "@reduxjs/toolkit": "^2.7.0",
+    "@vitejs/plugin-react": "^4.4.1",
     "aos": "^2.3.4",
     "axios": "^1.8.4",
     "dayjs": "^1.11.13",
