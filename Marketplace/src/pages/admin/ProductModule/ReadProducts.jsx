@@ -4,7 +4,7 @@ import swal from "sweetalert2";
 import axios from "axios";
 
 const ReadProducts = ({
-                          filteredProducts, products, searchTerm, setSearchTerm,
+                          filteredProducts, products, searchTerm, setSearchTerm, setProducts
                       }) => {
 
     const navigate = useNavigate();
@@ -18,23 +18,32 @@ const ReadProducts = ({
         navigate(`/admin/delete-product/${productId}`);
     }
 
-    const changeActive = async (id) => {
+    const changeActive = async (id, index) => {
         // alert(id)
-        const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/updateisactive`, {
-            id
-        })
-        if (res.status === 200) {
+        try {
+            const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/updateisactive`, {id});
+            if (res.status === 200) {
+                swal.fire({
+                    icon: "success", title: "Success", timer: 1500,
+                }).then(() => {
+                    setProducts(prev => {
+                        const shallowCopy = [...prev];
+                        shallowCopy[index] = {...shallowCopy[index], active: !shallowCopy[index].active};
+                        return shallowCopy
+                    })
+                    return true;
+                })
+            }
+        } catch (error) {
             swal.fire({
-                icon: "success", title: "Success", timer: 1500,
-            }).then((result) => {
-                if (result.dismiss) {
-                    location.reload();
-                } else if (result.isConfirmed) {
-                    location.reload();
-                }
+                icon: "error",
+                title: "Oops...",
+                text: "Something went wrong!",
             })
+            console.error(error)
         }
     }
+
 
     return (<>
         <div className="p-4">
@@ -78,7 +87,7 @@ const ReadProducts = ({
                         <td className="border px-4 py-2">{product.quantity}</td>
                         <td className="border px-4 py-2">{product?.category?.category}</td>
                         <td className="border px-4 py-2"
-                            onClick={() => changeActive(product._id)}>
+                            onClick={() => changeActive(product._id, index)}>
                             <input type="checkbox" checked={product.active}/>
                         </td>
                         <td className="border px-4 py-2">

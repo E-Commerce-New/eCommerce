@@ -124,11 +124,12 @@ const Products = () => {
 
             {/*Show Products*/}
             <ReadProducts
-                categories={categories}
+                // categories={categories}
                 filteredProducts={filteredProducts}
                 products={products}
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
+                setProducts={setProducts}
             />
         </>
     );

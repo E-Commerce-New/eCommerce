@@ -58,6 +58,94 @@ const Orders = () => {
     };
 
 
+    const cancelOrder = (order, index) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Want to cancel this order?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Proceed',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Cancelling...',
+                    text: 'Please wait while we cancel the order.',
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                    allowOutsideClick: false,
+                    showConfirmButton: false
+                });
+
+                axios.post(`${import.meta.env.VITE_BASE_URL}/api/order/cancelOrder`, {
+                    orderId: order.order_id,
+                    documentId: order._id
+                }, { withCredentials: true }).then(() => {
+                    setOrders(prev => {
+                        const shallowCopy = [...prev];
+                        shallowCopy.splice(index, 1);
+                        return shallowCopy;
+                    });
+
+                    Swal.fire({
+                        title: 'Cancelled!',
+                        text: 'The order has been cancelled.',
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }).catch((err) => {
+                    console.error(err);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Something went wrong.',
+                        icon: 'error'
+                    });
+                }).finally(() => {
+
+                });
+            } else {
+                console.log('Cancelled!');
+            }
+        });
+    };
+
+
+    // const cancelOrder = (order, index)=>{
+    //     Swal.fire({
+    //         title: 'Are you sure?',
+    //         text: "Want to cancel this order?",
+    //         icon: 'warning',
+    //         showCancelButton: true,
+    //         confirmButtonColor: '#3085d6',
+    //         cancelButtonColor: '#d33',
+    //         confirmButtonText: 'Proceed',
+    //         cancelButtonText: 'Cancel'
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
+    //             console.log('Confirmed!');
+    //             axios.post(`${import.meta.env.VITE_BASE_URL}/api/order/cancelOrder`, {
+    //                 orderId: order.order_id,
+    //                 documentId: order._id
+    //             }, {withCredentials: true}).then(() => {
+    //                 setOrders(prev => {
+    //                 const shallowCopy = [...prev];
+    //                 shallowCopy.splice(index,1);
+    //                 return shallowCopy;
+    //                 });
+    //                 console.log(orders)
+    //             }
+    //             )
+    //         } else {
+    //             console.log('Cancelled!');
+    //         }
+    //     });
+    // }
+
+
     return (
         <div
             className="p-4 w-[70%] mt-5 ml-[15%] h-[80vh] overflow-y-scroll scrollbar-hide border rounded-2xl bg-white shadow-2xl">
@@ -122,27 +210,9 @@ const Orders = () => {
                                            <CircleX
                                                className="cursor-pointer inline bg-red-500 text-white rounded-full p-1"
                                                onClick={
-                                                   () => {
-                                                       Swal.fire({
-                                                           title: 'Are you sure?',
-                                                           text: "Want to cancel this order?",
-                                                           icon: 'warning',
-                                                           showCancelButton: true,
-                                                           confirmButtonColor: '#3085d6',
-                                                           cancelButtonColor: '#d33',
-                                                           confirmButtonText: 'Proceed',
-                                                           cancelButtonText: 'Cancel'
-                                                       }).then((result) => {
-                                                           if (result.isConfirmed) {
-                                                               console.log('Confirmed!');
-                                                               axios.post(`${import.meta.env.VITE_BASE_URL}/api/order/cancelOrder`, {
-                                                                   orderId: order.order_id,
-                                                                   documentId: order._id
-                                                               }, {withCredentials: true})
-                                                           } else {
-                                                               console.log('Cancelled!');
-                                                           }
-                                                       });
+                                                   ()=> {
+                                                       // console.log(order)
+                                                       cancelOrder(order, index)
                                                    }
 
                                                    } />
