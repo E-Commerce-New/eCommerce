@@ -59,7 +59,7 @@ export const handlePayment = async (
 
                             if (placeRes.data.success) {
                                 await Swal.fire("Success!", "Your order has been placed", "success");
-                                window.location.reload(); // reload after confirmation
+                                window.location='/Orders'; // reload after confirmation
                             } else {
                                 throw new Error("Order placement failed");
                             }
@@ -142,7 +142,7 @@ export const handlePayment = async (
             if (placeRes.data.success) {
                 Swal.close()
                 await Swal.fire("Success!", "Your COD order has been placed", "success");
-                window.location.reload();
+                window.location = '/Orders'//window.location.reload();
             }
         } catch (e) {
             await Swal.fire({
