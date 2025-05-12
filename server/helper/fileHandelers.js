@@ -10,19 +10,15 @@ const imagekit = new ImageKit({
 const uploadFiles = async (imagesArray) => {
     const filePath = []
     const fileId = []
-    // console.log("Image Arr : " ,imagesArray)
     for (const file of imagesArray) {
-        // console.log("file : ", i++, "buffer :", file.buffer, "name :", file.originalname);
         const fileBuff = file?.buffer
         if (fileBuff) {
             const result = await imagekit.upload({
                 file: fileBuff,//<url|base_64|binary>, //required
                 fileName: file.originalname,   //required
             });
-            // console.log("Result", result)
             fileId.push(result.fileId)
             filePath.push(result.filePath)
-            // console.log("File Path : ", result)
         }
     }
     return {filePath, fileId};
