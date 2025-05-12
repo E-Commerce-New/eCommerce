@@ -12,7 +12,8 @@ const {
     passwordRouter,
     uiCustomize,
     faq,
-    newsletter
+    newsletter,
+    reviewRoutes
 } = require('./routes/index')
 const cookieParser = require('cookie-parser')
 
@@ -59,6 +60,7 @@ app.use('/api/password', passwordRouter)
 app.use('/api/ui', uiCustomize)
 app.use('/api/faq', faq)
 app.use('/api/newsletter', newsletter)
+app.use("/api/reviews", reviewRoutes);
 
 
 // Start server

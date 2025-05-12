@@ -8,6 +8,7 @@ const passwordRouter = require('./password.routes');
 const uiCustomize = require('./uiCustomize.routes');
 const faq = require('./faq.routes');
 const newsletter = require('./newsletter.routes');
+const reviewRoutes = require('./review.routes');
 module.exports = {
     userRouter,
     productRouter,
@@ -18,5 +19,6 @@ module.exports = {
     passwordRouter,
     uiCustomize,
     faq,
-    newsletter
+    newsletter,
+    reviewRoutes
 };

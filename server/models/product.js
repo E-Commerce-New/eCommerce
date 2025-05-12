@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const {Schema} = mongoose
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
 const productSchema = new Schema({
     name: String,
@@ -15,7 +15,7 @@ const productSchema = new Schema({
     sku: String,
     images: [String],
     imagesId: [String],
-    category: {type: Schema.Types.ObjectId, ref: 'Category'},
+    category: { type: Schema.Types.ObjectId, ref: 'Category' },
     active: Boolean,
     isFeatured: Boolean,
     meta: {
@@ -30,12 +30,23 @@ const productSchema = new Schema({
         }
     ],
     about: String,
+
+    // Physical dimensions
     length: Schema.Types.Double,
     breadth: Schema.Types.Double,
     height: Schema.Types.Double,
-    weight: Schema.Types.Double
+    weight: Schema.Types.Double,
 
-}, {timestamps: true});
+    // Ratings & Reviews summary
+    averageRating: {
+        type: Number,
+        default: 0
+    },
+    reviewCount: {
+        type: Number,
+        default: 0
+    }
 
+}, { timestamps: true });
 
 module.exports = mongoose.model('Product', productSchema);
