@@ -1,40 +1,33 @@
-import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState, useRef } from "react";
+import {useNavigate, useParams} from "react-router-dom";
+import {useEffect, useRef, useState} from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { useSelector } from "react-redux";
+import {useSelector} from "react-redux";
 import addToCart from "../../components/reUsable/AddToCart";
 import GoBack from "../../components/reUsable/Goback";
 
 const fallbackImg = "https://static-00.iconduck.com/assets.00/no-image-icon-512x512-lfoanl0w.png";
 
 const ProductInfo = () => {
-    const { id } = useParams();
+    const {id} = useParams();
     const [product, setProduct] = useState({});
     const [mainImage, setMainImage] = useState("");
     const [zoomVisible, setZoomVisible] = useState(false);
     const [zoomStyles, setZoomStyles] = useState({});
     const imgRef = useRef(null);
-
-    const { user } = useSelector((state) => state.user);
+    const {user} = useSelector((state) => state.user);
     const navigate = useNavigate();
+    const [purchaseInfo, setPurchaseInfo] = useState({});
 
     useEffect(() => {
         const fetchProductById = async () => {
             Swal.fire({
-                title: 'Loading...',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                didOpen: () => {
+                title: 'Loading...', allowOutsideClick: false, allowEscapeKey: false, didOpen: () => {
                     Swal.showLoading();
                 }
             });
             try {
-                const res = await axios.post(
-                    `${import.meta.env.VITE_BASE_URL}/api/product/getProductById`,
-                    { id },
-                    { withCredentials: true }
-                );
+                const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/getProductById`, {id}, {withCredentials: true});
                 if (res.status === 200) {
                     const productData = res.data.data;
                     setProduct(productData);
@@ -48,7 +41,25 @@ const ProductInfo = () => {
                 Swal.close();
             }
         };
+
+        const fetchPurchaseInfo = async () => {
+            try {
+                const {data} = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/order/checkIfPurchased`, {
+                    params: {
+                        userId: user._id, productId: id,
+                    }
+                });
+                console.table(data)
+                setPurchaseInfo(data);
+            } catch (err) {
+                console.error("Error fetching purchase info", err);
+            }
+        }
+
         fetchProductById();
+        fetchPurchaseInfo();
+
+
     }, [id]);
 
     const handleAddToCart = (productId) => {
@@ -81,7 +92,7 @@ const ProductInfo = () => {
     const inflatedPrice = Math.round(product.price * (100 / (100 - 60)));
 
     const handleReportProblem = async () => {
-        const { value: message } = await Swal.fire({
+        const {value: message} = await Swal.fire({
             title: 'Report a Problem',
             input: 'textarea',
             inputLabel: 'What issue did you find?',
@@ -100,15 +111,9 @@ const ProductInfo = () => {
 
         if (message) {
             try {
-                const res = await axios.post(
-                    `${import.meta.env.VITE_BASE_URL}/api/report-product`,
-                    {
-                        productId: product._id,
-                        userId: user?._id || null,
-                        message
-                    },
-                    { withCredentials: true }
-                );
+                const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/report-product`, {
+                    productId: product._id, userId: user?._id || null, message
+                }, {withCredentials: true});
 
                 if (res.status === 200) {
                     Swal.fire('Thanks!', 'Your report has been submitted.', 'success');
@@ -120,8 +125,7 @@ const ProductInfo = () => {
     };
 
 
-    return (
-        <div className="flex flex-col md:flex-row gap-8 p-4">
+    return (<div className="flex flex-col md:flex-row gap-8 p-4">
             {/* Image Section */}
             <div className="w-full md:w-1/3 relative">
                 <div
@@ -143,24 +147,20 @@ const ProductInfo = () => {
                 </div>
 
                 {/* Zoom View on Hover */}
-                {zoomVisible && (
-                    <div
+                {zoomVisible && (<div
                         className="hidden md:block absolute top-0 left-full ml-6 w-[150%] h-[100%] border shadow-xl rounded-lg z-50 bg-white"
                         style={{
                             backgroundImage: `url(${mainImage})`,
                             backgroundRepeat: "no-repeat",
-                            backgroundSize: "200%",
-                            ...zoomStyles
+                            backgroundSize: "200%", ...zoomStyles
                         }}
-                    />
-                )}
+                    />)}
 
                 {/* Thumbnails */}
                 <div className="flex gap-4 justify-center mt-4">
                     {product?.images?.slice(0, 4).map((img, index) => {
                         const fullURL = `https://ik.imagekit.io/0Shivams${img}`;
-                        return (
-                            <img
+                        return (<img
                                 key={index}
                                 src={fullURL}
                                 alt={`Thumbnail ${index + 1}`}
@@ -170,19 +170,31 @@ const ProductInfo = () => {
                                     e.target.onerror = null;
                                     e.target.src = fallbackImg;
                                 }}
-                            />
-                        );
+                            />);
                     })}
                 </div>
             </div>
 
             {/* Product Info */}
             <div className="w-full md:w-2/3 space-y-4">
+                {purchaseInfo && purchaseInfo.purchased && purchaseInfo.purchaseDate && (
+                    <div className="flex items-center gap-2 bg-green-100 text-green-800 px-4 py-2 rounded-md shadow w-fit">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                  d="M5 13l4 4L19 7"/>
+                        </svg>
+                        <span>You purchased this on {new Date(purchaseInfo.purchaseDate).toLocaleDateString()}</span>
+                    </div>
+                )}
+
+
                 <div className="flex gap-2 items-center">
-                    <GoBack />
-                    <h1 className="text-xl font-semibold">{product?.name} — <span className="text-gray-600">{product?.description}</span></h1>
+                    <GoBack/>
+                    <h1 className="text-xl font-semibold">{product?.name} — <span
+                        className="text-gray-600">{product?.description}</span></h1>
                 </div>
-                <hr />
+                <hr/>
                 <div className="space-y-1">
                     <p className="text-red-500 font-bold">{60}% off</p>
                     <p className="text-green-600 text-lg font-semibold">₹{product.price}</p>
@@ -191,8 +203,7 @@ const ProductInfo = () => {
                 </div>
 
                 {/* Attributes */}
-                {product?.attributes?.length > 0 && (
-                    <div className="overflow-x-auto mt-6">
+                {product?.attributes?.length > 0 && (<div className="overflow-x-auto mt-6">
                         <h2 className="text-lg font-semibold mb-2">Product Specifications</h2>
                         <table className="min-w-full text-sm text-left border rounded-lg overflow-hidden">
                             <thead className="bg-gray-100 text-gray-700">
@@ -202,16 +213,13 @@ const ProductInfo = () => {
                             </tr>
                             </thead>
                             <tbody>
-                            {product.attributes.map((attr, i) => (
-                                <tr key={i} className="even:bg-gray-50">
+                            {product.attributes.map((attr, i) => (<tr key={i} className="even:bg-gray-50">
                                     <td className="px-4 py-2 font-medium capitalize">{attr.key}</td>
                                     <td className="px-4 py-2">{attr.value}</td>
-                                </tr>
-                            ))}
+                                </tr>))}
                             </tbody>
                         </table>
-                    </div>
-                )}
+                    </div>)}
 
 
                 {/* Description */}
@@ -238,8 +246,7 @@ const ProductInfo = () => {
                 </p>
 
             </div>
-        </div>
-    );
+        </div>);
 };
 
 export default ProductInfo;

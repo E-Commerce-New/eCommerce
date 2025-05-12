@@ -288,4 +288,36 @@ const getDeliveryCharges = async (req, res) => {
 
 }
 
-module.exports = {placeOrder, getOrdersById, getOrders, getTotalRevenue, cancelOrderByOrderId, getDeliveryCharges};
+
+const checkIfPurchased = async (req, res) => {
+    const { userId, productId } = req.query;
+
+    if (!userId || !productId) {
+        return res.status(400).json({ error: 'Missing userId or productId' });
+    }
+
+    try {
+        const order = await Order.findOne({
+            userId,
+            order_items: {
+                $elemMatch: {
+                    _id: new mongoose.Types.ObjectId(productId)
+                }
+            }
+        }).sort({ createdAt: -1 });
+
+        if (!order) {
+            return res.json({ purchased: false });
+        }
+
+        return res.json({
+            purchased: true,
+            purchaseDate: order.createdAt
+        });
+    } catch (err) {
+        console.error("Error checking purchase status:", err);
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
+module.exports = {placeOrder, getOrdersById, getOrders, getTotalRevenue, cancelOrderByOrderId, getDeliveryCharges , checkIfPurchased};
