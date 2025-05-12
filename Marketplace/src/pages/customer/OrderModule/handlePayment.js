@@ -67,6 +67,7 @@ export const handlePayment = async (
                             await Swal.fire("Failed", "Payment verification failed", "error");
                         }
                     } catch (e) {
+                        console.log(e)
                         await Swal.fire({
                             title: 'Error!',
                             icon: 'error',

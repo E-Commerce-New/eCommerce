@@ -34,11 +34,11 @@ const ShowCartItems = ({
                         const discountPercent = Math.floor(Math.random() * (80 - 50 + 1)) + 50;
                         const inflatedPrice = Math.round(originalPrice * (100 / (100 - discountPercent)));
                         return (
-                            <div key={item._id} className="border-b-2 p-4 border-black flex gap-2 justify-between">
+                            <div key={item?._id} className="border-b-2 p-4 border-black flex gap-2 justify-between">
                                 <div className="flex gap-2">
                                     <p>{index + 1}</p>
                                     <img
-                                        onClick={() => handleProduct(item._id)}
+                                        onClick={() => handleProduct(item?._id)}
                                         src={`https://ik.imagekit.io/0Shivams${item?.images?.[0]}`}
                                         alt={`Thumbnail ${index + 1}`}
                                         className="w-20 h-20 object-cover border-2 rounded-md cursor-pointer"
@@ -49,26 +49,26 @@ const ShowCartItems = ({
                                     />
                                     <div>
                                         <div className="text-lg font-semibold flex gap-2 flex-col">
-                                            <p>{item.name}</p>
+                                            <p>{item?.name}</p>
                                             <div className="flex border-2 border-yellow-400 rounded-2xl py-1 px-3 w-[5vw] text-sm">
-                                                {item.quantity > 1 ? (
+                                                {item?.quantity > 1 ? (
                                                     <p
-                                                        onClick={() => decreaseQuantity(user._id, item._id, cartUpdated, setCartUpdated)}
+                                                        onClick={() => decreaseQuantity(user._id, item?._id, cartUpdated, setCartUpdated)}
                                                         className="cursor-pointer basis-1/3 text-left"
                                                     >
                                                         -
                                                     </p>
                                                 ) : (
                                                     <p
-                                                        onClick={() => deleteCartItem(user._id, item._id, cartUpdated, setCartUpdated)}
+                                                        onClick={() => deleteCartItem(user._id, item?._id, cartUpdated, setCartUpdated)}
                                                         className="cursor-pointer basis-1/3"
                                                     >
                                                         <Trash2 className="w-4 h-4 text-sm" />
                                                     </p>
                                                 )}
-                                                <p className="basis-1/3 text-center">{item.quantity}</p>
+                                                <p className="basis-1/3 text-center">{item?.quantity}</p>
                                                 <p
-                                                    onClick={() => increaseQuantity(user._id, item._id, cartUpdated, setCartUpdated)}
+                                                    onClick={() => increaseQuantity(user._id, item?._id, cartUpdated, setCartUpdated)}
                                                     className="cursor-pointer basis-1/3 text-right"
                                                 >
                                                     +
@@ -76,7 +76,7 @@ const ShowCartItems = ({
                                             </div>
                                             <div
                                                 className="flex gap-1 text-sm items-center cursor-pointer"
-                                                onClick={() => deleteCartItem(user._id, item._id, cartUpdated, setCartUpdated)}
+                                                onClick={() => deleteCartItem(user._id, item?._id, cartUpdated, setCartUpdated)}
                                             >
                                                 <Trash2 className="w-4 h-4 text-sm" /> <p>Delete</p>
                                             </div>
