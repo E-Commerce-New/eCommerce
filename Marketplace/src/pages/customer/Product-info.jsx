@@ -1,17 +1,22 @@
-import {useNavigate, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import swal from "sweetalert2";
-import {useSelector} from "react-redux";
-import addToCart from "../../components/reUsable/AddToCart.js";
-import GoBack from "../../components/reUsable/Goback.jsx";
+import { useSelector } from "react-redux";
+import addToCart from "../../components/reUsable/AddToCart";
+import GoBack from "../../components/reUsable/Goback";
+
+const fallbackImg = "https://static-00.iconduck.com/assets.00/no-image-icon-512x512-lfoanl0w.png";
 
 const ProductInfo = () => {
-    const id = useParams();
+    const { id } = useParams();
     const [product, setProduct] = useState({});
     const [mainImage, setMainImage] = useState("");
-    const {user} = useSelector((state) => state.user);
+    const [zoomVisible, setZoomVisible] = useState(false);
+    const [zoomStyles, setZoomStyles] = useState({});
+    const imgRef = useRef(null);
+
+    const { user } = useSelector((state) => state.user);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -24,12 +29,12 @@ const ProductInfo = () => {
                     Swal.showLoading();
                 }
             });
-            const pid = id.id
-            console.log(pid)
             try {
-                const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/getProductById`, {id: pid}, {
-                    withCredentials: true,
-                });
+                const res = await axios.post(
+                    `${import.meta.env.VITE_BASE_URL}/api/product/getProductById`,
+                    { id },
+                    { withCredentials: true }
+                );
                 if (res.status === 200) {
                     const productData = res.data.data;
                     setProduct(productData);
@@ -37,16 +42,16 @@ const ProductInfo = () => {
                         setMainImage(`https://ik.imagekit.io/0Shivams${productData?.images?.[0]}`);
                     }
                 }
-            } catch (e) {
-                console.log(e);
+            } catch (error) {
+                console.error("Fetch error:", error);
             } finally {
-                swal.close();
+                Swal.close();
             }
         };
         fetchProductById();
     }, [id]);
 
-    function handleAddToCart(productId, user) {
+    const handleAddToCart = (productId) => {
         if (!user || !user._id) {
             Swal.fire({
                 title: 'You must be logged in!',
@@ -62,108 +67,179 @@ const ProductInfo = () => {
             return;
         }
         addToCart(productId, user);
-    }
+    };
 
+    const handleMouseMove = (e) => {
+        const bounds = imgRef.current.getBoundingClientRect();
+        const x = ((e.pageX - bounds.left) / bounds.width) * 100;
+        const y = ((e.pageY - bounds.top) / bounds.height) * 100;
+        setZoomStyles({
+            backgroundPosition: `${x}% ${y}%`
+        });
+    };
 
-    const fallbackImg = "https://static-00.iconduck.com/assets.00/no-image-icon-512x512-lfoanl0w.png";
+    const inflatedPrice = Math.round(product.price * (100 / (100 - 60)));
 
-    const originalPrice = product?.price;
-    const discountPercent = Math.floor(Math.random() * (80 - 50 + 1)) + 50;
-    const inflatedPrice = Math.round(originalPrice * (100 / (100 - discountPercent)));
+    const handleReportProblem = async () => {
+        const { value: message } = await Swal.fire({
+            title: 'Report a Problem',
+            input: 'textarea',
+            inputLabel: 'What issue did you find?',
+            inputPlaceholder: 'Describe the problem here...',
+            inputAttributes: {
+                'aria-label': 'Describe the problem here'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Submit',
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'Please enter a message!';
+                }
+            }
+        });
+
+        if (message) {
+            try {
+                const res = await axios.post(
+                    `${import.meta.env.VITE_BASE_URL}/api/report-product`,
+                    {
+                        productId: product._id,
+                        userId: user?._id || null,
+                        message
+                    },
+                    { withCredentials: true }
+                );
+
+                if (res.status === 200) {
+                    Swal.fire('Thanks!', 'Your report has been submitted.', 'success');
+                }
+            } catch (error) {
+                Swal.fire('Error', 'Something went wrong. Please try again later.', 'error');
+            }
+        }
+    };
+
 
     return (
-        <>
-            <div className="flex justify-start">
-                {/*image section*/}
-                <div className="w-[30%] justify-start">
-                    <div className="flex flex-col w-full max-w-[600px] mx-auto mt-8">
-                        {/* Main Image */}
-                        <div className="w-full h-96 mb-4 border rounded-lg overflow-hidden">
+        <div className="flex flex-col md:flex-row gap-8 p-4">
+            {/* Image Section */}
+            <div className="w-full md:w-1/3 relative">
+                <div
+                    className="w-full h-96 border rounded-lg overflow-hidden relative"
+                    onMouseEnter={() => setZoomVisible(true)}
+                    onMouseLeave={() => setZoomVisible(false)}
+                    onMouseMove={handleMouseMove}
+                    ref={imgRef}
+                >
+                    <img
+                        src={mainImage || fallbackImg}
+                        alt={product?.name}
+                        className="w-full h-full object-contain"
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = fallbackImg;
+                        }}
+                    />
+                </div>
+
+                {/* Zoom View on Hover */}
+                {zoomVisible && (
+                    <div
+                        className="hidden md:block absolute top-0 left-full ml-6 w-[150%] h-[100%] border shadow-xl rounded-lg z-50 bg-white"
+                        style={{
+                            backgroundImage: `url(${mainImage})`,
+                            backgroundRepeat: "no-repeat",
+                            backgroundSize: "200%",
+                            ...zoomStyles
+                        }}
+                    />
+                )}
+
+                {/* Thumbnails */}
+                <div className="flex gap-4 justify-center mt-4">
+                    {product?.images?.slice(0, 4).map((img, index) => {
+                        const fullURL = `https://ik.imagekit.io/0Shivams${img}`;
+                        return (
                             <img
-                                src={mainImage || fallbackImg}
-                                alt={product?.name}
-                                className="w-full h-full object-contain"
+                                key={index}
+                                src={fullURL}
+                                alt={`Thumbnail ${index + 1}`}
+                                className={`w-20 h-20 object-cover border-2 rounded-md cursor-pointer ${mainImage === fullURL ? "border-blue-500" : "border-gray-300"}`}
+                                onClick={() => setMainImage(fullURL)}
                                 onError={(e) => {
                                     e.target.onerror = null;
                                     e.target.src = fallbackImg;
                                 }}
                             />
-                        </div>
-
-                        {/* Thumbnails */}
-                        <div className="flex gap-4 justify-center">
-                            {product?.images?.slice(0, 4).map((img, index) => (
-                                <img
-                                    key={index}
-                                    src={`https://ik.imagekit.io/0Shivams${img}`}
-                                    alt={`Thumbnail ${index + 1}`}
-                                    className={`w-20 h-20 object-cover border-2 rounded-md cursor-pointer ${mainImage.includes(img) ? "border-blue-500" : "border-gray-300"}`}
-                                    onClick={() => setMainImage(`https://ik.imagekit.io/0Shivams${img}`)}
-                                    onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = fallbackImg;
-                                    }}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                </div>
-
-
-                {/*product info section */}
-                <div className="flex flex-col gap-3 p-4 w-[70%]">
-                    <div className="flex gap-2 items-center">
-                        <GoBack/>
-                        <h1>
-                        <span className="font-medium">
-                        {product?.name} {" "}
-                        </span>
-                            — {product?.description}
-                        </h1>
-                    </div>
-                    <hr/>
-                    <p className="flex gap-3 items-center"><span
-                        className="text-sm text-red-500 font-medium">{discountPercent}%</span> <span
-                        className="text-green-600 font-semibold">₹{originalPrice}</span></p>
-                    <p className="line-through text-gray-500 mr-2">M.R.P: {inflatedPrice}</p>
-                    <p>Inclusive of all taxes</p>
-                    <div className="w-1/2">
-                        {product?.attributes?.map((attribute, index) => {
-                                return (
-                                    <div className="flex gap-2 my-3 w-full justify-between items-center capitalize">
-                                        <p className="py-1 w-1/2 font-medium">{attribute.key}</p> -
-                                        <p className="py-1 w-1/2">{attribute.value}</p>
-                                    </div>
-                                )
-                            }
-                        )}
-                    </div>
-                    <div className="flex flex-col">
-                        <h1 className="text-xl font-medium">About this Item :- </h1>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A ab adipisci aliquid beatae
-                            consequatur ea eius error in laborum magni maiores maxime minima molestiae, mollitia neque
-                            perferendis, perspiciatis, provident quae quibusdam quisquam recusandae sed tempore
-                            temporibus veritatis voluptatum. Ad animi asperiores enim eveniet, fugiat iusto laborum
-                            provident quaerat quam quasi sequi sunt ullam ut voluptas voluptate. A accusantium assumenda
-                            consectetur distinctio dolores, eligendi ex illum in iste natus nulla, perferendis quas
-                            repudiandae sequi ullam ut, vel voluptates? Accusamus corporis dicta error iure iusto
-                            quaerat quibusdam quidem quisquam repudiandae soluta? Animi consequuntur doloremque dolorum
-                            est fugit maxime nam porro voluptate voluptatem?</p>
-                    </div>
-                    <p className="underline">Report a problem about this product</p>
-                    <div className="flex gap-4 justify-end">
-                        <button className="border-b-2 border-black p-2 w-1/2 hover:bg-gray-200"
-                                onClick={() => handleAddToCart(product._id, user)}
-                        >Add to Cart
-                        </button>
-                        {/*<button className="border-b-2 border-black p-2 w-1/2 hover:bg-gray-200">Buy Now</button>*/}
-                    </div>
-                    <hr/>
-
+                        );
+                    })}
                 </div>
             </div>
-        </>
-    )
-}
+
+            {/* Product Info */}
+            <div className="w-full md:w-2/3 space-y-4">
+                <div className="flex gap-2 items-center">
+                    <GoBack />
+                    <h1 className="text-xl font-semibold">{product?.name} — <span className="text-gray-600">{product?.description}</span></h1>
+                </div>
+                <hr />
+                <div className="space-y-1">
+                    <p className="text-red-500 font-bold">{60}% off</p>
+                    <p className="text-green-600 text-lg font-semibold">₹{product.price}</p>
+                    <p className="line-through text-gray-500 text-sm">M.R.P: ₹{inflatedPrice}</p>
+                    <p className="text-xs text-gray-600">Inclusive of all taxes</p>
+                </div>
+
+                {/* Attributes */}
+                {product?.attributes?.length > 0 && (
+                    <div className="overflow-x-auto mt-6">
+                        <h2 className="text-lg font-semibold mb-2">Product Specifications</h2>
+                        <table className="min-w-full text-sm text-left border rounded-lg overflow-hidden">
+                            <thead className="bg-gray-100 text-gray-700">
+                            <tr>
+                                <th className="px-4 py-2">Attribute</th>
+                                <th className="px-4 py-2">Value</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {product.attributes.map((attr, i) => (
+                                <tr key={i} className="even:bg-gray-50">
+                                    <td className="px-4 py-2 font-medium capitalize">{attr.key}</td>
+                                    <td className="px-4 py-2">{attr.value}</td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+
+
+                {/* Description */}
+                <div>
+                    <h2 className="font-medium text-lg mb-1">About this Item:</h2>
+                    <p className="text-sm text-gray-700">{product.description || "No description available."}</p>
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-4">
+                    <button
+                        className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800 w-1/2"
+                        onClick={() => handleAddToCart(product._id)}
+                    >
+                        Add to Cart
+                    </button>
+                </div>
+
+                <p
+                    onClick={handleReportProblem}
+                    className="underline cursor-pointer text-sm text-gray-600 hover:text-black"
+                >
+                    Report a problem about this product
+                </p>
+
+            </div>
+        </div>
+    );
+};
 
 export default ProductInfo;

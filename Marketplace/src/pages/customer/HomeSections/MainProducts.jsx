@@ -3,8 +3,6 @@ import {Autoplay} from 'swiper/modules';
 import 'swiper/css';
 import {useEffect, useState} from "react";
 import axios from "axios";
-// import 'swiper/css/navigation';
-// import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 import {useNavigate} from "react-router-dom";
 
@@ -16,9 +14,8 @@ const MainProducts = () => {
         const fetchMainProducts = async () => {
             try {
                 const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/ui/get`);
-                console.log(res.data);
+                const productIds = res?.data?.data?.mainProducts || [];
 
-                const productIds = res?.data?.mainProducts;
                 if (res.status === 200 && Array.isArray(productIds)) {
                     const productRequests = productIds.map((id) =>
                         axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/getProductById`, { id })
@@ -28,8 +25,9 @@ const MainProducts = () => {
                     const products = productResponses.map(response => response.data.data);
 
                     setMainProducts(products);
+                    console.log("Final products:", products);
                 } else {
-                    console.warn("mainProducts not found or invalid:", res?.data?.data);
+                    console.warn("Condition failed: mainProducts not an array or bad status");
                 }
             } catch (err) {
                 console.error("Error fetching main products:", err);
@@ -38,6 +36,7 @@ const MainProducts = () => {
 
         fetchMainProducts();
     }, []);
+
 
 
 
