@@ -1,16 +1,17 @@
-import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import {useSelector} from "react-redux";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import ShowCartItems from "./OrderModule/ShowCartItems.jsx";
-import { handlePayment } from "./OrderModule/handlePayment.js";
-import { handleAddressClick } from "./OrderModule/handleAddressClick.js";
+import {handlePayment} from "./OrderModule/handlePayment.js";
+import {handleAddressClick} from "./OrderModule/handleAddressClick.js";
+
 const MySwal = withReactContent(Swal);
 
 const Cart = () => {
-    const { user } = useSelector((state) => state.user);
+    const {user} = useSelector((state) => state.user);
     const navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
     const [userCart, setUserCart] = useState([]);
@@ -21,7 +22,17 @@ const Cart = () => {
         else if (user?.isAdmin) navigate("/admin/panel");
     }, []);
 
+
     useEffect(() => {
+        const getProductsById = async (item) => {
+            try {
+                return await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/getProductById`, {
+                    id: item.productId,
+                })
+            } catch (e) {
+                console.log(e, item);
+            }
+        }
         const fetchCartProducts = async () => {
             MySwal.fire({
                 title: "Loading cart...",
@@ -33,24 +44,23 @@ const Cart = () => {
             });
 
             try {
-                const userRes = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/user/getUser`, { id: user._id });
+                const userRes = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/user/getUser`, {id: user._id});
 
                 if (userRes.status === 200) {
                     const cart = userRes.data.data.cart;
                     setUserCart(cart);
 
                     const productRequests = cart.map((item) =>
-                        axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/getProductById`, {
-                            id: item.productId,
-                        })
+                        getProductsById(item)
                     );
 
                     const productResponses = await Promise.all(productRequests);
-                    const products = productResponses.map((res, idx) => ({
-                        ...res.data.data,
-                        quantity: cart[idx].quantity,
-                    }));
-
+                    const products =
+                        productResponses.reduce((acc, product, idx) => {
+                            if(product !== undefined ) acc.push({...product.data.data, quantity: cart[idx].quantity})
+                            return acc
+                        }, [])
+                    console.log("Products", products);
                     setCartItems(products);
                 }
             } catch (err) {
@@ -91,7 +101,9 @@ const Cart = () => {
                         >
                             <p><strong>Address Line 1:</strong> {address.addressLine1}</p>
                             <p><strong>Address Line 2:</strong> {address.addressLine2}</p>
-                            <p><strong>City:</strong> {address.city}, <strong>State:</strong> {address.state}, <strong>Pincode:</strong> {address.postalCode}</p>
+                            <p>
+                                <strong>City:</strong> {address.city}, <strong>State:</strong> {address.state}, <strong>Pincode:</strong> {address.postalCode}
+                            </p>
                             <p><strong>Country:</strong> {address.country}</p>
                         </div>
                     ))}
@@ -106,7 +118,8 @@ const Cart = () => {
     };
 
     return (
-        <div className="p-4 w-[70%] ml-[15%] h-[80vh] overflow-y-scroll scrollbar-hide border rounded-2xl bg-white shadow-2xl transform-gpu hover:scale-[1.02] hover:-rotate-x-1 hover:rotate-y-1 transition-all duration-300 ease-in-out bg-white/30 backdrop-blur-md border-white/20">
+        <div
+            className="p-4 w-[70%] ml-[15%] h-[80vh] overflow-y-scroll scrollbar-hide border rounded-2xl bg-white shadow-2xl transform-gpu hover:scale-[1.02] hover:-rotate-x-1 hover:rotate-y-1 transition-all duration-300 ease-in-out bg-white/30 backdrop-blur-md border-white/20">
             <ShowCartItems
                 cartItems={cartItems}
                 handleProduct={handleProduct}
