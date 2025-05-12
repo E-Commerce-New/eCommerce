@@ -8,34 +8,18 @@ import axios from "axios";
 import {z} from "zod"
 
 const Login = () => {
-
     const {user} = useSelector((state) => state.user)
-    // console.log(user)
+    const dispatch = useDispatch();
     const navigate = useNavigate();
-
-    useEffect(() => {
-        if(!user){
-            // navigate('/');
-        }
-        else if (user?.isAdmin) {
-            console.log(user)
-            navigate('/admin/panel');
-        }else if(!user?.isAdmin){
-            navigate('/');
-        }
-    })
     const [form, setForm] = useState({
         username: "", password: "",
     })
     const [errors, setErrors] = useState({})
-
     const schema = z.object({
         username: z.string().min(3, "Username must be at least 3 characters long").max(15, "Username can't exceed more than 15 characters long"),
         password: z.string().min(3, "Password should be 3 character long").max(15, "Password can't exceed more than 15 characters long"),
     })
 
-
-    const dispatch = useDispatch();
     const onSubmit = async (e) => {
         Swal.fire({
             title: 'Finding You!', allowOutsideClick: false, allowEscapeKey: false, didOpen: () => {
@@ -62,8 +46,10 @@ const Login = () => {
                 swal.fire({
                     icon: "success", title: "Yay! Found You.", timer: 1500,
                 })
-                if (form.username === "admin") {
+                if (res.data.user.isAdmin === true) {
                     navigate("/admin/panel")
+                } else if (res.data.user.addresses.length === 0) {
+                    navigate("/updateAddress")
                 } else navigate("/")
             } else if (res.status === 404) {
                 swal.fire({

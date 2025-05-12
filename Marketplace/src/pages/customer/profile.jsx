@@ -174,8 +174,6 @@ const Profile = () => {
 
     const onSubmit = async (e) => {
         e.preventDefault();
-
-
         Swal.fire({
             title: 'We are updating your profile...',
             allowOutsideClick: false,
@@ -184,26 +182,19 @@ const Profile = () => {
                 Swal.showLoading();
             }
         });
-
-
         const result = formSchema.safeParse(formData);
         console.log("Validation result:", result);
-
         if (!result.success) {
             setErrors(result.error.flatten().fieldErrors);
             Swal.close();
             return;
         }
-
-
         setErrors({});
-
         try {
             const payload = {
                 id: user._id,
                 ...formData,
             };
-
             const res = await axios.put(`${import.meta.env.VITE_BASE_URL}/api/user/profileupdate`, payload);
 
             Swal.close();

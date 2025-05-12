@@ -75,19 +75,21 @@ const getUserById = async (req, res) => {
 };
 
 const register = async (req, res) => {
-    // console.log(req.body);
     try {
-        const {username, email, password, firstname, lastname, phone, terms} = req.body;
+        const { username, email, password, firstname, lastname, phone, terms } = req.body;
 
         if (!terms) {
-            return res.status(400).json({message: "You must accept terms and conditions"});
+            return res.status(400).json({ message: "You must accept terms and conditions" });
         }
 
-        const usernames = await getAllUserName()
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
+            return res.status(400).json({ message: "Username already exists" });
+        }
 
-        if (usernames.includes(username)) {
-            console.log("true haha...")
-            return res.status(400).json({message: "Username already exists"})
+        const existingEmail = await User.findOne({ email });
+        if (existingEmail) {
+            return res.status(400).json({ message: "Email already registered" });
         }
 
         const newUser = new User({
@@ -100,13 +102,13 @@ const register = async (req, res) => {
         });
 
         await newUser.save();
-        res.status(200).json({message: 'User registered successfully!', user: newUser});
+        res.status(200).json({ message: 'User registered successfully!', user: newUser });
 
     } catch (err) {
-        console.error(err);
-        res.status(500).json({message: 'Something went wrong!'});
+        console.error("Error during registration:", err);
+        res.status(500).json({ message: 'Something went wrong!' });
     }
-}
+};
 
 const updateUserProfile = async (req, res) => {
     const {id, addresses, currentPassword, email, firstname, lastname, phone, username} = req.body;
@@ -149,6 +151,35 @@ const updateUserProfile = async (req, res) => {
     }
 }
 
+const updateUserAddress = async (req, res) => {
+    const { id, addresses } = req.body;
+
+    if (!id || !addresses) {
+        return res.status(400).json({ message: "User ID and addresses are required" });
+    }
+
+    try {
+        const user = await User.findByIdAndUpdate(
+            id,
+            { addresses },
+            { new: true }
+        );
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        return res.status(200).json({
+            message: "Address updated successfully",
+            data: user.addresses
+        });
+    } catch (error) {
+        console.error("Error updating address:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+
 module.exports = {
-    getUserByUsernameAndPassword, register, getUserById, updateUserProfile
+    getUserByUsernameAndPassword, register, getUserById, updateUserProfile , updateUserAddress
 }
