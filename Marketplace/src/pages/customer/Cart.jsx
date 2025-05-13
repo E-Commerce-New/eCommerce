@@ -11,28 +11,34 @@ import {handleAddressClick} from "./OrderModule/handleAddressClick.js";
 const MySwal = withReactContent(Swal);
 
 const Cart = () => {
-    const {user} = useSelector((state) => state.user);
+    const { user } = useSelector((state) => state.user);
     const navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
     const [userCart, setUserCart] = useState([]);
     const [cartUpdated, setCartUpdated] = useState(false);
 
     useEffect(() => {
-        if (!user) navigate("/login");
-        else if (user?.isAdmin) navigate("/admin/panel");
+        if (user?.isAdmin) navigate("/admin/panel");
     }, []);
-
 
     useEffect(() => {
         const getProductsById = async (item) => {
+            console.log("Requesting product for ID:", item);
             try {
+                if (user && user._id) {
+                return await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/getProductById`, {
+                    id: item,
+                });
+                } else {
                 return await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/getProductById`, {
                     id: item.productId,
-                })
+                });
+                }
             } catch (e) {
                 console.log(e, item);
             }
-        }
+        };
+
         const fetchCartProducts = async () => {
             MySwal.fire({
                 title: "Loading cart...",
@@ -44,23 +50,34 @@ const Cart = () => {
             });
 
             try {
-                const userRes = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/user/getUser`, {id: user._id});
+                const localCart = JSON.parse(localStorage.getItem("guest_cart")) || [];
 
-                if (userRes.status === 200) {
-                    const cart = userRes.data.data.cart;
-                    setUserCart(cart);
+                if (user && user._id) {
+                    // Logged-in user: fetch cart from DB
+                    const userRes = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/user/getUser`, { id: user._id });
 
-                    const productRequests = cart.map((item) =>
-                        getProductsById(item)
-                    );
+                    if (userRes.status === 200) {
+                        const cart = userRes.data.data.cart;
+                        setUserCart(cart);
 
+                        // Fetch product details for DB cart
+                        const productRequests = cart.map((item) => getProductsById(item.productId));
+                        const productResponses = await Promise.all(productRequests);
+                        const products = productResponses.map((res, idx) => ({
+                            ...res.data.data,
+                            quantity: cart[idx].quantity,
+                        }));
+                        setCartItems(products);
+                    }
+                } else {
+                    // Guest user: fetch from localStorage
+                    console.table(localCart);
+                    const productRequests = localCart.map((item) => getProductsById(item));
                     const productResponses = await Promise.all(productRequests);
-                    const products =
-                        productResponses.reduce((acc, product, idx) => {
-                            if(product !== undefined ) acc.push({...product.data.data, quantity: cart[idx].quantity})
-                            return acc
-                        }, [])
-                    console.log("Products", products);
+                    const products = productResponses.map((res, idx) => ({
+                        ...res.data.data,
+                        quantity: localCart[idx].quantity,
+                    }));
                     setCartItems(products);
                 }
             } catch (err) {
@@ -70,7 +87,10 @@ const Cart = () => {
             }
         };
 
-        if (user) fetchCartProducts();
+
+
+
+        fetchCartProducts();
     }, [user, cartUpdated]);
 
     const fallbackImg = "https://static-00.iconduck.com/assets.00/no-image-icon-512x512-lfoanl0w.png";
@@ -79,6 +99,16 @@ const Cart = () => {
     const handleProduct = (id) => navigate(`/product-info/${id}`);
 
     const showAddressPopup = () => {
+        if (!user) {
+            return Swal.fire({
+                icon: "info",
+                title: "Login Required",
+                text: "Please login to proceed with checkout.",
+                confirmButtonText: "Go to Login",
+                confirmButtonColor: "#000",
+            }).then(() => navigate("/login"));
+        }
+
         MySwal.fire({
             title: <p className="text-xl font-bold">Select Shipping Address</p>,
             html: (
@@ -117,9 +147,10 @@ const Cart = () => {
         });
     };
 
+
+
     return (
-        <div
-            className="p-4 w-[70%] ml-[15%] h-[80vh] overflow-y-scroll scrollbar-hide border rounded-2xl bg-white shadow-2xl transform-gpu hover:scale-[1.02] hover:-rotate-x-1 hover:rotate-y-1 transition-all duration-300 ease-in-out bg-white/30 backdrop-blur-md border-white/20">
+        <div className="p-4 w-[90%] max-w-6xl mx-auto h-[80vh] overflow-y-scroll scrollbar-hide border rounded-2xl bg-white shadow-2xl bg-white/30 backdrop-blur-md border-white/20">
             <ShowCartItems
                 cartItems={cartItems}
                 handleProduct={handleProduct}

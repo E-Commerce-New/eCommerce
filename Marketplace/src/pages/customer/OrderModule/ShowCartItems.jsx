@@ -3,6 +3,7 @@ import {decreaseQuantity, deleteCartItem, increaseQuantity} from "./QuantityHand
 import {ShoppingBag, Trash2} from "lucide-react";
 import {Link} from "react-router-dom";
 import {handleAddressClick} from "./handleAddressClick.js";
+import axios from "axios";
 
 const ShowCartItems = ({
                            cartItems,
@@ -16,6 +17,32 @@ const ShowCartItems = ({
                            userCart,
                            handlePayment,
                        }) => {
+
+    const handleQuantityChange = (productId, type) => {
+        if (!user || !user._id) {
+            let guestCart = JSON.parse(localStorage.getItem("guest_cart")) || [];
+            const index = guestCart.findIndex(item => item.productId === productId);
+
+            if (index !== -1) {
+                if (type === "inc") {
+                    guestCart[index].quantity += 1;
+                } else if (type === "dec") {
+                    guestCart[index].quantity -= 1;
+                    if (guestCart[index].quantity <= 0) {
+                        guestCart.splice(index, 1);
+                    }
+                } else if (type === "remove") {
+                    guestCart.splice(index, 1);
+                }
+                localStorage.setItem("guest_cart", JSON.stringify(guestCart));
+                setCartUpdated(prev => !prev);
+            }
+        } else {
+            console.log("Failed")
+        }
+    };
+
+
     return (
         <div>
             <h1 className="text-xl font-bold sticky -top-5 bg-white p-2 flex gap-2 items-center">
@@ -50,36 +77,43 @@ const ShowCartItems = ({
                                     <div>
                                         <div className="text-lg font-semibold flex gap-2 flex-col">
                                             <p>{item?.name}</p>
-                                            <div className="flex border-2 border-yellow-400 rounded-2xl py-1 px-3 w-[5vw] text-sm">
-                                                {item?.quantity > 1 ? (
+                                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 w-full">
+                                                {/* Quantity Controller */}
+                                                <div className="flex gap-4 items-center border-2 border-yellow-400 rounded-2xl py-1 px-3 w-full sm:w-auto text-sm">
+                                                    {item?.quantity > 1 ? (
+                                                        <p
+                                                            onClick={() => user ? decreaseQuantity(user._id, item?._id, cartUpdated, setCartUpdated) : handleQuantityChange(item._id , "dec")}
+                                                            className="cursor-pointer basis-1/3 text-left text-lg sm:text-base"
+                                                        >
+                                                            -
+                                                        </p>
+                                                    ) : (
+                                                        <p
+                                                            onClick={() => user ? deleteCartItem(user._id, item?._id, cartUpdated, setCartUpdated) : handleQuantityChange(item._id , "remove")}
+                                                            className="cursor-pointer basis-1/3 text-left"
+                                                        >
+                                                            <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                                                        </p>
+                                                    )}
+                                                    <p className="basis-1/3 text-center text-base">{item?.quantity}</p>
                                                     <p
-                                                        onClick={() => decreaseQuantity(user._id, item?._id, cartUpdated, setCartUpdated)}
-                                                        className="cursor-pointer basis-1/3 text-left"
+                                                        onClick={() => user ? increaseQuantity(user._id, item?._id, cartUpdated, setCartUpdated) : handleQuantityChange(item._id , "inc")}
+                                                        className="cursor-pointer basis-1/3 text-right text-lg sm:text-base"
                                                     >
-                                                        -
+                                                        +
                                                     </p>
-                                                ) : (
-                                                    <p
-                                                        onClick={() => deleteCartItem(user._id, item?._id, cartUpdated, setCartUpdated)}
-                                                        className="cursor-pointer basis-1/3"
-                                                    >
-                                                        <Trash2 className="w-4 h-4 text-sm" />
-                                                    </p>
-                                                )}
-                                                <p className="basis-1/3 text-center">{item?.quantity}</p>
-                                                <p
-                                                    onClick={() => increaseQuantity(user._id, item?._id, cartUpdated, setCartUpdated)}
-                                                    className="cursor-pointer basis-1/3 text-right"
+                                                </div>
+
+                                                {/* Delete Button */}
+                                                <div
+                                                    className="flex items-center gap-1 text-sm sm:text-base text-red-600 hover:text-red-800 transition cursor-pointer"
+                                                    onClick={() => user ? deleteCartItem(user._id, item?._id, cartUpdated, setCartUpdated) : handleQuantityChange(item._id , "remove")}
                                                 >
-                                                    +
-                                                </p>
+                                                    <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                                                    <p>Delete</p>
+                                                </div>
                                             </div>
-                                            <div
-                                                className="flex gap-1 text-sm items-center cursor-pointer"
-                                                onClick={() => deleteCartItem(user._id, item?._id, cartUpdated, setCartUpdated)}
-                                            >
-                                                <Trash2 className="w-4 h-4 text-sm" /> <p>Delete</p>
-                                            </div>
+
                                         </div>
                                     </div>
                                 </div>

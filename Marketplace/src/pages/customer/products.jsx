@@ -55,21 +55,35 @@ const Products = () => {
 
     function handleAddToCart(productId, user) {
         if (!user || !user._id) {
+            let guestCart = JSON.parse(localStorage.getItem('guest_cart')) || [];
+
+            const index = guestCart.findIndex((item) => item.productId === productId);
+            if (index !== -1) {
+                guestCart[index].quantity += 1;
+            } else {
+                guestCart.push({ productId, quantity: 1 });
+            }
+
+            localStorage.setItem('guest_cart', JSON.stringify(guestCart));
+
             Swal.fire({
-                title: 'You must be logged in!',
-                text: 'Please login to add items to your cart.',
-                icon: 'warning',
-                confirmButtonText: 'Login now',
-                showCancelButton: true,
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    navigate('/login');
-                }
+                toast: true,
+                position: 'top-end',
+                icon: 'info',
+                title: 'Saved temporarily in guest cart',
+                text: 'Please login to save permanently',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
             });
+
             return;
         }
-        addToCart(productId, user);
+
+        // Logged-in users – call backend
+        addToCart(productId, user._id);
     }
+
 
     return (
         <>
