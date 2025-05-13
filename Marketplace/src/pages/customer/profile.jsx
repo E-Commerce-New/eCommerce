@@ -200,10 +200,8 @@ const Profile = () => {
             };
             const res = await axios.put(`${import.meta.env.VITE_BASE_URL}/api/user/profileupdate`, payload);
 
-            Swal.close();
-
             if (res.status === 200) {
-                dispatch(setUser(res.data.data));
+            Swal.close();
                 Swal.fire({
                     icon: 'success',
                     title: 'Profile Updated Successfully',
@@ -230,81 +228,73 @@ const Profile = () => {
 
 
     return (
-        <div className="mt-5 p-4 w-[70%] ml-[15%] h-[80vh] overflow-y-scroll scrollbar-hide
-        border rounded-2xl bg-white
-        shadow-2xl transform-gpu
-        hover:scale-[1.02] hover:-rotate-x-1 hover:rotate-y-1
-        transition-all duration-300 ease-in-out
-        bg-white/30 backdrop-blur-md border-white/20">
-            <h1 className="capitalize text-2xl font-medium mb-4">
-                Hey, {user?.firstname}{" "}
-                <span className="font-normal text-gray-700 text-xl">- Update your Profile here</span>
+        <div className="p-6 w-full mx-auto overflow-y-auto scrollbar-hide">
+            <h1 className="text-3xl font-semibold mb-6 text-gray-900">
+                Hey, <span className="capitalize">{user?.firstname}</span>
+                <span className="text-lg text-gray-600 font-normal"> — update your profile here</span>
             </h1>
 
-            <hr/>
+            <hr className="mb-8 border-gray-300"/>
 
-            <div className="flex justify-between">
-                <form onSubmit={onSubmit} className="space-y-4 mt-5 w-[65%] ">
-                    {/* Basic Info Fields */}
+            <div className="flex gap-8">
+                {/* Left Form Section */}
+                <form onSubmit={onSubmit} className="space-y-6 flex-1">
                     {["username", "email", "firstname", "lastname", "phone"].map((field) => (
-                        <div key={field}>
-                            <label htmlFor={field} className="capitalize">{field} :</label>
+                        <div key={field} className="flex flex-col">
+                            <label htmlFor={field} className="capitalize text-sm text-gray-700 mb-1">{field}</label>
                             <input
-                                className={`border-b-2 border-black p-2 w-full ${field === "email" ? null : "capitalize"}`}
+                                className="px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
                                 id={field}
                                 name={field}
                                 value={formData[field]}
                                 onChange={handleChange}
                                 placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
                             />
-                            {errors[field] && <p className="text-red-500 text-sm">{errors[field][0]}</p>}
+                            {errors[field] && <p className="text-red-500 text-sm mt-1">{errors[field][0]}</p>}
                         </div>
                     ))}
 
-
-                    {/* Address Section */}
+                    {/* Addresses */}
                     <div className="flex justify-between items-center">
-                        <h2 className="text-xl font-semibold">Addresses</h2>
+                        <h2 className="text-xl font-medium text-gray-800">Addresses</h2>
                         {formData.addresses.length < 4 && (
                             <button
                                 type="button"
-                                className="bg-green-600 text-white px-2 py-1 rounded flex items-center gap-1"
                                 onClick={addNewAddress}
+                                className="bg-green-600 hover:bg-green-700 text-white text-sm px-3 py-1 rounded flex items-center gap-1"
                             >
-                                <Plus size={18}/> Add Address
+                                <Plus size={16}/> Add Address
                             </button>
                         )}
                     </div>
 
                     {formData.addresses.map((address, index) => (
-                        <div key={index} className="border p-4 bg-gray-100 rounded-md space-y-2">
+                        <div key={index} className="bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm space-y-3">
                             {["postalCode", "addressLine1", "addressLine2"].map(field => (
                                 <input
                                     key={field}
-                                    className="border-b border-black px-4 py-2 w-full"
+                                    className="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
                                     value={address[field]}
                                     onChange={(e) => handleAddressChange(index, field, e.target.value)}
                                     placeholder={field}
                                 />
                             ))}
 
-                            {/* City field with dropdown/manual entry switch */}
+                            {/* City Dropdown or Manual */}
                             {placesOptions[index]?.length > 1 && !manualCityEntry[index] ? (
-                                <>
-                                    <select
-                                        className="border-b border-black px-4 py-2 w-full"
-                                        value={address.city}
-                                        onChange={(e) => handleAddressChange(index, "city", e.target.value)}
-                                    >
-                                        {placesOptions[index].map((place, i) => (
-                                            <option key={i} value={place}>{place}</option>
-                                        ))}
-                                        <option value="manual">Other (Enter Manually)</option>
-                                    </select>
-                                </>
+                                <select
+                                    className="w-full px-4 py-2 rounded-md border border-gray-300"
+                                    value={address.city}
+                                    onChange={(e) => handleAddressChange(index, "city", e.target.value)}
+                                >
+                                    {placesOptions[index].map((place, i) => (
+                                        <option key={i} value={place}>{place}</option>
+                                    ))}
+                                    <option value="manual">Other (Enter Manually)</option>
+                                </select>
                             ) : (
                                 <input
-                                    className="border-b border-black px-4 py-2 w-full"
+                                    className="w-full px-4 py-2 rounded-md border border-gray-300"
                                     value={address.city}
                                     onChange={(e) => handleAddressChange(index, "city", e.target.value)}
                                     placeholder="City"
@@ -312,57 +302,65 @@ const Profile = () => {
                             )}
 
                             <input
-                                className="border-b border-black px-4 py-2 w-full"
+                                className="w-full px-4 py-2 rounded-md border border-gray-300"
                                 value={address.state}
                                 onChange={(e) => handleAddressChange(index, "state", e.target.value)}
                                 placeholder="State"
                             />
                             <input
-                                className="border-b border-black px-4 py-2 w-full"
+                                className="w-full px-4 py-2 rounded-md border border-gray-300"
                                 value={address.country}
                                 onChange={(e) => handleAddressChange(index, "country", e.target.value)}
                                 placeholder="Country"
                             />
 
-                            <label className="flex items-center space-x-2">
+                            <label className="inline-flex items-center gap-2">
                                 <input
                                     type="checkbox"
                                     checked={address.isDefault}
                                     onChange={() => toggleDefault(index)}
+                                    className="accent-blue-600"
                                 />
-                                <span>Default Address</span>
+                                <span className="text-sm text-gray-700">Default Address</span>
                             </label>
                         </div>
                     ))}
 
-
-                    {/* Passwords */}
-                    <div>
-                        <label htmlFor="currentPassword">Password :</label>
+                    {/* Password */}
+                    <div className="flex flex-col">
+                        <label htmlFor="currentPassword" className="text-sm text-gray-700 mb-1">Password</label>
                         <input
-                            className="border-b-2 border-black p-2 w-full"
+                            className="px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500"
+                            type="password"
                             name="currentPassword"
                             id="currentPassword"
                             value={formData.currentPassword}
                             onChange={handleChange}
                             placeholder="Password"
-                            type="password"
                         />
                     </div>
 
                     <button
                         type="submit"
-                        className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md shadow-md font-medium"
                     >
                         Update Profile
                     </button>
                 </form>
 
-                <div className="w-[30%] m-2">
-                    Quick Links will be here
+                {/* Right Sidebar */}
+                <div className="w-1/3 flex flex-col gap-4 p-4 bg-white/60 rounded-xl shadow-md">
+                    <h3 className="text-lg font-semibold text-gray-800">Quick Links</h3>
+                    <ul className="space-y-2 text-sm text-blue-700">
+                        <li><a href="#">Dashboard</a></li>
+                        <li><a href="#">My Orders</a></li>
+                        <li><a href="#">Saved Items</a></li>
+                        <li><a href="#">Logout</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
+
     );
 };
 
