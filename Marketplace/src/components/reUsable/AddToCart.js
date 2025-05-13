@@ -5,7 +5,6 @@ const addToCart = async (productId, userId) => {
     try {
         Swal.fire({
             title: 'Adding To Cart',
-
             allowOutsideClick: false,
             allowEscapeKey: false,
             didOpen: () => {
