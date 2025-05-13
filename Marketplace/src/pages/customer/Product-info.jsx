@@ -18,6 +18,7 @@ const ProductInfo = () => {
     const imgRef = useRef(null);
     const {user} = useSelector((state) => state.user);
     const [purchaseInfo, setPurchaseInfo] = useState({});
+    const [outOfStock, setOutOfStock] = useState(false);
     const [deliveryInfo, setDeliveryInfo] = useState({
         charge: "", time: "",
     });
@@ -31,13 +32,16 @@ const ProductInfo = () => {
                     Swal.showLoading();
                 }
             });
-
             try {
                 const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/getProductById`, {id}, {withCredentials: true});
 
                 if (res.status === 200) {
                     const productData = res.data.data;
                     setProduct(productData);
+
+                    if(productData.quantity < 1){
+                        setOutOfStock(true)
+                    }
 
                     if (productData?.images?.length > 0) {
                         setMainImage(`https://ik.imagekit.io/0Shivams${productData.images[0]}`);
@@ -315,39 +319,43 @@ const ProductInfo = () => {
                 <p className="text-sm text-gray-700">{product.description || "No description available."}</p>
             </div>
 
-            <div>
-                <div className="font-bold">
-                    Address for Delivery -{" "}
-                    {defaultAddress
-                        ? `${defaultAddress.addressLine1}, ${defaultAddress.city}, ${defaultAddress.state} - ${defaultAddress.postalCode}`
-                        : "No default address available"}
-                </div>
+            {outOfStock ? null :
+                <div>
+                    <div className="font-bold">
+                        Address for Delivery -{" "}
+                        {defaultAddress
+                            ? `${defaultAddress.addressLine1}, ${defaultAddress.city}, ${defaultAddress.state} - ${defaultAddress.postalCode}`
+                            : "No default address available"}
+                    </div>
 
-                <p className="text-sm text-gray-600">
-                    This is your Default Address -
-                    You can select the other addresses while buying through the cart.
-                </p>
+                    <p className="text-sm text-gray-600">
+                        This is your Default Address -
+                        You can select the other addresses while buying through the cart.
+                    </p>
 
-                <div className="font-bold mt-2">
-                    Delivery Charge -{" "}
-                    <span className="text-green-600 font-semibold">
+                    <div className="font-bold mt-2">
+                        Delivery Charge -{" "}
+                        <span className="text-green-600 font-semibold">
                         ₹{deliveryInfo?.charge || 0}
                     </span>
-                </div>
+                    </div>
 
-                <div className="font-bold">
-                    Estimated Delivery Time -{" "}
-                    <span className="text-green-600 font-semibold">
+                    <div className="font-bold">
+                        Estimated Delivery Time -{" "}
+                        <span className="text-green-600 font-semibold">
                         {deliveryInfo?.time || "Fetching"} Days
                     </span>
+                    </div>
                 </div>
-            </div>
+            }
 
 
+            <p className="font-bold text-red-700 text-2xl">{outOfStock ? "Out of Stock" : null}</p>
             {/* Actions */}
             <div className="flex gap-4">
                 <button
-                    className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800 w-1/2"
+                    disabled={outOfStock}
+                    className={`bg-black text-white px-6 py-2 rounded hover:bg-gray-800 w-1/2 ${outOfStock ? "cursor-not-allowed" : null}`}
                     onClick={() => handleAddToCart(product._id)}
                 >
                     Add to Cart
