@@ -11,18 +11,7 @@ export const increaseQuantity = async (userId, productId , cartUpdated , setCart
         const res = await axios.put(`${import.meta.env.VITE_BASE_URL}/api/cart/increase`, {
             userId, productId,
         });
-        if (res.status === 200) {
-            await Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: 'success',
-                title: 'Successfully Added!',
-                showConfirmButton: false,
-                timer: 1500,
-                timerProgressBar: true,
-            });
-            setCartUpdated(!cartUpdated);
-        }
+        setCartUpdated(!cartUpdated);
     } catch (err) {
         console.error(err);
         Swal.fire({
@@ -47,18 +36,7 @@ export const decreaseQuantity = async (userId, productId , cartUpdated , setCart
         const res = await axios.put(`${import.meta.env.VITE_BASE_URL}/api/cart/decrease`, {
             userId, productId,
         });
-        if (res.status === 200) {
-            await Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: 'success',
-                title: 'Successfully removed!',
-                showConfirmButton: false,
-                timer: 1500,
-                timerProgressBar: true,
-            });
-                setCartUpdated(!cartUpdated);
-        }
+        setCartUpdated(!cartUpdated);
     } catch (err) {
         console.error(err);
         Swal.fire({
@@ -100,19 +78,8 @@ export const deleteCartItem = async (userId, productId, cartUpdated, setCartUpda
             data: { userId, productId }
         });
 
-        if (res.status === 200) {
-            await Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: 'success',
-                title: 'Successfully Deleted!',
-                showConfirmButton: false,
-                timer: 1500,
-                timerProgressBar: true,
-            });
+        setCartUpdated(!cartUpdated);
 
-            setCartUpdated(!cartUpdated);
-        }
     } catch (err) {
         console.error(err);
         await Swal.fire({

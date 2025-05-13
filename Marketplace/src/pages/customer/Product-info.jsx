@@ -1,4 +1,4 @@
-import {useNavigate, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {useEffect, useRef, useState} from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -17,8 +17,12 @@ const ProductInfo = () => {
     const [zoomStyles, setZoomStyles] = useState({});
     const imgRef = useRef(null);
     const {user} = useSelector((state) => state.user);
-    const navigate = useNavigate();
     const [purchaseInfo, setPurchaseInfo] = useState({});
+    const [deliveryInfo, setDeliveryInfo] = useState({
+        charge: "", time: "",
+    });
+    console.log(user);
+    const defaultAddress = user?.addresses?.find(address => address.isDefault === true);
 
     useEffect(() => {
         const fetchProductById = async () => {
@@ -27,13 +31,26 @@ const ProductInfo = () => {
                     Swal.showLoading();
                 }
             });
+
             try {
                 const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/getProductById`, {id}, {withCredentials: true});
+
                 if (res.status === 200) {
                     const productData = res.data.data;
                     setProduct(productData);
+
                     if (productData?.images?.length > 0) {
-                        setMainImage(`https://ik.imagekit.io/0Shivams${productData?.images?.[0]}`);
+                        setMainImage(`https://ik.imagekit.io/0Shivams${productData.images[0]}`);
+                    }
+                    Swal.close()
+                    if (defaultAddress && productData?.weight) {
+                        const deliveryRes = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/order/getCharges/${defaultAddress.postalCode}/${productData.weight}`);
+
+                        if (deliveryRes.status === 200) {
+                            const charge = deliveryRes?.data?.finalResult?.[0]?.freight_charge || 0;
+                            const time = deliveryRes?.data?.finalResult[0]?.estimated_delivery_days || "N/A"
+                            setDeliveryInfo({charge, time});
+                        }
                     }
                 }
             } catch (error) {
@@ -42,6 +59,7 @@ const ProductInfo = () => {
                 Swal.close();
             }
         };
+
 
         const fetchPurchaseInfo = async () => {
             try {
@@ -71,7 +89,7 @@ const ProductInfo = () => {
             if (index !== -1) {
                 guestCart[index].quantity += 1;
             } else {
-                guestCart.push({ productId, quantity: 1 });
+                guestCart.push({productId, quantity: 1});
             }
 
             localStorage.setItem('guest_cart', JSON.stringify(guestCart));
@@ -297,6 +315,35 @@ const ProductInfo = () => {
                 <p className="text-sm text-gray-700">{product.description || "No description available."}</p>
             </div>
 
+            <div>
+                <div className="font-bold">
+                    Address for Delivery -{" "}
+                    {defaultAddress
+                        ? `${defaultAddress.addressLine1}, ${defaultAddress.city}, ${defaultAddress.state} - ${defaultAddress.postalCode}`
+                        : "No default address available"}
+                </div>
+
+                <p className="text-sm text-gray-600">
+                    This is your Default Address -
+                    You can select the other addresses while buying through the cart.
+                </p>
+
+                <div className="font-bold mt-2">
+                    Delivery Charge -{" "}
+                    <span className="text-green-600 font-semibold">
+                        ₹{deliveryInfo?.charge || 0}
+                    </span>
+                </div>
+
+                <div className="font-bold">
+                    Estimated Delivery Time -{" "}
+                    <span className="text-green-600 font-semibold">
+                        {deliveryInfo?.time || "Fetching"} Days
+                    </span>
+                </div>
+            </div>
+
+
             {/* Actions */}
             <div className="flex gap-4">
                 <button
@@ -315,11 +362,11 @@ const ProductInfo = () => {
             </p>
             {purchaseInfo?.purchased === true && (<p onClick={() => handleAddReview(id, user._id)}
                                                      className="text-blue-600 cursor-pointer hover:underline">
-                    Add Review
-                </p>)}
+                Add Review
+            </p>)}
 
             <ShowReviews
-            productId={id}
+                productId={id}
             />
         </div>
     </div>);

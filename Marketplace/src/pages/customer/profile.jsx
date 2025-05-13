@@ -1,13 +1,15 @@
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {Plus} from "lucide-react";
 import Swal from "sweetalert2";
 import {useNavigate} from "react-router-dom";
 import {z} from "zod";
+import {setUser} from "../../store/User.js";
 
 const Profile = () => {
     const {user} = useSelector((state) => state.user);
+    console.log(user)
     const navigate = useNavigate();
     useEffect(() => {
         if (!user) {
@@ -29,6 +31,7 @@ const Profile = () => {
     const [errors, setErrors] = useState({});
     const [placesOptions, setPlacesOptions] = useState([]);
     const [manualCityEntry, setManualCityEntry] = useState([]);
+    const dispatch = useDispatch();
 
     const addressSchema = z.object({
         addressLine1: z.string().min(1, "Address Line 1 is required"),
@@ -183,7 +186,7 @@ const Profile = () => {
             }
         });
         const result = formSchema.safeParse(formData);
-        console.log("Validation result:", result);
+        console.log(result)
         if (!result.success) {
             setErrors(result.error.flatten().fieldErrors);
             Swal.close();
@@ -200,6 +203,7 @@ const Profile = () => {
             Swal.close();
 
             if (res.status === 200) {
+                dispatch(setUser(res.data.data));
                 Swal.fire({
                     icon: 'success',
                     title: 'Profile Updated Successfully',
