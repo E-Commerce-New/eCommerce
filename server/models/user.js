@@ -66,6 +66,18 @@ const userSchema = new Schema({
             }
         }
     ],
+    saveForLater: [
+        {
+            productId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Product',
+            },
+            quantity: {
+                type: Number,
+                default: 1,
+            }
+        }
+    ],
 
     resetPasswordToken: String,
     resetPasswordExpires: Date,

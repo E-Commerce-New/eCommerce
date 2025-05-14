@@ -14,6 +14,7 @@ const {
     faq,
     newsletter,
     reviewRoutes,
+    saveForLater,
     // authRouter
 } = require('./routes/index')
 const cookieParser = require('cookie-parser')

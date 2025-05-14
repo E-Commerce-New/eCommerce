@@ -238,13 +238,39 @@ const addCategory = async (req, res) => {
 
 const getCategories = async (req, res) => {
     try {
-        const categories = await Category.find({});
-        res.status(200).json({success: true, categories});
+        const categories = await Product.aggregate([
+            {
+                $group: {
+                    _id: "$category",
+                    productCount: { $sum: 1 }
+                }
+            },
+            {
+                $lookup: {
+                    from: "categories",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "category"
+                }
+            },
+            { $unwind: "$category" },
+            {
+                $project: {
+                    _id: "$category._id",
+                    category: "$category.category",
+                    productCount: 1
+                }
+            }
+        ]);
+
+        res.status(200).json({ success: true, categories });
     } catch (error) {
-        console.error('Error fetching categories:', error);
-        res.status(500).json({success: false, message: 'Failed to fetch categories'});
+        console.error('Error fetching categories with product count:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch categories' });
     }
 };
+
+
 
 const getProductsByCategory = async (req, res) => {
     try {

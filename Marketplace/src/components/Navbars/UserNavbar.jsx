@@ -21,12 +21,12 @@ const AdminNavbar = () => {
         {to: "/explore", label: "Explore", icon: <PackageSearch/>},
         {to: "/aboutUs", label: "About Us", icon: <Store/>},
         {to: "/contact", label: "Contact", icon: <Contact/>},
+        {to: "/cart", label: "Cart", icon: <ShoppingCart/>},
     ];
 
     const authLinks = user
         ? [
             {to: "/profile", label: "Profile", icon: <User/>},
-            {to: "/cart", label: "Cart", icon: <ShoppingCart/>},
             {to: "/Orders", label: "Orders", icon: <Package/>},
         ]
         : [

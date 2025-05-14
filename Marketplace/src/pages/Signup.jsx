@@ -8,29 +8,6 @@ import swal from "sweetalert2";
 import {z} from "zod";
 import {Eye, EyeClosed} from "lucide-react"
 
-// const Login = () => {
-//     // const navigate = useNavigate();
-//     // const { user } = useContext(AuthContext);
-//
-//     // useEffect(() => {
-//     //     if (user) {
-//     //         navigate("/home");
-//     //     }
-//     // }, [user, navigate]);
-//
-//     const googleLogin = () => {
-//         window.open(`http://localhost:3000/api/auth/google`, "_self");
-//     };
-//
-//     return (
-//         <div>
-//             <h1>MERN OAuth Example Project</h1>
-//             <button onClick={googleLogin}>Login with Google</button>
-//         </div>
-//     );
-// };
-
-
 const Signup = () => {
     const navigate = useNavigate();
     const user = useSelector((state) => state.user.user);
@@ -137,84 +114,141 @@ const Signup = () => {
 
     }
     return (
-        <>
-            <div className="ml-[20%] mt-10 z-50
-    w-[60%] overflow-y-scroll scrollbar-hide
-    border rounded-2xl bg-white/30 backdrop-blur-md border-white/20
-    shadow-2xl transition-all duration-500 ease-out">
-                <form onSubmit={onSubmit} className="flex flex-col gap-2 p-4 mt-10 font-mono ">
-                    <h1 className="text-center text-3xl font-medium font-mono">Hey dude! SignUp here</h1>
-                    <label htmlFor="" className="">Username - </label>
-                    <input type="text" placeholder="Enter your Username"
-                           className="border-b-2 border-black py-2 px-4 focus:outline-0"
-                           onChange={(e) => setForm({...form, username: e.target.value})}
-                    />
-                    {errors.username && <p className="text-red-500 text-sm">{errors.username[0]}</p>}
-                    <label htmlFor="" className="">Email - </label>
-                    <input type="email" placeholder="Enter your Email"
-                           className="border-b-2 border-black py-2 px-4 focus:outline-0"
-                           onChange={(e) => setForm({...form, email: e.target.value})}
-                    />
-                    {errors.email && <p className="text-red-500 text-sm">{errors.email[0]}</p>}
-                    <div className="flex flex-col gap-2 relative">
-                        <label htmlFor="">Password - </label>
-                        <input type={showpass ? "password" : "text"} placeholder="Enter your password"
-                               className="border-b-2 border-black py-2 px-4 focus:outline-0"
-                               onChange={(e) => setForm({...form, password: e.target.value})}
-                        />
-                        <p className="absolute right-0 bottom-0 px-10 py-2 cursor-pointer"
-                           onClick={() => setShowpass(!showpass)}>
-                            {showpass ?
-                                <Eye/>
-                                :
-                                <EyeClosed/>
-                            }
-                        </p>
-                    </div>
-                    {errors.password && <p className="text-red-500 text-sm">{errors.password[0]}</p>}
-                    <label htmlFor="">First Name - </label>
-                    <input type="text" placeholder="Enter your First Name"
-                           className="border-b-2 border-black py-2 px-4 focus:outline-0 capitalize"
-                           onChange={(e) => setForm({...form, firstname: e.target.value})}
-                    />
-                    {errors.firstname && <p className="text-red-500 text-sm">{errors.firstname[0]}</p>}
-                    <label htmlFor="">Last Name - </label>
-                    <input type="text" placeholder="Enter your Last Name"
-                           className="border-b-2 border-black py-2 px-4 focus:outline-0"
-                           onChange={(e) => setForm({...form, lastname: e.target.value})}
-                    />
-                    {errors.lastname && <p className="text-red-500 text-sm">{errors.lastname[0]}</p>}
-                    <label htmlFor="">Mobile Number - </label>
-                    <div className=''>
-                    <span className='border-b-2 border-black py-2 inline-block w-1/12 text-center'>+91</span>
-                    <input type="number" placeholder="Enter your Mobile Number"
-                           className="border-b-2 border-black py-2 px-4 focus:outline-0  w-11/12"
-                           onChange={(e) => setForm({...form, phone: e.target.value})}
-                    />
-                    {errors.phone && <p className="text-red-500 text-sm">{errors.phone[0]}</p>}
-                    </div>
-                    <div className="flex gap-2 items-center p-1">
-                        <input
-                            type="checkbox"
-                            name="term"
-                            id="term"
-                            checked={form.terms}
-                            onChange={e => setForm({...form, terms: e.target.checked})}
-                        />
-                        <p>
-                            I hereby accept the{" "}
-                            <Link className="underline" to="/termsandcondition">
-                                Terms & Conditions
-                            </Link>
-                        </p>
-                    </div>
+        <div className="flex pt-16 justify-center bg-white px-4">
+            <form
+                onSubmit={onSubmit}
+                className="w-full max-w-md bg-white border border-gray-300 rounded-lg p-6 sm:p-8 shadow-md"
+            >
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center">
+                    Create a New Account
+                </h1>
 
-                    <input type="submit" value="Sign Up" className="bg-sky-200 p-2"/>
-                    <p>Already have an account? <Link to="/login" className="underline">LogIn Now</Link></p>
-                </form>
-            </div>
-            {/*<Login/>*/}
-        </>
+                {/* Username */}
+                <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                    <input
+                        type="text"
+                        placeholder="your username"
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+                        onChange={(e) => setForm({ ...form, username: e.target.value })}
+                    />
+                    {errors.username && (
+                        <p className="text-red-500 text-xs mt-1">{errors.username[0]}</p>
+                    )}
+                </div>
+
+                {/* Email */}
+                <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input
+                        type="email"
+                        placeholder="your email"
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+                        onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    />
+                    {errors.email && (
+                        <p className="text-red-500 text-xs mt-1">{errors.email[0]}</p>
+                    )}
+                </div>
+
+                {/* Password with toggle */}
+                <div className="mb-4 relative">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input
+                        type={showpass ? "password" : "text"}
+                        placeholder="••••••••"
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+                        onChange={(e) => setForm({ ...form, password: e.target.value })}
+                    />
+                    <div
+                        className="absolute right-3 top-9 cursor-pointer text-gray-600"
+                        onClick={() => setShowpass(!showpass)}
+                    >
+                        {showpass ? <Eye className="w-5 h-5" /> : <EyeClosed className="w-5 h-5" />}
+                    </div>
+                    {errors.password && (
+                        <p className="text-red-500 text-xs mt-1">{errors.password[0]}</p>
+                    )}
+                </div>
+
+                {/* First Name */}
+                <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                    <input
+                        type="text"
+                        placeholder="your first name"
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black capitalize"
+                        onChange={(e) => setForm({ ...form, firstname: e.target.value })}
+                    />
+                    {errors.firstname && (
+                        <p className="text-red-500 text-xs mt-1">{errors.firstname[0]}</p>
+                    )}
+                </div>
+
+                {/* Last Name */}
+                <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                    <input
+                        type="text"
+                        placeholder="your last name"
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black capitalize"
+                        onChange={(e) => setForm({ ...form, lastname: e.target.value })}
+                    />
+                    {errors.lastname && (
+                        <p className="text-red-500 text-xs mt-1">{errors.lastname[0]}</p>
+                    )}
+                </div>
+
+                {/* Phone Number */}
+                <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Mobile Number</label>
+                    <input
+                        type="number"
+                        placeholder="your mobile number"
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+                        onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    />
+                    {errors.phone && (
+                        <p className="text-red-500 text-xs mt-1">{errors.phone[0]}</p>
+                    )}
+                </div>
+
+                {/* Terms and Conditions */}
+                <div className="mb-6 flex items-start gap-2 text-sm">
+                    <input
+                        type="checkbox"
+                        name="term"
+                        id="term"
+                        checked={form.terms}
+                        onChange={(e) => setForm({ ...form, terms: e.target.checked })}
+                        className="mt-1"
+                    />
+                    <label htmlFor="term" className="text-gray-700">
+                        I accept the{" "}
+                        <Link to="/termsandcondition" className="underline font-medium text-black">
+                            Terms & Conditions
+                        </Link>
+                    </label>
+                </div>
+
+                {/* Submit Button */}
+                <button
+                    type="submit"
+                    className="w-full bg-black text-white py-2 rounded-md font-semibold hover:opacity-90"
+                >
+                    Sign Up
+                </button>
+
+                {/* Switch to Login */}
+                <p className="text-center text-sm text-gray-700 mt-6">
+                    Already have an account?{" "}
+                    <Link to="/login" className="font-semibold text-black hover:underline">
+                        Log in
+                    </Link>
+                </p>
+            </form>
+        </div>
+
     )
 }
 
