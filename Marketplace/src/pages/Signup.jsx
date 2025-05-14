@@ -8,6 +8,29 @@ import swal from "sweetalert2";
 import {z} from "zod";
 import {Eye, EyeClosed} from "lucide-react"
 
+// const Login = () => {
+//     // const navigate = useNavigate();
+//     // const { user } = useContext(AuthContext);
+//
+//     // useEffect(() => {
+//     //     if (user) {
+//     //         navigate("/home");
+//     //     }
+//     // }, [user, navigate]);
+//
+//     const googleLogin = () => {
+//         window.open(`http://localhost:3000/api/auth/google`, "_self");
+//     };
+//
+//     return (
+//         <div>
+//             <h1>MERN OAuth Example Project</h1>
+//             <button onClick={googleLogin}>Login with Google</button>
+//         </div>
+//     );
+// };
+
+
 const Signup = () => {
     const navigate = useNavigate();
     const user = useSelector((state) => state.user.user);
@@ -50,7 +73,7 @@ const Signup = () => {
             .min(1, "Last name is required"),
         phone: z
             .string()
-            .regex(/^\d{10}$/, "Phone number must be exactly 10 digits"),
+            .regex(/^[6-9]\d{9}$/, "Phone number must be 10 digits and start with 6-9"),
         terms: z
             .literal(true)
             .refine(val => val === true, {
@@ -162,11 +185,14 @@ const Signup = () => {
                     />
                     {errors.lastname && <p className="text-red-500 text-sm">{errors.lastname[0]}</p>}
                     <label htmlFor="">Mobile Number - </label>
+                    <div className=''>
+                    <span className='border-b-2 border-black py-2 inline-block w-1/12 text-center'>+91</span>
                     <input type="number" placeholder="Enter your Mobile Number"
-                           className="border-b-2 border-black py-2 px-4 focus:outline-0"
+                           className="border-b-2 border-black py-2 px-4 focus:outline-0  w-11/12"
                            onChange={(e) => setForm({...form, phone: e.target.value})}
                     />
                     {errors.phone && <p className="text-red-500 text-sm">{errors.phone[0]}</p>}
+                    </div>
                     <div className="flex gap-2 items-center p-1">
                         <input
                             type="checkbox"
@@ -187,6 +213,7 @@ const Signup = () => {
                     <p>Already have an account? <Link to="/login" className="underline">LogIn Now</Link></p>
                 </form>
             </div>
+            {/*<Login/>*/}
         </>
     )
 }

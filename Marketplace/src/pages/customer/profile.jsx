@@ -1,14 +1,16 @@
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {Plus} from "lucide-react";
+import {Eye, EyeClosed, Plus} from "lucide-react";
 import Swal from "sweetalert2";
 import {useNavigate} from "react-router-dom";
 import {z} from "zod";
+import {setUser} from "../../store/User.js";
 
 const Profile = () => {
     const {user} = useSelector((state) => state.user);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     useEffect(() => {
         if (!user) {
             navigate('/login');
@@ -29,7 +31,7 @@ const Profile = () => {
     const [errors, setErrors] = useState({});
     const [placesOptions, setPlacesOptions] = useState([]);
     const [manualCityEntry, setManualCityEntry] = useState([]);
-
+    const [showpass, setShowpass] = useState(true);
     const addressSchema = z.object({
         addressLine1: z.string().min(1, "Address Line 1 is required"),
         addressLine2: z.string().optional(),
@@ -206,6 +208,7 @@ const Profile = () => {
                     text: res.data.message || 'Your profile has been updated!',
                     timer: 1500
                 });
+                dispatch(setUser(res.data.user));
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -333,17 +336,25 @@ const Profile = () => {
 
 
                     {/* Passwords */}
-                    <div>
+                    <div className='relative'>
                         <label htmlFor="currentPassword">Password :</label>
                         <input
+                            type={showpass ? "password" : "text"}
                             className="border-b-2 border-black p-2 w-full"
                             name="currentPassword"
                             id="currentPassword"
                             value={formData.currentPassword}
                             onChange={handleChange}
                             placeholder="Password"
-                            type="password"
                         />
+                        <p className="absolute right-0 bottom-0 px-10 py-2 cursor-pointer"
+                           onClick={() => setShowpass(!showpass)}>
+                            {showpass ?
+                                <Eye/>
+                                :
+                                <EyeClosed/>
+                            }
+                        </p>
                     </div>
 
                     <button
