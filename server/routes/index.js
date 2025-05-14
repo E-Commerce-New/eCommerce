@@ -9,6 +9,7 @@ const uiCustomize = require('./uiCustomize.routes');
 const faq = require('./faq.routes');
 const newsletter = require('./newsletter.routes');
 const reviewRoutes = require('./review.routes');
+const saveForLater = require('./saveForLater.routes');
 module.exports = {
     userRouter,
     productRouter,
@@ -20,5 +21,6 @@ module.exports = {
     uiCustomize,
     faq,
     newsletter,
-    reviewRoutes
+    reviewRoutes,
+    saveForLater,
 };

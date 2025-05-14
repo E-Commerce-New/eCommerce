@@ -4,6 +4,9 @@ import {ShoppingBag, Trash2} from "lucide-react";
 import {Link} from "react-router-dom";
 import {handleAddressClick} from "./handleAddressClick.js";
 import CartItemCard from "./CartItemCard";
+import {useEffect, useState} from "react";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 const ShowCartItems = ({
                            cartItems,
@@ -43,6 +46,7 @@ const ShowCartItems = ({
             console.log("Failed")
         }
     };
+
 
 
     return (
@@ -106,11 +110,12 @@ const ShowCartItems = ({
                                 handleQuantityChange={handleQuantityChange}
                                 deleteCartItem={deleteCartItem}
                                 isOutOfStock={true}
-                        fallbackImg={fallbackImg}
+                                fallbackImg={fallbackImg}
                             />
                         ))}
                     </>
                 )}
+
             </div>
         )}
     </div>

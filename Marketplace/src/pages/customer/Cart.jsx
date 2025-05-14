@@ -7,6 +7,7 @@ import {useNavigate} from "react-router-dom";
 import ShowCartItems from "./OrderModule/ShowCartItems.jsx";
 import {handlePayment} from "./OrderModule/handlePayment.js";
 import {handleAddressClick} from "./OrderModule/handleAddressClick.js";
+import SaveForLater from "./OrderModule/SaveForLater.jsx"
 
 const MySwal = withReactContent(Swal);
 
@@ -168,7 +169,7 @@ const Cart = () => {
 
 
     return (
-        <div className="p-4 w-[90%] max-w-6xl mx-auto h-[80vh] overflow-y-scroll scrollbar-hide border rounded-2xl bg-white shadow-2xl bg-white/30 backdrop-blur-md border-white/20">
+        <div className="p-4 mx-auto min-h-[90vh]">
             <ShowCartItems
                 cartItems={cartItems}
                 outOfStockItems={outOfStockItems}
@@ -180,6 +181,11 @@ const Cart = () => {
                 totalPrice={totalPrice}
                 showAddressPopup={showAddressPopup}
             />
+            {user && (
+            <SaveForLater
+            user={user}
+            />
+            )}
         </div>
     );
 };
