@@ -6,11 +6,12 @@ import Swal from "sweetalert2";
 import {useNavigate} from "react-router-dom";
 import {z} from "zod";
 import {setUser} from "../../store/User.js";
+import {useDispatch} from "react-redux";
 
 const Profile = () => {
     const {user} = useSelector((state) => state.user);
     const navigate = useNavigate();
-    const dispatch = useDispatch();
+    //const dispatch = useDispatch();
     useEffect(() => {
         if (!user) {
             navigate('/login');
