@@ -5,6 +5,11 @@ const {sendOrderConfirmationEmail} = require("../utils/sendMail");
 const {updateProductStock} = require("./product.controller");
 const axios = require("axios");
 
+
+//401 = token unauthorized
+//422 = invalid data passed to api
+//200 = all good
+
 const getValidDateAndTime = () => {
     const now = new Date();
     const year = now.getFullYear();
@@ -30,7 +35,7 @@ const getNewShipRocketToken = async () => {
                 }
             }
         )
-        // console.log("Response token : ", res.data);
+        console.log("Response token : ", res.data);
         token = res.data.token;
         return token
     } catch (err) {
@@ -56,6 +61,7 @@ const getCourierServiceAbility = async (data) => {
     } catch (err) {
         console.log("GetCourierServiceAbility Error:")
         console.log(err)
+        if(err.status ===422){console.log("Inside error");throw new Error(err)}
         await getNewShipRocketToken();
         return await getCourierServiceAbility(data);
     }
@@ -74,6 +80,7 @@ const placeOrderOnShipRocket = async (data) => {
     } catch (err) {
         console.log("PlaceOrderOnShipRocket Error:")
         console.log(err);
+        if(err.status ===422){console.log("Inside error");throw new Error(err)}
         await getNewShipRocketToken();
         return await placeOrderOnShipRocket(data);
     }
@@ -92,9 +99,11 @@ const cancelOrderOnShipRocket = async (data) => {
     } catch (err) {
         console.log("CancelOrderOnShipRocket Error:");
         console.log(err);
+        if(err.status ===422){console.log("Inside error");throw new Error(err)}
+        await getNewShipRocketToken();
+        return await cancelOrderOnShipRocket(data);
     }
 }
-
 
 const placeOrder = async (req, res) => {
     const {cartItems, shippingAddress, paymentInfo, userId, userCart, paymentMethod, deliveryCharge} = req.body;

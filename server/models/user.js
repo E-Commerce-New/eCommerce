@@ -70,6 +70,14 @@ const userSchema = new Schema({
     resetPasswordToken: String,
     resetPasswordExpires: Date,
 
+    picture:String,
+    googleId:String,
+    phoneNumber:String,
+    googleAccessToken:String,
+    googleRefreshToken:String,
+    tokenExpiryDate:Date,
+    name:String,
+
     createdAt: {
         type: Date,
         default: Date.now,
