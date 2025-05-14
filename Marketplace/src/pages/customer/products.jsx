@@ -138,9 +138,12 @@ const Products = () => {
                                 <span className="text-sm text-red-500 font-medium">
                                             {discountPercent}% OFF
                                         </span>
-                                <button className="text-center p-2 border-2 border-black rounded-lg hover:bg-gray-200"
+                                <button className={`text-center p-2 border-2 border-black rounded-lg hover:bg-gray-200 ${product.quantity < 1 ? "cursor-not-allowed bg-red-200" : null}`}
                                         onClick={() => handleAddToCart(product._id, user)}
-                                >Add to Cart
+                                        disabled={product.quantity < 1}
+
+                                >
+                                    {product.quantity < 1 ? "Out of Stock" : "Add to Cart"}
                                 </button>
                             </div>
                         </div>

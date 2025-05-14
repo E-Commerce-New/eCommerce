@@ -16,6 +16,7 @@ const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
     const [userCart, setUserCart] = useState([]);
     const [cartUpdated, setCartUpdated] = useState(false);
+    const [outOfStockItems, setOutOfStockItems] = useState([]);
 
     useEffect(() => {
         if (user?.isAdmin) navigate("/admin/panel");
@@ -53,21 +54,38 @@ const Cart = () => {
                 const localCart = JSON.parse(localStorage.getItem("guest_cart")) || [];
 
                 if (user && user._id) {
-                    // Logged-in user: fetch cart from DB
                     const userRes = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/user/getUser`, { id: user._id });
 
                     if (userRes.status === 200) {
                         const cart = userRes.data.data.cart;
                         setUserCart(cart);
 
+                        const outOfStockProducts = [];
+                        const validProducts = [];
+
                         // Fetch product details for DB cart
-                        const productRequests = cart.map((item) => getProductsById(item.productId));
+                        const productRequests = cart.map(item => getProductsById(item.productId));
                         const productResponses = await Promise.all(productRequests);
-                        const products = productResponses.map((res, idx) => ({
-                            ...res.data.data,
-                            quantity: cart[idx].quantity,
-                        }));
-                        setCartItems(products);
+
+                        productResponses.forEach((res, idx) => {
+                            const product = res.data.data;
+                            const quantityInCart = cart[idx].quantity;
+
+                            if (product.quantity > 0) {
+                                validProducts.push({
+                                    ...product,
+                                    quantity: quantityInCart
+                                });
+                            } else {
+                                outOfStockProducts.push({
+                                    ...product,
+                                    quantity: 0
+                                });
+                            }
+                        });
+
+                        setCartItems(validProducts);
+                        setOutOfStockItems(outOfStockProducts);
                     }
                 } else {
                     // Guest user: fetch from localStorage
@@ -153,6 +171,7 @@ const Cart = () => {
         <div className="p-4 w-[90%] max-w-6xl mx-auto h-[80vh] overflow-y-scroll scrollbar-hide border rounded-2xl bg-white shadow-2xl bg-white/30 backdrop-blur-md border-white/20">
             <ShowCartItems
                 cartItems={cartItems}
+                outOfStockItems={outOfStockItems}
                 handleProduct={handleProduct}
                 fallbackImg={fallbackImg}
                 user={user}
