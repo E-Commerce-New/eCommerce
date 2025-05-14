@@ -26,10 +26,10 @@ const createReview = async (req, res) => {
 
 const getReviewsByProduct = async (req, res) => {
     try {
-        const { productId } = req.params;
-        const reviews = await Review.find({ product: productId })
+        const { id } = req.params;
+        const reviews = await Review.find({ productId: id })
             .sort({ createdAt: -1 })
-            .select("rating comment createdAt");
+            .select("rating comment createdAt user");
 
         res.status(200).json(reviews);
     } catch (err) {
