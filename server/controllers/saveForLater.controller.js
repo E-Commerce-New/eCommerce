@@ -3,7 +3,7 @@ const User = require("../models/user");
 const saveForLater = async (req, res) => {
     try {
         const { userId, productId } = req.body;
-
+        // console.log({ userId, productId });
         if (!userId || !productId) {
             return res.status(400).json({ message: "Missing userId or productId" });
         }
@@ -44,7 +44,6 @@ const saveForLater = async (req, res) => {
 const getSaveForLaterItems = async (req, res) => {
     const { userId } = req.params
     console.log(userId)
-
     try {
         const user = await User.findById(userId).populate('saveForLater.productId');
 
