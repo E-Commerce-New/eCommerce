@@ -50,7 +50,7 @@ const Signup = () => {
             .min(1, "Last name is required"),
         phone: z
             .string()
-            .regex(/^\d{10}$/, "Phone number must be exactly 10 digits"),
+            .regex(/^[6-9]\d{9}$/, "Phone number must be 10 digits and start with 6-9"),
         terms: z
             .literal(true)
             .refine(val => val === true, {

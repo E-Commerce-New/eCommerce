@@ -13,9 +13,9 @@ const Login = () => {
     const [errors, setErrors] = useState({});
 
     const schema = z.object({
-        username: z.string().min(3, "Username must be at least 3 characters").max(15),
-        password: z.string().min(3, "Password must be at least 3 characters").max(15),
-    });
+        username: z.string().min(3, "Username must be at least 3 characters long").max(15, "Username can't exceed more than 15 characters long"),
+        password: z.string().min(3, "Password should be 3 character long")
+    })
 
     const onSubmit = async (e) => {
         e.preventDefault();

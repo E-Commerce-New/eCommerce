@@ -5,6 +5,12 @@ const jwt = require('jsonwebtoken');
 
 const secretKey = process.env.SECRET_KEY;
 
+const getAllUserName = async (req, res) => {
+    const getUsers = await User.find({}, 'username')
+    const usernames = getUsers.map(user => user.username)
+    return usernames
+}
+
 const getUserByUsernameAndPassword = async (req, res) => {
     // console.log(req.body)
     try {
@@ -137,18 +143,18 @@ const updateUserProfile = async (req, res) => {
                 }
             }
 
-            const user = {addresses, email, firstname, lastname, phone, username}
-            await User.findByIdAndUpdate(id, user)
+            const user = {addresses, email, firstname, lastname, phone, username, _id:id};
+            await User.findByIdAndUpdate(id, user);
 
             return res.status(200).json({
                 message: 'User updated successfully',
-                data: {id, addresses, currentPassword, email, firstname, lastname, phone, username}
+                user
             });
         }
     } catch (error) {
         console.log("ERROR : ", error)
         res.status(500).json({message: 'Internal server error'})
-    }
+    };
 }
 
 const updateUserAddress = async (req, res) => {

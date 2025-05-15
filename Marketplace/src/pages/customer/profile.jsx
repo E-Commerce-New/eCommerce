@@ -1,16 +1,17 @@
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {Plus} from "lucide-react";
+import {Eye, EyeClosed, Plus} from "lucide-react";
 import Swal from "sweetalert2";
 import {useNavigate} from "react-router-dom";
 import {z} from "zod";
 import {setUser} from "../../store/User.js";
+import {useDispatch} from "react-redux";
 
 const Profile = () => {
     const {user} = useSelector((state) => state.user);
-    console.log(user)
     const navigate = useNavigate();
+    //const dispatch = useDispatch();
     useEffect(() => {
         if (!user) {
             navigate('/login');
@@ -31,6 +32,7 @@ const Profile = () => {
     const [errors, setErrors] = useState({});
     const [placesOptions, setPlacesOptions] = useState([]);
     const [manualCityEntry, setManualCityEntry] = useState([]);
+    const [showpass, setShowpass] = useState(true);
     const dispatch = useDispatch();
 
     const addressSchema = z.object({
@@ -186,7 +188,7 @@ const Profile = () => {
             }
         });
         const result = formSchema.safeParse(formData);
-        console.log(result)
+        console.log("Validation result:", result);
         if (!result.success) {
             setErrors(result.error.flatten().fieldErrors);
             Swal.close();
@@ -208,6 +210,7 @@ const Profile = () => {
                     text: res.data.message || 'Your profile has been updated!',
                     timer: 1500
                 });
+                dispatch(setUser(res.data.user));
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -260,8 +263,8 @@ const Profile = () => {
                         {formData.addresses.length < 4 && (
                             <button
                                 type="button"
+                                className="bg-green-600 text-white px-2 py-1 rounded flex items-center gap-1"
                                 onClick={addNewAddress}
-                                className="bg-green-600 hover:bg-green-700 text-white text-sm px-3 py-1 rounded flex items-center gap-1"
                             >
                                 <Plus size={16}/> Add Address
                             </button>
@@ -327,17 +330,25 @@ const Profile = () => {
                     ))}
 
                     {/* Password */}
-                    <div className="flex flex-col">
+                    <div className="flex flex-col relative">
                         <label htmlFor="currentPassword" className="text-sm text-gray-700 mb-1">Password</label>
                         <input
+                            type={showpass ? "password" : "text"}
                             className="px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500"
-                            type="password"
                             name="currentPassword"
                             id="currentPassword"
                             value={formData.currentPassword}
                             onChange={handleChange}
                             placeholder="Password"
                         />
+                        <p className="absolute right-0 bottom-0 px-10 py-2 cursor-pointer"
+                           onClick={() => setShowpass(!showpass)}>
+                            {showpass ?
+                                <Eye/>
+                                :
+                                <EyeClosed/>
+                            }
+                        </p>
                     </div>
 
                     <button
@@ -360,7 +371,6 @@ const Profile = () => {
                 </div>
             </div>
         </div>
-
     );
 };
 
