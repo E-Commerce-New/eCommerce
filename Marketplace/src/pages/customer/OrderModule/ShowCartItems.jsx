@@ -50,55 +50,24 @@ const ShowCartItems = ({
 
 
     return (
-    <div>
-        <h1 className="text-xl font-bold sticky -top-5 bg-white p-2 flex gap-2 items-center">
-            <GoBack /> Your Cart
-        </h1>
+        <div className="max-w-5xl mx-auto px-4 py-6">
+            {/* Header */}
+            <h1 className="text-xl sm:text-2xl font-bold sticky top-0 bg-white z-10 py-3 border-b flex items-center gap-2">
+                <GoBack /> Your Cart
+            </h1>
 
-        {cartItems.length === 0 ? (
-            <div className="text-center p-4 text-red-500 font-medium">
-                <Link to="/" className="text-2xl">
-                    Your cart is empty. <br /> Shop Now
-                </Link>
-            </div>
-        ) : (
-            <div className="w-full">
-                {cartItems.map((item, index) => (
-                    <CartItemCard
-                        key={item._id}
-                        item={item}
-                        index={index}
-                        user={user}
-                        cartUpdated={cartUpdated}
-                        setCartUpdated={setCartUpdated}
-                        handleProduct={handleProduct}
-                        handleQuantityChange={handleQuantityChange}
-                        deleteCartItem={deleteCartItem}
-                        isOutOfStock={false}
-                        fallbackImg={fallbackImg}
-                    />
-                ))}
-
-                <div className="w-full text-right sticky -bottom-4 bg-white">
-                    <p className="text-lg font-bold">
-                        Total: ({cartItems.length} Items) ₹{totalPrice.toLocaleString()}
-                    </p>
-                    <button
-                        onClick={() =>
-                            showAddressPopup(user, handleAddressClick, cartItems, totalPrice, userCart, handlePayment)
-                        }
-                        className="px-4 py-2 border-2 rounded-xl border-black bg-green-200 font-medium mt-2 active:bg-gray-400"
-                    >
-                        <p className="flex gap-2">
-                            <ShoppingBag /> Buy Your Cart
-                        </p>
-                    </button>
+            {/* Empty Cart */}
+            {cartItems.length === 0 ? (
+                <div className="text-center py-16 text-red-500 font-medium">
+                    <Link to="/" className="text-2xl hover:underline">
+                        Your cart is empty. <br /> <span className="text-blue-600">Shop Now</span>
+                    </Link>
                 </div>
-
-                {outOfStockItems.length > 0 && (
-                    <>
-                        <h1 className="text-red-500 text-xl font-bold mt-6 mb-2">Out of Stock Products</h1>
-                        {outOfStockItems.map((item, index) => (
+            ) : (
+                <div className="w-full space-y-6">
+                    {/* Cart Items */}
+                    <div className="space-y-4">
+                        {cartItems.map((item, index) => (
                             <CartItemCard
                                 key={item._id}
                                 item={item}
@@ -109,18 +78,66 @@ const ShowCartItems = ({
                                 handleProduct={handleProduct}
                                 handleQuantityChange={handleQuantityChange}
                                 deleteCartItem={deleteCartItem}
-                                isOutOfStock={true}
+                                isOutOfStock={false}
                                 fallbackImg={fallbackImg}
                             />
                         ))}
-                    </>
-                )}
+                    </div>
 
-            </div>
-        )}
-    </div>
+                    {/* Cart Summary */}
+                    <div className="w-full text-right sticky bottom-0 bg-white border-t pt-4 pb-6 z-10">
+                        <p className="text-lg sm:text-xl font-bold">
+                            Total ({cartItems.length} item{cartItems.length > 1 ? "s" : ""}): ₹
+                            {totalPrice.toLocaleString()}
+                        </p>
+                        <button
+                            onClick={() =>
+                                showAddressPopup(
+                                    user,
+                                    handleAddressClick,
+                                    cartItems,
+                                    totalPrice,
+                                    userCart,
+                                    handlePayment
+                                )
+                            }
+                            className="mt-3 px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition"
+                        >
+                            <div className="flex items-center justify-center gap-2">
+                                <ShoppingBag size={18} /> Buy Your Cart
+                            </div>
+                        </button>
+                    </div>
 
-);
+                    {/* Out-of-Stock Items */}
+                    {outOfStockItems.length > 0 && (
+                        <div className="mt-10">
+                            <h2 className="text-xl text-red-600 font-bold mb-4">Out of Stock Products</h2>
+                            <div className="space-y-4">
+                                {outOfStockItems.map((item, index) => (
+                                    <CartItemCard
+                                        key={item._id}
+                                        item={item}
+                                        index={index}
+                                        user={user}
+                                        cartUpdated={cartUpdated}
+                                        setCartUpdated={setCartUpdated}
+                                        handleProduct={handleProduct}
+                                        handleQuantityChange={handleQuantityChange}
+                                        deleteCartItem={deleteCartItem}
+                                        isOutOfStock={true}
+                                        fallbackImg={fallbackImg}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+
+
+    );
 };
 
 export default ShowCartItems;

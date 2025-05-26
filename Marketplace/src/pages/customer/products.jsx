@@ -88,72 +88,77 @@ const Products = () => {
 
 
     return (<>
-            <div className="flex justify-start flex-wrap">
-                {products.map((product, index) => {
-                    const originalPrice = product.price;
-                    const discountPercent = Math.floor(Math.random() * (80 - 50 + 1)) + 50;
-                    const inflatedPrice = Math.round(originalPrice * (100 / (100 - discountPercent)));
-                    return (<div
-                            key={index}
-                            className="group border-b-2 border-black w-[18%] m-[1%] overflow-hidden cursor-pointer transition-all duration-300"
-                            data-aos="fade-up"
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4">
+            {products.map((product, index) => {
+                const originalPrice = product.price;
+                const discountPercent = Math.floor(Math.random() * (80 - 50 + 1)) + 50;
+                const inflatedPrice = Math.round(originalPrice * (100 / (100 - discountPercent)));
+
+                return (
+                    <div
+                        key={index}
+                        className="group border border-gray-300 rounded-lg overflow-hidden bg-white shadow hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+                        data-aos="fade-up"
+                    >
+                        <div
+                            className="h-48 w-full flex items-center justify-center bg-white overflow-hidden"
+                            onClick={() => handleProduct(product._id)}
                         >
-                            <div className="h-48 w-full overflow-hidden flex items-center justify-center bg-white"
-                                 onClick={() => {
-                                     handleProduct(product._id)
-                                 }}
+                            <img
+                                src={`https://ik.imagekit.io/0Shivams${product.images?.[0] || "https://static-00.iconduck.com/assets.00/no-image-icon-512x512-lfoanl0w.png"}`}
+                                alt={product.name}
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = "https://static-00.iconduck.com/assets.00/no-image-icon-512x512-lfoanl0w.png";
+                                }}
+                                className="h-full object-contain transition-transform duration-300 transform group-hover:scale-105"
+                            />
+                        </div>
+
+                        <div className="p-3 flex flex-col gap-2">
+                            <h1
+                                className="font-semibold text-sm sm:text-base group-hover:underline"
+                                onClick={() => handleProduct(product._id)}
                             >
-                                <>
-                                    <img
-                                        src={`https://ik.imagekit.io/0Shivams${product.images?.[0] || "https://static-00.iconduck.com/assets.00/no-image-icon-512x512-lfoanl0w.png"}`}
-                                        alt={product.name}
-                                        onError={(e) => {
-                                            e.target.onerror = null;
-                                            e.target.src = "https://static-00.iconduck.com/assets.00/no-image-icon-512x512-lfoanl0w.png";
-                                        }}
-                                        className="h-full object-contain transition-transform duration-300 transform hover:scale-105"
-                                    /></>
+                                {product.name}
+                            </h1>
+
+                            <div
+                                className="text-sm"
+                                onClick={() => handleProduct(product._id)}
+                            >
+            <span className="line-through text-gray-500 mr-2">
+              ₹{inflatedPrice?.toLocaleString()}
+            </span>
+                                <span className="text-green-600 font-semibold">
+              ₹{originalPrice?.toLocaleString()}
+            </span>
                             </div>
 
+                            <span className="text-xs text-red-500 font-medium">
+            {discountPercent}% OFF
+          </span>
 
-                            <div className="flex flex-col gap-1 p-2">
-                                <h1 className="font-bold transition-colors duration-300 group-hover:underline"
-                                    onClick={() => {
-                                        handleProduct(product._id)
-                                    }}
-                                >
-                                    {product.name}
-                                </h1>
-                                <p
-                                    onClick={() => {
-                                        handleProduct(product._id)
-                                    }}
-                                >
-                                        <span className="line-through text-gray-500 mr-2">
-                                            ₹{inflatedPrice?.toLocaleString()}
-                                        </span>
-                                    <span className="text-green-600 font-semibold">
-                                                 ₹{originalPrice?.toLocaleString()}
-                                        </span>
-                                </p>
-                                <span className="text-sm text-red-500 font-medium">
-                                            {discountPercent}% OFF
-                                        </span>
-                                <button
-                                    className={`text-center p-2 border-2 border-black rounded-lg hover:bg-gray-200 ${product.quantity < 1 ? "cursor-not-allowed bg-red-200" : null}`}
-                                    onClick={() => handleAddToCart(product._id, user)}
-                                    disabled={product.quantity < 1}
-
-                                >
-                                    {product.quantity < 1 ? "Out of Stock" : "Add to Cart"}
-                                </button>
-                            </div>
-                        </div>);
-                })}
-            </div>
+                            <button
+                                className={`mt-auto text-sm text-white p-2 rounded-lg transition ${
+                                    product.quantity < 1
+                                        ? "bg-red-400 cursor-not-allowed"
+                                        : "bg-black hover:bg-gray-800"
+                                }`}
+                                onClick={() => handleAddToCart(product._id, user)}
+                                disabled={product.quantity < 1}
+                            >
+                                {product.quantity < 1 ? "Out of Stock" : "Add to Cart"}
+                            </button>
+                        </div>
+                    </div>
+                );
+            })}
+        </div>
 
 
-        </>)
+
+    </>)
 }
 
 export default Products;

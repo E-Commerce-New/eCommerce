@@ -58,16 +58,16 @@ const SearchPage = () => {
     };
 
     return (
-        <div className="max-w-7xl mx-auto p-6">
-            <h1 className="text-3xl font-bold mb-6">Search Products</h1>
+        <div className="max-w-7xl mx-auto p-4 sm:p-6">
+            <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-800">Search Products</h1>
 
             {/* Filters */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <input
                     type="text"
                     name="keyword"
                     placeholder="Search by keyword"
-                    className="p-2 border rounded"
+                    className="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
                     value={filters.keyword}
                     onChange={handleInputChange}
                 />
@@ -75,7 +75,7 @@ const SearchPage = () => {
                     type="text"
                     name="category"
                     placeholder="Category"
-                    className="p-2 border rounded"
+                    className="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
                     value={filters.category}
                     onChange={handleInputChange}
                 />
@@ -83,7 +83,7 @@ const SearchPage = () => {
                     type="number"
                     name="minPrice"
                     placeholder="Min Price"
-                    className="p-2 border rounded"
+                    className="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
                     value={filters.minPrice}
                     onChange={handleInputChange}
                 />
@@ -91,35 +91,35 @@ const SearchPage = () => {
                     type="number"
                     name="maxPrice"
                     placeholder="Max Price"
-                    className="p-2 border rounded"
+                    className="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
                     value={filters.maxPrice}
                     onChange={handleInputChange}
                 />
             </div>
 
-            {/* Sorting Button */}
-            <div className="mb-6">
+            {/* Sorting */}
+            <div className="mb-6 flex flex-wrap items-center gap-4">
                 <button
                     onClick={handleSortClick}
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
                 >
                     Sort By
                 </button>
-                <span className="ml-4 text-gray-600">Current: {sortBy.replace(/_/g, " ")}</span>
+                <span className="text-gray-600 text-sm">Current: <strong>{sortBy.replace(/_/g, " ")}</strong></span>
             </div>
 
             {/* Product Results */}
             {products?.length === 0 ? (
-                <p>No products found.</p>
+                <p className="text-center text-gray-500">No products found.</p>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                    {products?.map((product) => (
+                    {products.map((product) => (
                         <div
                             key={product._id}
-                            className="bg-white rounded-lg shadow-md border hover:shadow-lg transition-all duration-300 overflow-hidden"
-                            onClick={()=>navigate(`/product-info/${product._id}`)}
+                            className="bg-white rounded-lg shadow-sm hover:shadow-lg border border-gray-200 transition duration-300 cursor-pointer overflow-hidden"
+                            onClick={() => navigate(`/product-info/${product._id}`)}
                         >
-                            <div className="w-full h-48 bg-gray-100 flex items-center justify-center overflow-hidden">
+                            <div className="w-full h-48 bg-gray-50 flex items-center justify-center overflow-hidden">
                                 <img
                                     src={`https://ik.imagekit.io/0Shivams${product.images?.[0] || ""}`}
                                     alt={product.name}
@@ -131,16 +131,16 @@ const SearchPage = () => {
                                 />
                             </div>
 
-                            <div className="p-4 flex flex-col">
-                                <h2 className="text-lg font-semibold mb-2 truncate">{product.name}</h2>
-                                <p className="text-gray-700 font-bold text-md">₹{product.price}</p>
+                            <div className="p-4">
+                                <h2 className="text-base font-semibold text-gray-800 truncate mb-1">{product.name}</h2>
+                                <p className="text-green-700 font-bold text-sm">₹{product.price}</p>
                             </div>
                         </div>
                     ))}
                 </div>
-
             )}
         </div>
+
     );
 };
 

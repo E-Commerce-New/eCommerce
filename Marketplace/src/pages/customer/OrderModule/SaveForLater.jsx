@@ -81,64 +81,81 @@ const SaveForLater = ({ user }) => {
     };
 
     return (
-        <div className="mt-8 border-t-2 p-4">
+        <div className="mt-8 border-t-2 pt-6">
             {saveForLater.length === 0 ? (
-                <p className="text-2xl text-center text-gray-500 font-bold">No items saved for later</p>
+                <p className="text-2xl text-center text-gray-500 font-bold">
+                    No items saved for later
+                </p>
             ) : (
                 <>
-                    <h1 className="text-red-500 text-xl font-bold mb-4">Save For Later</h1>
-                    <div className="space-y-4">
+                    <h1 className="text-red-500 text-xl font-bold mb-6">Saved For Later</h1>
+
+                    <div className="space-y-6">
                         {saveForLater.map((itemObj, index) => {
                             const item = itemObj.product;
                             const quantity = itemObj.quantity;
                             const originalPrice = item.price;
-                            const inflatedPrice = (item.price * 1.25).toFixed(0);
-                            const discountPercent = Math.round(((inflatedPrice - originalPrice) / inflatedPrice) * 100);
+                            const inflatedPrice = Math.round(item.price * 1.25);
+                            const discountPercent = Math.round(
+                                ((inflatedPrice - originalPrice) / inflatedPrice) * 100
+                            );
 
                             return (
-                                <div key={item._id} className="border-b-2 p-4 border-gray-300 flex gap-4 justify-between">
-                                    {/* Left: Image and Details */}
-                                    <div className="flex gap-4"
-                                    onClick={()=>navigate(`/product-info/${item._id}`)}
+                                <div
+                                    key={item._id}
+                                    className="flex flex-col sm:flex-row justify-between gap-4 border-b pb-4"
+                                >
+                                    {/* 🖼️ Product Info */}
+                                    <div
+                                        className="flex gap-4 cursor-pointer"
+                                        onClick={() => navigate(`/product-info/${item._id}`)}
                                     >
                                         <img
                                             src={`https://ik.imagekit.io/0Shivams${item?.images?.[0]}`}
-                                            alt={`Thumbnail ${index + 1}`}
-                                            className="w-24 h-24 object-cover border rounded-md"
+                                            alt={item.name}
+                                            className="w-24 h-24 object-cover rounded border"
                                             onError={(e) => {
                                                 e.target.onerror = null;
                                                 e.target.src = fallbackImg;
                                             }}
                                         />
-                                        <div className="text-base flex flex-col gap-1 max-w-md">
-                                            <p className="font-semibold">{item.name}</p>
-                                            <p className="text-gray-600 text-sm">{item.description}</p>
+                                        <div className="flex flex-col gap-1 max-w-md">
+                                            <p className="font-semibold text-base">{item.name}</p>
+                                            <p className="text-gray-600 text-sm line-clamp-2">
+                                                {item.description}
+                                            </p>
                                             <p className="text-gray-400 text-sm">Qty: {quantity}</p>
                                         </div>
                                     </div>
 
-                                    {/* Right: Price and Actions */}
-                                    <div className="flex flex-col items-end justify-between">
+                                    {/* 💰 Price & Actions */}
+                                    <div className="flex flex-col items-end justify-between text-sm">
                                         <div className="text-right">
-                                            <p className="text-green-600 font-semibold text-lg">₹{originalPrice}</p>
-                                            <p className="text-sm text-red-500">{discountPercent}% OFF</p>
-                                            <p className="text-xs text-gray-500 line-through">M.R.P ₹{inflatedPrice}</p>
+                                            <p className="text-green-600 font-semibold text-lg">
+                                                ₹{originalPrice}
+                                            </p>
+                                            <p className="text-red-500">{discountPercent}% OFF</p>
+                                            <p className="line-through text-xs text-gray-500">
+                                                M.R.P: ₹{inflatedPrice}
+                                            </p>
                                         </div>
-                                        <button
-                                            onClick={() => handleMoveToCart(item._id)}
-                                            className="text-sm mt-2 text-blue-600 hover:underline"
-                                        >
-                                            Move to Cart
-                                        </button>
 
-                                        <button
-                                            onClick={() => handleDeleteFromSaveForLater(item._id)}
-                                            className="text-sm text-red-600 hover:text-red-800 flex items-center gap-1 mt-1"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                            Delete
-                                        </button>
+                                        <div className="flex flex-col items-end gap-1 mt-2">
+                                            <button
+                                                onClick={() => handleMoveToCart(item._id)}
+                                                className="text-blue-600 hover:underline"
+                                            >
+                                                Move to Cart
+                                            </button>
 
+                                            <button
+                                                onClick={() => handleDeleteFromSaveForLater(item._id)}
+                                                className="flex items-center gap-1 text-red-600 hover:text-red-800"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                                Delete
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             );
@@ -147,6 +164,7 @@ const SaveForLater = ({ user }) => {
                 </>
             )}
         </div>
+
     );
 };
 

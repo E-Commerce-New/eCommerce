@@ -45,36 +45,56 @@ const MainProducts = () => {
             <Swiper
                 modules={[Autoplay]}
                 pagination={{
-                    clickable: true, dynamicBullets: true,
+                    clickable: true,
+                    dynamicBullets: true,
                 }}
                 navigation={true}
                 spaceBetween={30}
-                slidesPerView={5}
                 loop={true}
-                autoplay={{delay: 3000, disableOnInteraction: false}}
+                autoplay={{ delay: 3000, disableOnInteraction: false }}
                 className="rounded-lg overflow-hidden"
+                breakpoints={{
+                    0: {
+                        slidesPerView: 1, // Smallest screens
+                    },
+                    480: {
+                        slidesPerView: 2, // Small phones
+                    },
+                    768: {
+                        slidesPerView: 3, // Tablets
+                    },
+                    1024: {
+                        slidesPerView: 4, // Small desktops
+                    },
+                    1280: {
+                        slidesPerView: 5, // Large desktops
+                    },
+                }}
             >
-                {mainProducts?.map((product) => (<SwiperSlide key={product._id}>
-                    <div className="flex justify-center flex-col items-center overflow-hidden relative"
-                         onClick={() => navigate(`/product-info/${product._id}`)}
-                    >
-                        <div className="overflow-hidden">
-                            <img
-                                src={`https://ik.imagekit.io/0Shivams${product.images?.[0] || "https://static-00.iconduck.com/assets.00/no-image-icon-512x512-lfoanl0w.png"}`}
-                                alt={product.name}
-                                onError={(e) => {
-                                    e.target.onerror = null;
-                                    e.target.src = "https://static-00.iconduck.com/assets.00/no-image-icon-512x512-lfoanl0w.png";
-                                }}
-                                className="h-full object-contain transition-transform duration-300 transform hover:scale-105"
-                            />
+                {mainProducts?.map((product) => (
+                    <SwiperSlide key={product._id}>
+                        <div
+                            className="flex justify-center flex-col items-center overflow-hidden relative"
+                            onClick={() => navigate(`/product-info/${product._id}`)}
+                        >
+                            <div className="overflow-hidden">
+                                <img
+                                    src={`https://ik.imagekit.io/0Shivams${product.images?.[0] || "https://static-00.iconduck.com/assets.00/no-image-icon-512x512-lfoanl0w.png"}`}
+                                    alt={product.name}
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "https://static-00.iconduck.com/assets.00/no-image-icon-512x512-lfoanl0w.png";
+                                    }}
+                                    className="h-full object-contain transition-transform duration-300 transform hover:scale-105"
+                                />
+                            </div>
+                            <h1 className="p-3">{product.name}</h1>
                         </div>
-                        <h1 className="p-3">{product.name}</h1>
-                    </div>
-
-                </SwiperSlide>))}
+                    </SwiperSlide>
+                ))}
             </Swiper>
         </div>
+
     </>)
 }
 

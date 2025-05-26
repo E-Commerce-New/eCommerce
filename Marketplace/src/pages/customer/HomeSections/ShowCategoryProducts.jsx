@@ -22,7 +22,7 @@ const CategoryProducts = () => {
 
     return (
         <div className="category-products px-4 sm:px-8 lg:px-16 py-10">
-            <h1 className="text-center text-3xl font-bold text-gray-800 mb-8">
+            <h1 className="text-center text-2xl sm:text-3xl font-bold text-gray-800 mb-8">
                 Products in this Category
             </h1>
 
@@ -33,32 +33,37 @@ const CategoryProducts = () => {
                     {products.map((product) => (
                         <div
                             key={product._id}
-                            className="group bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition duration-300 cursor-pointer"
+                            className="group bg-white border rounded-xl overflow-hidden shadow-md hover:shadow-xl transition duration-300 cursor-pointer"
                             onClick={() => navigate(`/product-info/${product._id}`)}
                         >
-                            <div className="w-full h-48 overflow-hidden bg-gray-100">
+                            <div className="aspect-w-4 aspect-h-3 bg-gray-100 overflow-hidden">
                                 <img
-                                    src={`https://ik.imagekit.io/0Shivams${product.images[0]}`}
+                                    src={`https://ik.imagekit.io/0Shivams${product.images?.[0]}`}
                                     alt={product.name}
-                                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                     onError={(e) => {
                                         e.target.onerror = null;
-                                        e.target.src = "https://static-00.iconduck.com/assets.00/no-image-icon-512x512-lfoanl0w.png";
+                                        e.target.src =
+                                            "https://static-00.iconduck.com/assets.00/no-image-icon-512x512-lfoanl0w.png";
                                     }}
                                 />
                             </div>
 
-                            <div className="p-4 text-left">
+                            <div className="p-4">
                                 <h2 className="text-lg font-semibold text-gray-800 truncate">
                                     {product.name}
                                 </h2>
-                                <p className="text-sm text-gray-600 mt-1">${product.price}</p>
+                                <p className="text-sm text-gray-600 mt-1 font-medium">
+                                    ₹{product.price.toLocaleString()}
+                                </p>
                             </div>
                         </div>
                     ))}
                 </div>
             )}
         </div>
+
+
 
     );
 };

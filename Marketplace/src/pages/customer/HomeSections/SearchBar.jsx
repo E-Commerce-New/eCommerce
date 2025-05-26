@@ -14,7 +14,7 @@ const SearchBar = () => {
     return(
         <>
             <div className="flex justify-end mb-3">
-            <div className="flex w-1/3">
+            <div className="flex w-3/3 md:w-1/3">
                 <input
                     type="text"
                     placeholder="Search products..."

@@ -25,7 +25,7 @@ const ShopByCategory = () => {
                 {categories?.map((category) => (
                     <div
                         key={category._id}
-                        className="bg-gray-200 py-2 px-4 rounded-lg text-center cursor-pointer hover:bg-gray-300 capitalize"
+                        className="bg-gray-200 py-1 px-2 md:py-2 md:px-4 rounded-lg text-center cursor-pointer hover:bg-gray-300 capitalize text-[9px] md:text-lg"
                         onClick={() => navigate(`/category/${category._id}`)}
                     >
                         <h2 className="text-smcapitalize">{category.category} ({category.productCount})</h2>

@@ -231,49 +231,51 @@ const Profile = () => {
 
 
     return (
-        <div className="p-6 w-full mx-auto overflow-y-auto scrollbar-hide">
-            <h1 className="text-3xl font-semibold mb-6 text-gray-900">
+        <div className="p-4 sm:p-6 w-full max-w-7xl mx-auto overflow-y-auto">
+            <h1 className="text-2xl sm:text-3xl font-semibold mb-4 sm:mb-6 text-gray-900">
                 Hey, <span className="capitalize">{user?.firstname}</span>
-                <span className="text-lg text-gray-600 font-normal"> — update your profile here</span>
+                <span className="text-base sm:text-lg text-gray-600 font-normal"> — update your profile here</span>
             </h1>
 
-            <hr className="mb-8 border-gray-300"/>
+            <hr className="mb-6 border-gray-300" />
 
-            <div className="flex gap-8">
-                {/* Left Form Section */}
-                <form onSubmit={onSubmit} className="space-y-6 flex-1">
+            <div className="flex flex-col lg:flex-row gap-6">
+                {/* Form Section */}
+                <form onSubmit={onSubmit} className="flex-1 space-y-6">
                     {["username", "email", "firstname", "lastname", "phone"].map((field) => (
                         <div key={field} className="flex flex-col">
                             <label htmlFor={field} className="capitalize text-sm text-gray-700 mb-1">{field}</label>
                             <input
-                                className="px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                                className="px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 id={field}
                                 name={field}
                                 value={formData[field]}
                                 onChange={handleChange}
                                 placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
                             />
-                            {errors[field] && <p className="text-red-500 text-sm mt-1">{errors[field][0]}</p>}
+                            {errors[field] && (
+                                <p className="text-red-500 text-sm mt-1">{errors[field][0]}</p>
+                            )}
                         </div>
                     ))}
 
                     {/* Addresses */}
                     <div className="flex justify-between items-center">
-                        <h2 className="text-xl font-medium text-gray-800">Addresses</h2>
+                        <h2 className="text-lg sm:text-xl font-medium text-gray-800">Addresses</h2>
                         {formData.addresses.length < 4 && (
                             <button
                                 type="button"
                                 className="bg-green-600 text-white px-2 py-1 rounded flex items-center gap-1"
                                 onClick={addNewAddress}
                             >
-                                <Plus size={16}/> Add Address
+                                <Plus size={16} /> Add Address
                             </button>
                         )}
                     </div>
 
                     {formData.addresses.map((address, index) => (
                         <div key={index} className="bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm space-y-3">
-                            {["postalCode", "addressLine1", "addressLine2"].map(field => (
+                            {["postalCode", "addressLine1", "addressLine2"].map((field) => (
                                 <input
                                     key={field}
                                     className="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
@@ -333,7 +335,7 @@ const Profile = () => {
                     <div className="flex flex-col relative">
                         <label htmlFor="currentPassword" className="text-sm text-gray-700 mb-1">Password</label>
                         <input
-                            type={showpass ? "password" : "text"}
+                            type={showpass ? "text" : "password"}
                             className="px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500"
                             name="currentPassword"
                             id="currentPassword"
@@ -341,14 +343,12 @@ const Profile = () => {
                             onChange={handleChange}
                             placeholder="Password"
                         />
-                        <p className="absolute right-0 bottom-0 px-10 py-2 cursor-pointer"
-                           onClick={() => setShowpass(!showpass)}>
-                            {showpass ?
-                                <Eye/>
-                                :
-                                <EyeClosed/>
-                            }
-                        </p>
+                        <span
+                            onClick={() => setShowpass(!showpass)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 cursor-pointer"
+                        >
+          {showpass ? <Eye /> : <EyeClosed />}
+        </span>
                     </div>
 
                     <button
@@ -359,18 +359,19 @@ const Profile = () => {
                     </button>
                 </form>
 
-                {/* Right Sidebar */}
-                <div className="w-1/3 flex flex-col gap-4 p-4 bg-white/60 rounded-xl shadow-md">
-                    <h3 className="text-lg font-semibold text-gray-800">Quick Links</h3>
+                {/* Sidebar Section */}
+                <div className="w-full lg:w-1/3 bg-white/60 rounded-xl shadow-md p-4">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-3">Quick Links</h3>
                     <ul className="space-y-2 text-sm text-blue-700">
-                        <li><a href="#">Dashboard</a></li>
-                        <li><a href="#">My Orders</a></li>
-                        <li><a href="#">Saved Items</a></li>
-                        <li><a href="#">Logout</a></li>
+                        <li><a href="#" className="hover:underline">Dashboard</a></li>
+                        <li><a href="#" className="hover:underline">My Orders</a></li>
+                        <li><a href="#" className="hover:underline">Saved Items</a></li>
+                        <li><a href="#" className="hover:underline">Logout</a></li>
                     </ul>
                 </div>
             </div>
         </div>
+
     );
 };
 
